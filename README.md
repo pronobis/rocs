@@ -11,13 +11,13 @@ semantic information about environment from robotic sensors, place
 categorization etc. 
 
 #### For more information see:
-[http://github.com/pronobis/ROCS]
+- (http://github.com/pronobis/ROCS)
 
 #### Pleas report bugs and suggestions at:
-[http://github.com/pronobis/ROCS/issues]
+- (http://github.com/pronobis/ROCS/issues)
 
 #### Contact: 
-Andrzej Pronobis [E-mail](andrzej@pronobis.pro), [WWW](http://www.pronobis.pro)
+- Andrzej Pronobis [E-mail](mailto:andrzej@pronobis.pro), [WWW](http://www.pronobis.pro)
 
 
 Licensing and Authors 
@@ -35,7 +35,8 @@ WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
 FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License for 
 more details.
 
-See the LICENSE file for the license definitions and restrictions.
+See the [LICENSE](http://github.com/pronobis/ROCS/blob/master/LICENSE) 
+file for the license definitions and restrictions.
 
 #### Authors:
 - Arnaud Ramey
