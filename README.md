@@ -1,9 +1,8 @@
-=============================================
 ROCS (Toolkit for Robots Comprehending Space) 
 =============================================
 
-1. Introduction
----------------
+Introduction
+------------
 
 ROCS is a set of libraries and a repository for algorithms used for providing 
 mobile robots with spatial understanding capabilities. ROCS contains 
@@ -11,20 +10,20 @@ implementations of algorithms for mobile robot localization, extraction of
 semantic information about environment from robotic sensors, place 
 categorization etc. 
 
-For more information see:
+#### For more information see:
   http://github.com/pronobis/ROCS
 
-Pleas report bugs and suggestions at:
+#### Pleas report bugs and suggestions at:
   http://github.com/pronobis/ROCS/issues
 
-Contact: 
+#### Contact: 
   Andrzej Pronobis
   andrzej@pronobis.pro
   http://www.pronobis.pro
 
 
-2. Licensing and Authors 
-------------------------
+Licensing and Authors 
+---------------------
 
 ROCS is Copyright (C) 2010  Andrzej Pronobis
 
