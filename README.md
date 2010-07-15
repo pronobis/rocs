@@ -16,6 +16,9 @@ categorization etc.
 #### Pleas report bugs and suggestions at:
 - [GitHub issues page](http://github.com/pronobis/ROCS/issues)
 
+#### For ROCS changelog see:
+- [CHANGELOG.md](http://github.com/pronobis/ROCS/blob/master/CHANGELOG.md)  
+
 #### Contact: 
 - Andrzej Pronobis [E-mail](mailto:andrzej@pronobis.pro), [WWW](http://www.pronobis.pro)
 
