@@ -11,10 +11,10 @@ semantic information about environment from robotic sensors, place
 categorization etc. 
 
 #### For more information see:
-- (http://github.com/pronobis/ROCS)
+- [GitHub page](http://github.com/pronobis/ROCS)
 
 #### Pleas report bugs and suggestions at:
-- (http://github.com/pronobis/ROCS/issues)
+- [GitHub issues page](http://github.com/pronobis/ROCS/issues)
 
 #### Contact: 
 - Andrzej Pronobis [E-mail](mailto:andrzej@pronobis.pro), [WWW](http://www.pronobis.pro)
