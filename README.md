@@ -17,9 +17,7 @@ categorization etc.
 [http://github.com/pronobis/ROCS/issues]
 
 #### Contact: 
-Andrzej Pronobis
-[andrzej@pronobis.pro]
-[http://www.pronobis.pro]
+Andrzej Pronobis [E-mail](andrzej@pronobis.pro), [WWW](http://www.pronobis.pro)
 
 
 Licensing and Authors 
@@ -39,7 +37,7 @@ more details.
 
 See the LICENSE file for the license definitions and restrictions.
 
-Authors:
-* Arnaud Ramey
-* Andrzej Pronobis
+#### Authors:
+- Arnaud Ramey
+- Andrzej Pronobis
 
