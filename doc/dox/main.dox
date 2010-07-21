@@ -1,0 +1,25 @@
+/*!
+\mainpage ROCS - Toolkit for Robots Comprehending Space
+
+ROCS is a multi-language software toolkit containing algorithms providing
+mobile robots with the ability to perceive and understand large-scale
+real-world environments. ROCS contains implementations of algorithms for
+mobile robot localization, extraction of semantic information about
+environment from robotic sensors, place categorization etc.
+
+More information about the usage, structure as well as the algorithms 
+implemented in ROCS can be found below.
+\n\n
+
+<b>Usage</b>
+- \subpage installation
+- \subpage usecode
+- \subpage useapps
+
+\n
+<b>Structure of ROCS</b>
+- \subpage dirstruct
+- \subpage modules
+
+
+*/

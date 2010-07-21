@@ -1,0 +1,16 @@
+/*!
+\page usecode Using ROCS in Your Code
+
+If CMake is used as a build system for your application, add the following code to CMakeLists.txt:
+\code
+find_package(ROCS)
+if (NOT ROCS_FOUND)
+	message(FATAL_ERROR "ROCS not found!")
+endif (NOT ROCS_FOUND)
+\endcode
+
+\n
+In order for your application to find ROCS, you have to define the environmental variable ${ROCS_DIR} pointig to the directory where ROCS is installed.
+
+*/
+
