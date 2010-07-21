@@ -1,10 +1,9 @@
 Installation Instructions
 =========================
 
-# THIS DOCUMENT IS OUTDATED!
-
 Please follow the instructions for your operating system.
 CMake is used as a build system for ROCS.
+
 
 Linux
 -----
