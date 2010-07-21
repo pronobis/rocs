@@ -17,15 +17,14 @@ environment from robotic sensors, place categorization etc.
 - [GitHub issues page](http://github.com/pronobis/ROCS/issues)
 
 #### Contact:
-- Andrzej Pronobis [E-mail](mailto:andrzej@pronobis.pro),
-                   [WWW](http://www.pronobis.pro)
+- Andrzej Pronobis [E-mail](mailto:andrzej@pronobis.pro), [WWW](http://www.pronobis.pro)
 
 
 Installation
 ------------
 
 For detailed instructions on how to install ROCS, see
-[doc/INSTALL.md](http://github.com/pronobis/ROCS/blob/master/doc/INSTALL.md)
+[doc/INSTALL.md](http://github.com/pronobis/ROCS/blob/master/doc/INSTALL.md).
 
 
 Bugs and Suggestions
