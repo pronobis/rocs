@@ -7,19 +7,13 @@ real-world environments. ROCS contains implementations of algorithms for
 mobile robot localization, extraction of semantic information about
 environment from robotic sensors, place categorization etc.
 
-More information about the usage, structure as well as the algorithms 
+More information about the usage, structure as well as the algorithms
 implemented in ROCS can be found below.
 \n\n
 
-<b>Usage</b>
 - \subpage installation
 - \subpage usecode
 - \subpage useapps
-
-\n
-<b>Structure of ROCS</b>
-- \subpage dirstruct
 - \subpage modules
-
 
 */

@@ -1,7 +1,10 @@
 /*!
 \page modules Modules
 
+ROCS is organized into modules. Each module consists of components and
+applications which can be enabled or disabled during the build process.
+
 The following modules are available in ROCS:
-- \subpage Core "Core"
+- \subpage Core
 */
 
