@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<listName>
+	<item foo="bar" />
+	<item>foo</item>
+	<item>
+		<prop>2</prop>
+	</item>
+	<item prop="3"/>
+</listName>
+<book xmlns:xi="http://www.w3.org/2001/XInclude">
+	<name>A Foo Name</name>
+	<author>Max Smith</author>
+	<xi:include href="include2.xml"/>
+	<xi:include href="include3.xml"/>
+	<year>2002</year>
+</book>
