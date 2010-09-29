@@ -21,7 +21,7 @@
 
 
 # ------------------------------------------------------------------
-# FindRocs
+# FindRocs.cmake
 # Author: Andrzej Pronobis <a.pronobis@gmail.com>
 #
 # This module searches for ROCS in the directory pointed to by the

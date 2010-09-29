@@ -36,10 +36,10 @@ macro(add_rocs_cpp_module _NAME_ _SOURCES_VAR_ _HEADERS_VAR_)
 	endforeach(I)
 
 	# Add library
-	add_library(${_NAME_} SHARED ${_SOURCES_})
+	add_library(Rocs${_NAME_} SHARED ${_SOURCES_})
 
 	# Install
-	install(TARGETS ${_NAME_} LIBRARY DESTINATION lib ARCHIVE DESTINATION lib)
+	install(TARGETS Rocs${_NAME_} LIBRARY DESTINATION lib ARCHIVE DESTINATION lib)
 	install(FILES ${_HEADERS_} DESTINATION include/${_NAME_})
 endmacro(add_rocs_cpp_module)
 
