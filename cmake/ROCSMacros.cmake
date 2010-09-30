@@ -18,6 +18,14 @@
 # along with ROCS. If not, see <http://www.gnu.org/licenses/>.
 # ==================================================================
 
+# ------------------------------------------------------------------
+# ROCSMacros.cmake
+# Author: Andrzej Pronobis <a.pronobis@gmail.com>
+#
+# Internal ROCS-specific.
+# ------------------------------------------------------------------
+
+
 # Adds a C++ module
 macro(add_rocs_cpp_module _NAME_ _SOURCES_VAR_ _HEADERS_VAR_)
 	# Add to list of modules

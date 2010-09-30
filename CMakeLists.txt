@@ -38,39 +38,34 @@ set(CMAKE_MODULE_PATH "${ROCS_SRC_ROOT}/cmake" ${CMAKE_MODULE_PATH} )
 # General build configuration
 add_definitions(-Wall)
 
-# Include ROCS macros file
-include(ROCSMacros)
-
+# Includes
+include(BasicMacros) # General purpose macros
+include(ROCSMacros) # ROCS-specific macros
+include(ROCSDeps) # Macros for declaring dependencies
+include(ROCSBuildOpts) # Build options and interdependency maps
 
 # ------------------------------------------------------------------
 # Subprojects
 # ------------------------------------------------------------------
 
-# Obligatory
+# Always included
 add_subdirectory(${ROCS_SRC_CONFIG})
 add_subdirectory(${ROCS_SRC_DATA})
 add_subdirectory(${ROCS_SRC_CMAKE})
-add_subdirectory(${ROCS_SRC_MODULES}/Core)
 
-option(BUILD_DOC "Build documentation." YES)
-if(BUILD_DOC)
+# Documentation
+if(ROCS_BUILD_DOC)
     add_subdirectory(${ROCS_SRC_DOC})
-endif(BUILD_DOC)
+endif(ROCS_BUILD_DOC)
 
-# Optional
-#option(BUILD_MODULE_TOOLS "Build module Tools." YES)
-#if(BUILD_MODULE_TOOLS)
-#    add_subdirectory(${ROCS_SRC_MODULES}/Tools)
-#endif(BUILD_MODULE_TOOLS)
+# Thirdparty
+## Boost - Internal copy of some of the less common boost libraries
+if(ROCS_BUILD_THIRDPARTY_BOOST)
+	add_subdirectory(${ROCS_SRC_THIRDPARTY}/boost)
+endif(ROCS_BUILD_THIRDPARTY_BOOST)
 
-#option(BUILD_APPS "Build applications." YES)
-#if(BUILD_APPS)
-#    add_subdirectory(${ROCS_SRC_APPS})
-#endif(BUILD_APPS)
-
-#option(BUILD_TEST "Build test/demo applications." NO)
-#if(BUILD_TEST)
-#    add_subdirectory(${ROCS_SRC_TEST})
-#endif(BUILD_TEST)
-
-
+# Modules
+## Core
+if(ROCS_BUILD_MODULE_CORE)
+	add_subdirectory(${ROCS_SRC_MODULES}/Core)
+endif(ROCS_BUILD_MODULE_CORE)

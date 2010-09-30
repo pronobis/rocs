@@ -1,0 +1,3 @@
+if(ROCS_BUILD_THIRDPARTY_BOOST)
+	install(DIRECTORY boost/property_tree DESTINATION include/boost)
+endif(ROCS_BUILD_THIRDPARTY_BOOST)
