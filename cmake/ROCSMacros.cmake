@@ -27,28 +27,40 @@
 
 
 # Adds a C++ module
-macro(add_rocs_cpp_module _NAME_ _SOURCES_VAR_ _HEADERS_VAR_)
+# Arguments: 
+# <name> SOURCES <source_file> [<source_file> ...] 
+# HEADERS <header_file> [<header_file> ...]
+# LINK <library> [<library> ...]
+macro(add_rocs_cpp_module)
+	# Parse arguments
+	parse_arguments(ARG "SOURCES;HEADERS;LINK" "" ${ARGN})
+	list(GET ARG_DEFAULT_ARGS 0 ARG_NAME)
+
 	# Add to list of modules
-	set(ROCS_MODULE_LIST ${_NAME_} ${ROCS_MODULE_LIST} PARENT_SCOPE)
+	set(ROCS_MODULE_LIST ${ARG_NAME} ${ROCS_MODULE_LIST} PARENT_SCOPE)
 
 	# Get sources
 	set(_SOURCES_ "")
-	foreach(I ${${_SOURCES_VAR_}})
-		set(_SOURCES_ "cpp/${_NAME_}/${I}" ${_SOURCES_})
+	foreach(I IN LISTS ARG_SOURCES)
+		set(_SOURCES_ "cpp/${ARG_NAME}/${I}" ${_SOURCES_})
 	endforeach(I)
 
 	# Get headers
 	set(_HEADERS_ "")
-	foreach(I ${${_HEADERS_VAR_}})
-		set(_HEADERS_ "cpp/${_NAME_}/${I}" ${_HEADERS_})
+	foreach(I IN LISTS ARG_HEADERS)
+		set(_HEADERS_ "cpp/${ARG_NAME}/${I}" ${_HEADERS_})
 	endforeach(I)
 
+	# Get libraries
+	separate_by_spaces(_LIBRARIES_ ARG_LINK)
+	
 	# Add library
-	add_library(Rocs${_NAME_} SHARED ${_SOURCES_})
+	add_library(Rocs${ARG_NAME} SHARED ${_SOURCES_})
+	target_link_libraries(Rocs${ARG_NAME} ${_LIBRARIES_})
 
 	# Install
-	install(TARGETS Rocs${_NAME_} LIBRARY DESTINATION lib ARCHIVE DESTINATION lib)
-	install(FILES ${_HEADERS_} DESTINATION include/${_NAME_})
+	install(TARGETS Rocs${ARG_NAME} LIBRARY DESTINATION lib ARCHIVE DESTINATION lib)
+	install(FILES ${_HEADERS_} DESTINATION include/${ARG_NAME})
 endmacro(add_rocs_cpp_module)
 
 
