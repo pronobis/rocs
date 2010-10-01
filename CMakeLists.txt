@@ -52,6 +52,10 @@ include(ROCSBuildOpts) # Build options and interdependency maps
 add_subdirectory(${ROCS_SRC_CONFIG})
 add_subdirectory(${ROCS_SRC_DATA})
 add_subdirectory(${ROCS_SRC_CMAKE})
+install(FILES 
+	${ROCS_SRC_ROOT}/README.md ${ROCS_SRC_ROOT}/LICENSE.md 
+	${ROCS_SRC_ROOT}/INSTALL.md ${ROCS_SRC_ROOT}/CHANGELOG.md 
+	DESTINATION ${ROCS_DIR}/doc)
 
 # Documentation
 if(ROCS_BUILD_DOC)
