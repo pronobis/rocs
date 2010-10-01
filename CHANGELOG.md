@@ -11,6 +11,7 @@ Version 0.1
 - Initial version
 - Sources structured
 - CMake used as a build system
+- Initial implementation of Module Core
 - Initial matrix class implementation
 - Initial image class implementation
 - Initial version of the documentation
