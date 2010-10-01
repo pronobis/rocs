@@ -14,7 +14,7 @@
 // do we want to print debug infos ?
 // define between 0 (no debug infos), 1 (important warnings),
 // 2 (most of debug infos), and 3 (max verbosity)
-#define DEBUG_LEVEL 3
+#define DEBUG_LEVEL 1
 
 /* STD includes */
 #include <iostream>

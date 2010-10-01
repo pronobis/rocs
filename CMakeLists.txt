@@ -68,6 +68,14 @@ endif(ROCS_BUILD_THIRDPARTY_BOOST)
 if(ROCS_BUILD_MODULE_CORE)
 	add_subdirectory(${ROCS_SRC_MODULES}/core)
 endif(ROCS_BUILD_MODULE_CORE)
+## Math
+if(ROCS_BUILD_MODULE_MATH)
+	add_subdirectory(${ROCS_SRC_MODULES}/math)
+endif(ROCS_BUILD_MODULE_MATH)
+## CV
+#if(ROCS_BUILD_MODULE_CV)
+#	add_subdirectory(${ROCS_SRC_MODULES}/cv)
+#endif(ROCS_BUILD_MODULE_CV)
 
 # Documentation
 if(ROCS_BUILD_DOC)

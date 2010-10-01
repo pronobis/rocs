@@ -51,10 +51,32 @@ macro(depend_on_boost)
 	if(NOT Boost_FOUND)
 		message(FATAL_ERROR "System Boost libraries (${COMPONENTS_SEPARATED}) version ${ARG_VERSION} not found. Those libraries are required by the ${ARG_USEDBY}. Try enabling ROCS_USE_INTERNAL_BOOST.")
 	endif(NOT Boost_FOUND)
-	message(STATUS "Using system Boost libraries (${COMPONENTS_SEPARATED}) version ${ARG_VERSION} (required by ${ARG_USEDBY}).")
+	message(STATUS "Using system Boost libraries (${COMPONENTS_SEPARATED}) version ${Boost_VERSION} (required by ${ARG_USEDBY}).")
 
-	# Include boost headers
+	# Set directories
 	include_directories(${Boost_INCLUDE_DIRS})
+	link_directories(${Boost_LIBRARY_DIRS})
 endmacro(depend_on_boost)
 
+
+# Declares dependency on OpenCV
+# Arguments:
+# USEDBY <what_uses_them>
+macro(depend_on_opencv)
+	# Parse arguments
+	parse_arguments(ARG "USEDBY" "" ${ARGN})
+	
+	# Find system OpenCV
+	find_package(OpenCV)
+	if(NOT OpenCV_FOUND)
+		message(FATAL_ERROR "OpenCV library not found. OpenCV 2.x is required by the ${ARG_USEDBY}.")
+	endif(NOT OPENCV_FOUND)
+	if(OpenCV_VERSION_MAJOR LESS 2)
+		message(FATAL_ERROR "OpenCV library found, but the version is not 2.x. OpenCV 2.x is are required by the ${ARG_USEDBY}.")
+	endif(OpenCV_VERSION_MAJOR LESS 2)
+	message(STATUS "Using OpenCV library version ${OpenCV_VERSION} (required by ${ARG_USEDBY}).")
+
+	# Set directories
+	include_directories(${OPENCV_INCLUDE_DIR})
+endmacro(depend_on_opencv)
 

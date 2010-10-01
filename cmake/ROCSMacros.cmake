@@ -51,13 +51,15 @@ macro(add_rocs_cpp_module)
 		set(_HEADERS_ "cpp/rocs/${ARG_NAME}/${I}" ${_HEADERS_})
 	endforeach(I)
 
-	# Get libraries
-	separate_by_spaces(_LIBRARIES_ ARG_LINK)
-	
 	# Add library
 	add_library(rocs_${ARG_NAME} SHARED ${_SOURCES_})
-	target_link_libraries(rocs_${ARG_NAME} ${_LIBRARIES_})
 
+	# Get and add linked libraries
+	if(NOT "${ARG_LINK}" STREQUAL "")
+		separate_by_spaces(_LIBRARIES_ ARG_LINK)
+		target_link_libraries(rocs_${ARG_NAME} ${_LIBRARIES_})
+	endif(NOT "${ARG_LINK}" STREQUAL "")
+	
 	# Install
 	install(TARGETS rocs_${ARG_NAME} LIBRARY DESTINATION lib ARCHIVE DESTINATION lib)
 	install(FILES ${_HEADERS_} DESTINATION include/rocs/${ARG_NAME})

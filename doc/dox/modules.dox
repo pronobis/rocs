@@ -6,5 +6,6 @@ applications which can be enabled or disabled during the build process.
 
 The following modules are available in ROCS:
 - \subpage core
+- \subpage math
 */
 
