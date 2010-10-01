@@ -71,5 +71,5 @@ endif(ROCS_BUILD_THIRDPARTY_BOOST)
 # Modules
 ## Core
 if(ROCS_BUILD_MODULE_CORE)
-	add_subdirectory(${ROCS_SRC_MODULES}/Core)
+	add_subdirectory(${ROCS_SRC_MODULES}/core)
 endif(ROCS_BUILD_MODULE_CORE)

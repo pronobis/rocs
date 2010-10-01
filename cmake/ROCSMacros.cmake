@@ -42,25 +42,25 @@ macro(add_rocs_cpp_module)
 	# Get sources
 	set(_SOURCES_ "")
 	foreach(I IN LISTS ARG_SOURCES)
-		set(_SOURCES_ "cpp/${ARG_NAME}/${I}" ${_SOURCES_})
+		set(_SOURCES_ "cpp/rocs/${ARG_NAME}/${I}" ${_SOURCES_})
 	endforeach(I)
 
 	# Get headers
 	set(_HEADERS_ "")
 	foreach(I IN LISTS ARG_HEADERS)
-		set(_HEADERS_ "cpp/${ARG_NAME}/${I}" ${_HEADERS_})
+		set(_HEADERS_ "cpp/rocs/${ARG_NAME}/${I}" ${_HEADERS_})
 	endforeach(I)
 
 	# Get libraries
 	separate_by_spaces(_LIBRARIES_ ARG_LINK)
 	
 	# Add library
-	add_library(Rocs${ARG_NAME} SHARED ${_SOURCES_})
-	target_link_libraries(Rocs${ARG_NAME} ${_LIBRARIES_})
+	add_library(rocs_${ARG_NAME} SHARED ${_SOURCES_})
+	target_link_libraries(rocs_${ARG_NAME} ${_LIBRARIES_})
 
 	# Install
-	install(TARGETS Rocs${ARG_NAME} LIBRARY DESTINATION lib ARCHIVE DESTINATION lib)
-	install(FILES ${_HEADERS_} DESTINATION include/${ARG_NAME})
+	install(TARGETS rocs_${ARG_NAME} LIBRARY DESTINATION lib ARCHIVE DESTINATION lib)
+	install(FILES ${_HEADERS_} DESTINATION include/rocs/${ARG_NAME})
 endmacro(add_rocs_cpp_module)
 
 
