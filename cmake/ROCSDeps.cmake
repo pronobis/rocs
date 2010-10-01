@@ -32,6 +32,7 @@ macro(depend_on_boost)
 	# Parse arguments
 	parse_arguments(ARG "COMPONENTS;USEDBY" "" ${ARGN})
 	list(GET ARG_DEFAULT_ARGS 0 ARG_VERSION)
+
 	# Test if we use the internal boost components
 	if(ROCS_USE_INTERNAL_BOOST)
 		# Use the components that we have internally
@@ -43,6 +44,7 @@ macro(depend_on_boost)
 			include_directories(${ROCS_SRC_THIRDPARTY}/boost)
 		endif(${TMP})
 	endif(ROCS_USE_INTERNAL_BOOST)
+
 	# Check if the (remaining) components exist in the system
 	separate_by_spaces(COMPONENTS_SEPARATED ARG_COMPONENTS)
 	find_package(Boost ${ARG_VERSION} COMPONENTS ${COMPONENTS_SEPARATED})
@@ -50,6 +52,7 @@ macro(depend_on_boost)
 		message(FATAL_ERROR "System Boost libraries (${COMPONENTS_SEPARATED}) version ${ARG_VERSION} not found. Those libraries are required by the ${ARG_USEDBY}. Try enabling ROCS_USE_INTERNAL_BOOST.")
 	endif(NOT Boost_FOUND)
 	message(STATUS "Using system Boost libraries (${COMPONENTS_SEPARATED}) version ${ARG_VERSION} (required by ${ARG_USEDBY}).")
+
 	# Include boost headers
 	include_directories(${Boost_INCLUDE_DIRS})
 endmacro(depend_on_boost)
