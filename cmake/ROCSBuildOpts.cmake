@@ -32,7 +32,7 @@ set(ROCS_BUILD_MODULE_CORE YES)
 ## Documentation
 option(ROCS_BUILD_DOC "Build documentation." YES)
 ## Thirdparty
-option(ROCS_USE_INTERNAL_BOOST "Use the available internal Boost libraries." NO)
+option(ROCS_USE_INTERNAL_BOOST "Use the available internal Boost libraries." YES)
 ## Components
 
 # Dependencies
