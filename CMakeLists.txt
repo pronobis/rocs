@@ -57,11 +57,6 @@ install(FILES
 	${ROCS_SRC_ROOT}/INSTALL.md ${ROCS_SRC_ROOT}/CHANGELOG.md 
 	DESTINATION ${ROCS_DIR}/doc)
 
-# Documentation
-if(ROCS_BUILD_DOC)
-    add_subdirectory(${ROCS_SRC_DOC})
-endif(ROCS_BUILD_DOC)
-
 # Thirdparty
 ## Boost - Internal copy of some of the less common boost libraries
 if(ROCS_BUILD_THIRDPARTY_BOOST)
@@ -73,3 +68,9 @@ endif(ROCS_BUILD_THIRDPARTY_BOOST)
 if(ROCS_BUILD_MODULE_CORE)
 	add_subdirectory(${ROCS_SRC_MODULES}/core)
 endif(ROCS_BUILD_MODULE_CORE)
+
+# Documentation
+if(ROCS_BUILD_DOC)
+    add_subdirectory(${ROCS_SRC_DOC})
+endif(ROCS_BUILD_DOC)
+
