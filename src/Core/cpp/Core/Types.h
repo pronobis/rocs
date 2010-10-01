@@ -88,6 +88,9 @@
 #define MAT_64FC4   MAT_MAKETYPE(MAT_64F,4)
 #define MAT_64FC(n) MAT_MAKETYPE(MAT_64F,(n))
 
+namespace rocs {
+namespace core {
+
 /*!
  *
  * Define the traits that will be used to determine the best data type to work with.
@@ -555,5 +558,7 @@ public:
 	}
 };
 
+} // namespace core
+} // namespace rocs
 
 #endif /* TYPES_H_ */

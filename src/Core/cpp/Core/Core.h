@@ -9,7 +9,7 @@
 #define CORE_H_
 
 // defining _DEBUG will enable all the debug tests
-#define _DEBUG
+//#define _DEBUG
 
 // do we want to print debug infos ?
 // define between 0 (no debug infos), 1 (important warnings),
