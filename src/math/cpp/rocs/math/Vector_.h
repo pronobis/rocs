@@ -8,7 +8,7 @@
 #ifndef VECTOR__H_
 #define VECTOR__H_
 
-#include "Vector.h"
+#include "rocs/math/Vector.h"
 
 namespace rocs {
 namespace math {
@@ -25,7 +25,7 @@ class Vector_: public Vector {
 public:
 	//Vector_();
 	Vector_(int rows) :
-		Vector(rows, Type<_T>::type_()) {
+		Vector(rows, core::Type<_T>::type_()) {
 	}
 	virtual ~Vector_() {
 	}

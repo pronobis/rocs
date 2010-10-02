@@ -5,7 +5,7 @@
  *      Author: arnaud
  */
 
-#include "SparseMatrix.h"
+#include "rocs/math/SparseMatrix.h"
 
 using namespace rocs::math;
 

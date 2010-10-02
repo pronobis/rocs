@@ -9,11 +9,11 @@
 #define SPARSEMAT_H_
 
 /* openCV includes */
-#include <cv.h>
-#include <cxcore.hpp>
+#include <opencv/cv.h>
+#include <opencv/cxcore.hpp>
 
-#include "Core.h"
-#include "Types.h"
+#include "rocs/core/Core.h"
+#include "rocs/core/Types.h"
 
 namespace rocs {
 namespace math {

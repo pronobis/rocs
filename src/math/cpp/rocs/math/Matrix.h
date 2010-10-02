@@ -2,8 +2,8 @@
 #define MATRIX_H_
 
 /* openCV includes */
-#include <cv.h>
-#include <cxcore.hpp>
+#include <opencv/cv.h>
+#include <opencv/cxcore.hpp>
 // rename the opencv namespace not to collide with rocs::cv
 namespace opencv = cv;
 
@@ -11,9 +11,9 @@ namespace opencv = cv;
 #define MAT_DECOMP_LU		2//DECOMP_LU
 #define MAT_DECOMP_CHOLESKY	DECOMP_CHOLESKY
 
-#include "Core.h"
-#include "ElemMath.h"
-#include "Types.h"
+#include "rocs/core/Core.h"
+#include "rocs/math/ElemMath.h"
+#include "rocs/core/Types.h"
 
 namespace rocs {
 namespace math {

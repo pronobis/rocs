@@ -1,8 +1,8 @@
 #ifndef MATRIX__H_
 #define MATRIX__H_
 
-#include "Matrix.h"
-#include "Types.h"
+#include "rocs/math/Matrix.h"
+#include "rocs/core/Types.h"
 
 /*!
  *
