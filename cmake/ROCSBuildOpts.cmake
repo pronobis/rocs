@@ -22,33 +22,39 @@
 # ROCSBuildOpts.cmake
 # Author: Andrzej Pronobis <a.pronobis@gmail.com>
 #
-# ROCS build options and component interdependency map.
+# Defines build options.
+# Use it to set the build variables for the components
+# that directly result from the requested functionality.
+# Dependencies are resolved elsewhere.
+#
+# Set ROCS_DONT_DEFINE_OPTIONS if you don't want the options
+# to be defined. This is useful when ROCS is included into
+# a larger project.
 # ------------------------------------------------------------------
 
-# Options
-## Documentation
-option(ROCS_BUILD_DOC "Build documentation." YES)
-## Thirdparty
-option(ROCS_USE_INTERNAL_BOOST "Use the available internal Boost libraries." YES)
-## Components
-option(ROCS_USE_MODULE_CORE "Use the module Core." YES)
-option(ROCS_USE_MODULE_MATH "Use the module Math." YES)
-option(ROCS_USE_MODULE_CV "Use the module CV." YES)
-
-# Dependencies
-if(ROCS_USE_INTERNAL_BOOST)
-	set(ROCS_BUILD_THIRDPARTY_BOOST YES)
-endif(ROCS_USE_INTERNAL_BOOST)
-if(ROCS_USE_MODULE_CORE)
-	set(ROCS_BUILD_MODULE_CORE YES)
-endif(ROCS_USE_MODULE_CORE)
-if(ROCS_USE_MODULE_MATH)
-	set(ROCS_BUILD_MODULE_CORE YES)
-	set(ROCS_BUILD_MODULE_MATH YES)
-endif(ROCS_USE_MODULE_MATH)
-if(ROCS_USE_MODULE_CV)
-	set(ROCS_BUILD_MODULE_CORE YES)
-	set(ROCS_BUILD_MODULE_MATH YES)
-	set(ROCS_BUILD_MODULE_CV YES)
-endif(ROCS_USE_MODULE_CV)
+if(NOT ROCS_DONT_DEFINE_OPTIONS)
+	# Documentation
+	option(ROCS_BUILD_DOC "Build documentation." NO)
+	# Modules and components
+	## Core
+	option(USE_MODULE_CORE "Use the module Core." NO)
+	if(USE_MODULE_CORE)
+		set(ROCS_BUILD_MODULE_CORE YES)
+	endif(USE_MODULE_CORE)
+	## Math
+	option(USE_MODULE_MATH "Use the module Math." NO)
+	if(USE_MODULE_MATH)
+		set(ROCS_BUILD_MODULE_MATH YES)
+	endif(USE_MODULE_MATH)
+	## CV
+	option(USE_MODULE_CV "Use the module CV." NO)
+	if(USE_MODULE_CV)
+		set(ROCS_BUILD_MODULE_CV YES)
+	endif(USE_MODULE_CV)
+	## CV Apps
+	option(USE_MODULE_CV_APPS "Use applications of the module CV." NO)
+	if(USE_MODULE_CV_APPS)
+		set(ROCS_BUILD_MODULE_CV_APPS YES)
+	endif(USE_MODULE_CV_APPS)
+endif(NOT ROCS_DONT_DEFINE_OPTIONS)
 

@@ -39,16 +39,22 @@ set(CMAKE_MODULE_PATH "${ROCS_SRC_ROOT}/cmake" ${CMAKE_MODULE_PATH} )
 add_definitions(-Wall)
 
 # Includes
-include(BasicMacros) # General purpose macros
-include(ROCSMacros) # ROCS-specific macros
-include(ROCSDeps) # Macros for declaring dependencies
-include(ROCSBuildOpts) # Build options and interdependency maps
+## General purpose macros
+include(BasicMacros) 
+## ROCS-specific macros
+include(ROCSMacros) 
+# Build options
+include(ROCSBuildOpts) 
+# Component dependencies
+include(ROCSDeps)
+# Finding external dependencies
+include(ROCSExtDeps)
+
 
 # ------------------------------------------------------------------
 # Subprojects
 # ------------------------------------------------------------------
 
-# Always included
 add_subdirectory(${ROCS_SRC_CONFIG})
 add_subdirectory(${ROCS_SRC_DATA})
 add_subdirectory(${ROCS_SRC_CMAKE})
@@ -58,27 +64,12 @@ install(FILES
 	DESTINATION ${ROCS_DIR}/doc)
 
 # Thirdparty
-## Boost - Internal copy of some of the less common boost libraries
-if(ROCS_BUILD_THIRDPARTY_BOOST)
-	add_subdirectory(${ROCS_SRC_THIRDPARTY}/boost)
-endif(ROCS_BUILD_THIRDPARTY_BOOST)
+add_subdirectory_with_includes(${ROCS_SRC_THIRDPARTY}/boost)
 
 # Modules
-## Core
-if(ROCS_BUILD_MODULE_CORE)
-	add_subdirectory(${ROCS_SRC_MODULES}/core)
-endif(ROCS_BUILD_MODULE_CORE)
-## Math
-if(ROCS_BUILD_MODULE_MATH)
-	add_subdirectory(${ROCS_SRC_MODULES}/math)
-endif(ROCS_BUILD_MODULE_MATH)
-## CV
-#if(ROCS_BUILD_MODULE_CV)
-#	add_subdirectory(${ROCS_SRC_MODULES}/cv)
-#endif(ROCS_BUILD_MODULE_CV)
+add_subdirectory_with_includes(${ROCS_SRC_MODULES}/core)
+add_subdirectory_with_includes(${ROCS_SRC_MODULES}/math)
 
-# Documentation
-if(ROCS_BUILD_DOC)
-    add_subdirectory(${ROCS_SRC_DOC})
-endif(ROCS_BUILD_DOC)
+# Documentation - modules must be already defined
+add_subdirectory(${ROCS_SRC_DOC})
 

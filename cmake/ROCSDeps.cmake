@@ -22,61 +22,34 @@
 # ROCSDeps.cmake
 # Author: Andrzej Pronobis <a.pronobis@gmail.com>
 #
-# Macros used to declare dependencies.
+# Defines component dependencies. 
+# Use it to define direct dependencies of every component or app.
 # ------------------------------------------------------------------
 
-# Declares dependency on Boost
-# Arguments:
-# <version> COMPONENTS <components> USEDBY <what_uses_them>
-macro(depend_on_boost)
-	# Parse arguments
-	parse_arguments(ARG "COMPONENTS;USEDBY" "" ${ARGN})
-	list(GET ARG_DEFAULT_ARGS 0 ARG_VERSION)
+# Documentation
+if(ROCS_BUILD_DOC)
+	set(ROCS_FIND_DOXYGEN YES)	
+endif(ROCS_BUILD_DOC)
 
-	# Test if we use the internal boost components
-	if(ROCS_USE_INTERNAL_BOOST)
-		# Use the components that we have internally
-		## property_tree
-		list(FIND ARG_COMPONENTS "property_tree" TMP) 
-		if(${TMP})
-			list(REMOVE_ITEM ARG_COMPONENTS "property_tree")
-			message(STATUS "Using internal Boost property_tree library (required by the ${ARG_USEDBY}).")
-			include_directories(${ROCS_SRC_THIRDPARTY}/boost)
-		endif(${TMP})
-	endif(ROCS_USE_INTERNAL_BOOST)
+# Module CV Apps
+if(ROCS_BUILD_MODULE_CV_APPS)
+	set(ROCS_BUILD_MODULE_CV YES)
+endif(ROCS_BUILD_MODULE_CV_APPS)
 
-	# Check if the (remaining) components exist in the system
-	separate_by_spaces(COMPONENTS_SEPARATED ARG_COMPONENTS)
-	find_package(Boost ${ARG_VERSION} COMPONENTS ${COMPONENTS_SEPARATED})
-	if(NOT Boost_FOUND)
-		message(FATAL_ERROR "System Boost libraries (${COMPONENTS_SEPARATED}) version ${ARG_VERSION} not found. Those libraries are required by the ${ARG_USEDBY}. Try enabling ROCS_USE_INTERNAL_BOOST.")
-	endif(NOT Boost_FOUND)
-	message(STATUS "Using system Boost libraries (${COMPONENTS_SEPARATED}) version ${Boost_VERSION} (required by ${ARG_USEDBY}).")
+# Module CV
+if(ROCS_BUILD_MODULE_CV)
+	set(ROCS_BUILD_MODULE_MATH YES)
+	set(ROCS_FIND_OPENCV YES)
+endif(ROCS_BUILD_MODULE_CV)
 
-	# Set directories
-	include_directories(${Boost_INCLUDE_DIRS})
-	link_directories(${Boost_LIBRARY_DIRS})
-endmacro(depend_on_boost)
+# Module Math
+if(ROCS_BUILD_MODULE_MATH)
+	set(ROCS_BUILD_MODULE_CORE YES)
+endif(ROCS_BUILD_MODULE_MATH)
 
-
-# Declares dependency on OpenCV
-# Arguments:
-# USEDBY <what_uses_them>
-macro(depend_on_opencv)
-	# Parse arguments
-	parse_arguments(ARG "USEDBY" "" ${ARGN})
-	
-	# Find system OpenCV
-	find_package(OpenCV)
-	if(NOT OpenCV_FOUND)
-		message(FATAL_ERROR "OpenCV library not found. OpenCV 2.x is required by the ${ARG_USEDBY}.")
-	endif(NOT OPENCV_FOUND)
-	if(OpenCV_VERSION_MAJOR LESS 2)
-		message(FATAL_ERROR "OpenCV library found, but the version is not 2.x. OpenCV 2.x is are required by the ${ARG_USEDBY}.")
-	endif(OpenCV_VERSION_MAJOR LESS 2)
-	message(STATUS "Using OpenCV library version ${OpenCV_VERSION} (required by ${ARG_USEDBY}).")
-
-	# Set directories
-	include_directories(${OPENCV_INCLUDE_DIR})
-endmacro(depend_on_opencv)
+# Module Core
+if(ROCS_BUILD_MODULE_CORE)
+	set(ROCS_FIND_BOOST_PROGRAM_OPTIONS YES)
+	set(ROCS_FIND_BOOST_PROPERTY_TREE YES)
+endif(ROCS_BUILD_MODULE_CORE)
 

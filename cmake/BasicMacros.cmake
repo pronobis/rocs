@@ -70,3 +70,12 @@ macro(separate_by_spaces _VAR_ _LIST_)
 	endforeach(I)
 endmacro(separate_by_spaces)
 
+
+# Adds a subdirectory, then pulls its include_directories and sets
+# them in the current directory scope.
+macro(add_subdirectory_with_includes _DIR_NAME_)
+	add_subdirectory(${_DIR_NAME_})
+	get_directory_property(TMP DIRECTORY ${_DIR_NAME_} INCLUDE_DIRECTORIES)
+	include_directories(${TMP})	
+endmacro(add_subdirectory_with_includes)
+ 

@@ -33,7 +33,7 @@
 # LINK <library> [<library> ...]
 macro(add_rocs_cpp_module)
 	# Parse arguments
-	parse_arguments(ARG "SOURCES;HEADERS;LINK" "" ${ARGN})
+	parse_arguments(ARG "SOURCES;HEADERS;LINK;LINK_MODULES" "" ${ARGN})
 	list(GET ARG_DEFAULT_ARGS 0 ARG_NAME)
 
 	# Add to list of modules
@@ -59,10 +59,20 @@ macro(add_rocs_cpp_module)
 		separate_by_spaces(_LIBRARIES_ ARG_LINK)
 		target_link_libraries(rocs_${ARG_NAME} ${_LIBRARIES_})
 	endif(NOT "${ARG_LINK}" STREQUAL "")
+
+	# Get and add linked module libraries
+	if(NOT "${ARG_LINK_MODULES}" STREQUAL "")
+		foreach(I IN LISTS ARG_LINK_MODULES)
+			target_link_libraries(rocs_${ARG_NAME} rocs_${I})
+		endforeach(I)
+	endif(NOT "${ARG_LINK_MODULES}" STREQUAL "")
 	
 	# Install
 	install(TARGETS rocs_${ARG_NAME} LIBRARY DESTINATION lib ARCHIVE DESTINATION lib)
 	install(FILES ${_HEADERS_} DESTINATION include/rocs/${ARG_NAME})
+
+	# Make the module available to others
+	include_directories(cpp)
 endmacro(add_rocs_cpp_module)
 
 
