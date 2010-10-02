@@ -65,10 +65,12 @@ install(FILES
 
 # Thirdparty
 add_subdirectory_with_includes(${ROCS_SRC_THIRDPARTY}/boost)
+add_subdirectory_with_includes(${ROCS_SRC_THIRDPARTY}/cimg)
 
 # Modules
 add_subdirectory_with_includes(${ROCS_SRC_MODULES}/core)
 add_subdirectory_with_includes(${ROCS_SRC_MODULES}/math)
+add_subdirectory_with_includes(${ROCS_SRC_MODULES}/cv)
 
 # Documentation - modules must be already defined
 add_subdirectory(${ROCS_SRC_DOC})

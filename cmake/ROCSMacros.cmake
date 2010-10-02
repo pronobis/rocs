@@ -56,8 +56,7 @@ macro(add_rocs_cpp_module)
 
 	# Get and add linked libraries
 	if(NOT "${ARG_LINK}" STREQUAL "")
-		separate_by_spaces(_LIBRARIES_ ARG_LINK)
-		target_link_libraries(rocs_${ARG_NAME} ${_LIBRARIES_})
+		target_link_libraries(rocs_${ARG_NAME} ${ARG_LINK})
 	endif(NOT "${ARG_LINK}" STREQUAL "")
 
 	# Get and add linked module libraries

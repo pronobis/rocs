@@ -57,7 +57,6 @@ if(EXISTS "${OpenCV_DIR}")
 
         #When its possible to use the Config script use it.
         if(EXISTS "${OpenCV_DIR}/OpenCVConfig.cmake")
-
                 ## Include the standard CMake script
                 include("${OpenCV_DIR}/OpenCVConfig.cmake")
 
@@ -80,11 +79,10 @@ if(EXISTS "${OpenCV_DIR}")
                 string(REGEX REPLACE ".*#define CV_SUBMINOR_VERSION[ \t]+([0-9]+).*" "\\1" OpenCV_VERSION_PATCH ${OpenCV_VERSIONS_TMP})
                 set(OpenCV_VERSION ${OpenCV_VERSION_MAJOR}.${OpenCV_VERSION_MINOR}.${OpenCV_VERSION_PATCH} CACHE STRING "" FORCE)
                 set(CVLIB_SUFFIX "${OpenCV_VERSION_MAJOR}${OpenCV_VERSION_MINOR}${OpenCV_VERSION_PATCH}")
-                
+
         endif(EXISTS "${OpenCV_DIR}/OpenCVConfig.cmake")
 
-        
-        
+
 
         ## Initiate the variable before the loop
         set(OpenCV_LIBS "")
