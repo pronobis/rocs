@@ -36,6 +36,9 @@ macro(add_rocs_cpp_module)
 	parse_arguments(ARG "SOURCES;HEADERS;LINK;LINK_MODULES" "" ${ARGN})
 	list(GET ARG_DEFAULT_ARGS 0 ARG_NAME)
 
+	# Set a "public" variable MODULE_NAME
+	set(MODULE_NAME ${ARG_NAME})
+
 	# Add to list of modules
 	set(ROCS_MODULE_LIST ${ARG_NAME} ${ROCS_MODULE_LIST} PARENT_SCOPE)
 
@@ -62,6 +65,7 @@ macro(add_rocs_cpp_module)
 	# Get and add linked module libraries
 	if(NOT "${ARG_LINK_MODULES}" STREQUAL "")
 		foreach(I IN LISTS ARG_LINK_MODULES)
+			add_dependencies(rocs_${ARG_NAME} rocs_${I})                                                                                                                                                                                                                                    
 			target_link_libraries(rocs_${ARG_NAME} rocs_${I})
 		endforeach(I)
 	endif(NOT "${ARG_LINK_MODULES}" STREQUAL "")
@@ -91,22 +95,45 @@ macro(add_rocs_cpp_app _NAME_ _SOURCES_VAR_)
 endmacro(add_rocs_cpp_app)
 
 
-# Adds a C++ test application
-macro(add_rocs_cpp_test_app _NAME_ _SOURCES_VAR_)
-	# Get sources
-	set(_SOURCES_ "")
-	foreach(I ${${_SOURCES_VAR_}})
-		set(_SOURCES_ "${I}" ${_SOURCES_})
-	endforeach(I)
+# Adds a C++ test suite application
+# Arguments:
+# <test_name>
+macro(add_rocs_cpp_test_suite)
+	# Parse arguments
+	parse_arguments(ARG "" "" ${ARGN})
+	list(GET ARG_DEFAULT_ARGS 0 ARG_NAME)
 
-	# Add target
-	add_executable(${_NAME_} ${_SOURCES_})
+	# Check if module name is set
+	if("${MODULE_NAME}" STREQUAL "")
+		message(FATAL_ERROR "Module must be defined before a test suite can be defined!")
+	endif("${MODULE_NAME}" STREQUAL "") 
 
-	# Install
-	install(TARGETS ${_NAME_} RUNTIME DESTINATION test/cpp/${_NAME_})
-	if (NOT ${INSTALL_TO_SRC_ROOT})
-		install(DIRECTORY ${ROCS_SRC_TEST}/cpp/${_NAME_}/ DESTINATION test/cpp/${_NAME_})
-	endif (NOT ${INSTALL_TO_SRC_ROOT})
-endmacro(add_rocs_cpp_test_app)
+	# Check if we build tests at all
+	if(ROCS_BUILD_TESTS)
+		# Full test suite name
+		set(_TEST_TARGET_ "test_${MODULE_NAME}_${ARG_NAME}") 
+
+		# Special definitions used by Boost 
+		add_definitions("-DBOOST_TEST_DYN_LINK" "-DBOOST_TEST_MODULE=${_TEST_TARGET_}")   
+
+		# Add target for the test
+		add_executable(${_TEST_TARGET_} cpp/tests/${ARG_NAME}.cpp)
+		target_link_libraries(${_TEST_TARGET_} boost_unit_test_framework)
+		target_link_libraries(${_TEST_TARGET_} rocs_${MODULE_NAME})
+		
+		# Say where it should be built
+		set_target_properties(${_TEST_TARGET_} PROPERTIES
+				RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/tests/")
+
+		# Make output of CTest verbose on failure
+ 		#$ENV{CTEST_OUTPUT_ON_FAILURE} = 1;	
+
+		# Add the test
+		enable_testing()                                                                                                                                                                                                                                                               
+		get_target_property(LOC ${_TEST_TARGET_} LOCATION)                                                                                                                                                                                                                                
+		add_test(${_TEST_TARGET_} "${LOC}")                                               
+
+	endif(ROCS_BUILD_TESTS)
+endmacro(add_rocs_cpp_test_suite)
 
 

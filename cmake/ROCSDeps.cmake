@@ -58,4 +58,5 @@ endif(ROCS_BUILD_DOC)
 # Testing
 if(ROCS_BUILD_TESTS)
 	set(ROCS_FIND_BOOST_UNIT_TEST_FRAMEWORK yes)
+	enable_testing()
 endif(ROCS_BUILD_TESTS)
