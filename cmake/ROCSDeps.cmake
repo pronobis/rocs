@@ -26,32 +26,36 @@
 # Use it to define direct dependencies of every component or app.
 # ------------------------------------------------------------------
 
-# Documentation
-if(ROCS_BUILD_DOC)
-	set(ROCS_FIND_DOXYGEN YES)	
-endif(ROCS_BUILD_DOC)
-
 # Module CV Apps
 if(ROCS_BUILD_MODULE_CV_APPS)
-	set(ROCS_BUILD_MODULE_CV YES)
+	set(ROCS_BUILD_MODULE_CV yes)
 endif(ROCS_BUILD_MODULE_CV_APPS)
 
 # Module CV
 if(ROCS_BUILD_MODULE_CV)
-	set(ROCS_BUILD_MODULE_CORE YES)
-	set(ROCS_BUILD_MODULE_MATH YES)
-	set(ROCS_FIND_OPENCV YES)
+	set(ROCS_BUILD_MODULE_CORE yes)
+	set(ROCS_BUILD_MODULE_MATH yes)
+	set(ROCS_FIND_OPENCV yes)
 endif(ROCS_BUILD_MODULE_CV)
 
 # Module Math
 if(ROCS_BUILD_MODULE_MATH)
-	set(ROCS_BUILD_MODULE_CORE YES)
-	set(ROCS_FIND_OPENCV YES)
+	set(ROCS_BUILD_MODULE_CORE yes)
+	set(ROCS_FIND_OPENCV yes)
 endif(ROCS_BUILD_MODULE_MATH)
 
 # Module Core
 if(ROCS_BUILD_MODULE_CORE)
-	set(ROCS_FIND_BOOST_PROGRAM_OPTIONS YES)
-	set(ROCS_FIND_BOOST_PROPERTY_TREE YES)
+	set(ROCS_FIND_BOOST_PROGRAM_OPTIONS yes)
+	set(ROCS_FIND_BOOST_PROPERTY_TREE yes)
 endif(ROCS_BUILD_MODULE_CORE)
 
+# Documentation
+if(ROCS_BUILD_DOC)
+	set(ROCS_FIND_DOXYGEN yes)	
+endif(ROCS_BUILD_DOC)
+
+# Testing
+if(ROCS_BUILD_TESTS)
+	set(ROCS_FIND_BOOST_UNIT_TEST_FRAMEWORK yes)
+endif(ROCS_BUILD_TESTS)

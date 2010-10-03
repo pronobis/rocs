@@ -35,6 +35,8 @@
 if(NOT ROCS_DONT_DEFINE_OPTIONS)
 	# Documentation
 	option(ROCS_BUILD_DOC "Build documentation." NO)
+	# Tests
+	option(ROCS_BUILD_TESTS "Build tests." NO)
 	# Modules and components
 	## Core
 	option(USE_MODULE_CORE "Use the module Core." NO)
