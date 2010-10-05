@@ -14,6 +14,14 @@
 using namespace std;
 
 
+/*!
+ * a timer class
+ */
+//!  A test class.
+/*!
+  A more elaborate class description.
+*/
+
 class Timer {
 public:
 	Timer() {
