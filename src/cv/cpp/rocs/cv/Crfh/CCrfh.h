@@ -25,7 +25,7 @@ namespace cv {
 
 class CDescriptorList;
 
-/**
+/*!
  * Node of a libsvm sparse vector.
  */
 struct CSvmNode {
@@ -37,30 +37,30 @@ class CCrfh: public MapType {
 
 public:
 
-	/** Constructor. Creates a histogram from a set of
+	/*! Constructor. Creates a histogram from a set of
 	 outputs of descriptors. */
 	CCrfh(vector<math::Matrix_<double> *> outputs, const CDescriptorList &descrList,
 			int skipBorderPixels);
 
-	/** Zeroes small values in the histogram. The function removes those
+	/*! Zeroes small values in the histogram. The function removes those
 	 values that divided by maximum value are smaller than min_val. */
 	void filter(double min_val);
 
-	/** Normalizes the histogram - divides each bin by the sum of all. */
+	/*! Normalizes the histogram - divides each bin by the sum of all. */
 	void normalize();
 
-	/** Serializes the histogram to a file in the libSVM format. */
+	/*! Serializes the histogram to a file in the libSVM format. */
 	void serialize(ostream &stream);
 
-	/** Returns a libSVM compatible sparse vector containing the histogram. */
+	/*! Returns a libSVM compatible sparse vector containing the histogram. */
 	CSvmNode *getLibSvmVector();
 
 private:
 
-	/** Sum of all values before normalization. */
+	/*! Sum of all values before normalization. */
 	double _sum;
 
-	/** Maximal value before normalization. */
+	/*! Maximal value before normalization. */
 	double _max;
 
 };

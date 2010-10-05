@@ -34,14 +34,14 @@
 //
 // multi channel types - coming from OpenCV
 #define MAT_CN_SHIFT             3
-/** the functions to extract the depth from a type */
+/*! the functions to extract the depth from a type */
 #define MAT_DEPTH_MAX            (1 << MAT_CN_SHIFT)
 #define MAT_MAT_DEPTH_MASK       (MAT_DEPTH_MAX - 1)
 #define MAT_MAT_DEPTH(flags)     ((flags) & MAT_MAT_DEPTH_MASK)
-/** the functions to automatically build multi channel types */
+/*! the functions to automatically build multi channel types */
 #define MAT_MAKETYPE(depth,cn)   (MAT_MAT_DEPTH(depth) + (((cn)-1) << MAT_CN_SHIFT))
 #define MAT_MAKE_TYPE            MAT_MAKETYPE
-/** the functions to extract the number of channels from a type */
+/*! the functions to extract the number of channels from a type */
 #define MAT_CN_MAX     64
 #define MAT_MAT_CN_MASK          ((MAT_CN_MAX - 1) << MAT_CN_SHIFT)
 #define MAT_MAT_CN(flags)        ((((flags) & MAT_MAT_CN_MASK) >> MAT_CN_SHIFT) + 1)

@@ -86,7 +86,7 @@ public:
 	IplImage*					object_color_image;
 
 	// data access
-	/** returns the number of correspondances */
+	/*! returns the number of correspondances */
 	int	numberCorrespondances	();
 
 };

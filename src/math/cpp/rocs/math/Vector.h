@@ -13,7 +13,7 @@
 namespace rocs {
 namespace math {
 
-/**
+/*!
  * It is an extension of Matrix.
  * Most of its functions will redirect to the Matrix corresponding function,
  * with, for those who need it, a number of columns equal to 1

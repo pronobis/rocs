@@ -18,9 +18,9 @@
 // along with ROCS. If not, see <http://www.gnu.org/licenses/>.
 // ==================================================================
 
-/**
- * @file test1.cpp
- * @author Andrzej Pronobis
+/*!
+ * \file test1.cpp
+ * \author Andrzej Pronobis
  * Example test suite.
  * For more information see:
  * http://www.boost.org/doc/libs/1_44_0/libs/test/doc/html/utf/user-guide.html
@@ -31,17 +31,17 @@
 // ROCS
 /* Nothing for now. This is just an example*/
 
-/** Define first test case. */
+/*! Define first test case. */
 BOOST_AUTO_TEST_CASE( case1 )
 {
-    BOOST_CHECK( 0 == 0 );
+	BOOST_CHECK( 0 == 0 );
 	BOOST_REQUIRE(0 == 0);
 }
 
-/** Define second test case. */
+/*! Define second test case. */
 BOOST_AUTO_TEST_CASE( case2 )
 {
-    BOOST_CHECK( 0 == 1 );
+	BOOST_CHECK( 0 == 1 );
 	BOOST_REQUIRE(0 == 1);
 }
 

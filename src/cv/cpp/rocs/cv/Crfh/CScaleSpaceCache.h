@@ -8,7 +8,7 @@
 #ifndef CSCALESPACECACHE_H_
 #define CSCALESPACECACHE_H_
 
-/**
+/*!
  * \file CScaleSpaceCache.h
  * \author Andrzej Pronobis
  *
@@ -25,7 +25,7 @@ namespace cv {
 class CFilterCache;
 template<typename _T> class Matrix_;
 
-/**
+/*!
  * Struct storing information about a scale-space sample.
  */
 struct CScaleSpaceSampleInfo {
@@ -34,43 +34,43 @@ struct CScaleSpaceSampleInfo {
 	Matrix_<double> *matrix;
 };
 
-/**
+/*!
  * Cache storing samples of the scale-space.
  */
 class CScaleSpaceCache {
 
 public:
 
-	/** Default constructor. */
+	/*! Default constructor. */
 	inline CScaleSpaceCache(const CChannelCache &channelCache,
 			const CFilterCache &filterCache) :
 		_channelCache(&channelCache), _filterCache(&filterCache) {
 	}
 	;
 
-	/** Destructor. Deletes all the scale-space samples. */
+	/*! Destructor. Deletes all the scale-space samples. */
 	~CScaleSpaceCache();
 
 public:
 
-	/** Creates a sample of the scale-space obtained from a given
+	/*! Creates a sample of the scale-space obtained from a given
 	 channel. If an identical sample already exists a new one will
 	 not be created. */
 	void createScaleSpaceSample(ChannelType channelType, double scale);
 
-	/** Returns a pointer to a matrix containing pixels of the scale-space sample. */
+	/*! Returns a pointer to a matrix containing pixels of the scale-space sample. */
 	const Matrix_<double>
 			*getScaleSpaceSample(ChannelType channelType, double scale) const;
 
 private:
 
-	/** Pointer to the channel cache. */
+	/*! Pointer to the channel cache. */
 	const CChannelCache *_channelCache;
 
-	/** Pointer to the filter cache. */
+	/*! Pointer to the filter cache. */
 	const CFilterCache *_filterCache;
 
-	/** List storing information about samples. */
+	/*! List storing information about samples. */
 	vector<CScaleSpaceSampleInfo> _scaleSpaceSamplesList;
 
 };

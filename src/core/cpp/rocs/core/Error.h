@@ -24,10 +24,9 @@ using namespace std;
 namespace rocs {
 namespace core {
 
-/**
+/*!
  * the exception class
  */
-
 class Exception: public std::exception {
 public:
 	Exception() {
@@ -68,7 +67,7 @@ public:
 
 };
 
-/**
+/*!
  * the error routine
  * \param exc the Exception to cast
  */

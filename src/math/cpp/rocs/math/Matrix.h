@@ -140,7 +140,7 @@ public:
 		return at<_T> (row, col);
 	}
 
-	/**
+	/*!
 	 * change one of the values of the matrix
 	 *
 	 * \param row the row where to change the value
@@ -240,7 +240,7 @@ public:
 		return (static_cast<const opencv::Mat*> (this))->depth();
 	}
 
-	/** Resizes the matrix if the current size if different than given. */
+	/*! Resizes the matrix if the current size if different than given. */
 	inline void resize(int rows, int cols) {
 		debugPrintf_lvl3("resize(%ix%i)", rows, cols);
 		asOpenCvMat()->create(rows, cols, getDataType());

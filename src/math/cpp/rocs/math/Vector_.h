@@ -13,7 +13,7 @@
 namespace rocs {
 namespace math {
 
-/**
+/*!
  * a templated vector class
  *
  * We inherit from Vector so as not to have to make again the selection of
