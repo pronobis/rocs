@@ -1,5 +1,7 @@
-/*
+/*!
  * CDescriptorList.cc
+ *
+ * Contains implementation of the CDescriptorList class.
  *
  *  Created on: Sep 28, 2010
  *      Author: arnaud
@@ -10,13 +12,6 @@
 
 namespace rocs {
 namespace cv {
-
-/**
- * \file CDescriptorList.cpp
- * \author Andrzej Pronobis
- *
- * Contains implementation of the CDescriptorList class.
- */
 
 
 // -----------------------------------------

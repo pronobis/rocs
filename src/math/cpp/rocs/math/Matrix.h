@@ -43,20 +43,24 @@ namespace math {
 class Matrix: private opencv::Mat {
 public:
 	/* constructors and destructors */
-	//	Matrix();
+	//	Matrix(cv::Mat cv_matrix) {	};
+
+	/*! an empty constructor */
+	Matrix() :
+		opencv::Mat() {
+	}
+
 	/*!
-	 * the constructor
+	 * the constructor for a given size
 	 *
 	 * \param rows number of rows
 	 * \param cols number of columns
 	 * \param type the data_type of data : MAT_8U -> MAT_64F
 	 * \return
 	 */
-	//	Matrix(cv::Mat cv_matrix) {	};
-	Matrix() :
-		opencv::Mat() {
-	}
 	Matrix(int rows, int cols, int type);
+
+	/*! the destructor */
 	~Matrix();
 
 	/* data access */
@@ -109,6 +113,15 @@ public:
 		return m.str().c_str();
 	}
 
+	/*!
+	 * if DEBUG mode,
+	 * check if the given arguments are within the range of the matrix
+	 * and triggers an error if this fails
+	 * \param row
+	 *          the row to check
+	 * \param col
+	 *          the col to check
+	 */
 	inline void dbgAssertRangeCheck(const int row, const int col) const {
 		//debugPrintf_lvl3("dbgAssertRangeCheck(%i, %i)", row, col);
 		DbgAssert( row >= 0 && row < nbRows() && col >=0 && col < nbCols());
@@ -122,10 +135,6 @@ public:
 	 * \return the value at (row, col)
 	 */
 	//	template<typename _T> _T get(const int row, const int col) const {
-	//		dbgAssertRangeCheck(row, col);
-	//		return at<_T> (row, col);
-	//	}
-
 	template<typename _T> _T get(int row, int col) const {
 		dbgAssertRangeCheck(row, col);
 		return at<_T> (row, col);
@@ -144,12 +153,12 @@ public:
 		this->at<_T> (row, col) = value;
 	}
 
-	/*!
-	 * get a pointer to a chosen row of the matrix
-	 *
-	 * \param     i the row index
-	 * \return    a pointer to the row
-	 */
+	//	/*
+	//	 * get a pointer to a chosen row of the matrix
+	//	 *
+	//	 * \param     i the row index
+	//	 * \return    a pointer to the row
+	//	 */
 	// TODO write function
 	//	Matrix row_(int i) const {
 	//		cv::Mat ans = (static_cast<const cv::Mat*> (this))->row(i);
@@ -159,9 +168,11 @@ public:
 	/*!
 	 * copy the content of the matrix into another one
 	 *
-	 * \param     m the matrix where you want to copy the values.
-	 * 			They have to be of the same kind.
-	 *
+	 * \param   dst
+	 *           the matrix where you want to copy the values.
+	 * 			 They have to be of the same kind.
+	 *           However the size does not matter,
+	 *           dst will be resized if needed.
 	 */
 	void copyTo(Matrix dst) const;
 
@@ -169,7 +180,7 @@ public:
 	void copyTo_(Matrix dst) {
 		debugPrintf_lvl3("copyTo_(%s, %s)", infoString().c_str(), dst.infoString().c_str());
 
-		/* resize if needed TODO */
+		/* resize if needed */
 		if (dst.nbCols() != nbCols() || dst.nbRows() != nbRows()) {
 			//			char msg[300];
 			//			sprintf(
@@ -274,9 +285,13 @@ public:
 	 */
 	Matrix* inverse(int method = MAT_DECOMP_LU) const;
 
-	/** Convolves the matrix with another matrix.
-	 The size of the matrix remains identical (as in case
-	 of matlabs conv2(,,'same'). */
+	/*! Convolves the matrix with another matrix.
+	 * The size of the matrix remains identical (as in case
+	 * of matlabs conv2(,,'same').
+	 *
+	 * \param m
+	 *          the matrix to convolove with
+	 */
 	template<typename _T>
 	void convolveWith(const Matrix &m) {
 		debugPrintf_lvl3("convolveWith(m:%s)", m.infoString().c_str());
@@ -333,9 +348,20 @@ public:
 
 	//void convolveWithFft(const Matrix &m);
 
-	/** Convolves two matrices. The size of the resulting
-	 matrix will be the same as the size of the matrix A.
-	 (as in case of matlabs conv2(,,'same'). */
+	/*!
+	 * Convolves two matrices. The size of the resulting
+	 * matrix will be the same as the size of the matrix A.
+	 * (as in case of matlabs conv2(,,'same').
+	 *
+	 * \param mA
+	 *          the first matrix to convolve
+	 * \param mB
+	 *          the second matrix to convolve
+	 * \param mC
+	 *          the result matrix to populate (optional)
+	 * \return
+	 *          A convolved with B
+	 */
 	template<typename _T>
 	static Matrix *convolve(const Matrix &mA, const Matrix &mB, Matrix *mC = 0) {
 		debugPrintf_lvl3("convolve(mA:%s, mB:%s)", mA.infoString().c_str(), mB.infoString().c_str() );
@@ -400,6 +426,9 @@ public:
 		return mC;
 	}
 
+	/*!
+	 * @return a string version of the matrix values
+	 */
 	string toString();
 
 private:

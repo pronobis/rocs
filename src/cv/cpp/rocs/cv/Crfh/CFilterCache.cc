@@ -1,8 +1,10 @@
-/*
+/*!
  * CFilterCache.cc
  *
+ * Contains implementation of the CFilterCache class.
+ *
  *  Created on: Sep 27, 2010
- *      Author: arnaud
+ *      Author: Andrzej Pronobis, arnaud
  */
 
 //#include "global.h"
@@ -11,13 +13,6 @@
 
 namespace rocs {
 namespace cv {
-
-/**
- * \file CFilterCache.cpp
- * \author Andrzej Pronobis
- *
- * Contains implementation of the CFilterCache class.
- */
 
 // -----------------------------------------
 CFilterCache::~CFilterCache() {

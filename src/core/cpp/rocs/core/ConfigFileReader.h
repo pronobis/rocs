@@ -33,17 +33,27 @@ using boost::property_tree::ptree;
 
 class ConfigFileReader {
 public:
-	static void readFileAndCheckIncludes(string filename, ptree* tree,
-			bool include_allowed);
-
 	/*!
 	 * open a file, parse it
 	 * \param filename
 	 *          the name of the file to parse
+	 * \param tree
+	 *          the tree to poulate
 	 * \param include_allowed
 	 * 	        if <code>true</code>, allow the xml include tags :
 	 *          will parse the corresponding files and replace them
 	 */
+	static void readFileAndCheckIncludes(string filename, ptree* tree,
+			bool include_allowed);
+
+	//	/*
+	//	 * open a file, parse it
+	//	 * \param filename
+	//	 *          the name of the file to parse
+	//	 * \param include_allowed
+	//	 * 	        if <code>true</code>, allow the xml include tags :
+	//	 *          will parse the corresponding files and replace them
+	//	 */
 	//	void readFileAndCheckIncludes(string filename, bool include_allowed =
 	//			true);
 
@@ -141,6 +151,17 @@ public:
 		Error(-1, "Templated function non implemented");
 	}
 
+	/*!
+	 * return the children of a tree following a given path
+	 * \param tree
+	 *          the tree where to search
+	 * \param path
+	 *          the path to follow
+	 * \param nb_found
+	 *          the number of sons
+	 * \param answer
+	 *          the vector to populate with the answers
+	 */
 	static void getChildren(ptree* tree, string path, int& nb_found, vector<
 			ptree>* answer) {
 		nb_found = 0;
@@ -192,29 +213,33 @@ public:
 
 	/*!
 	 * Returns a list of values.
-	 * For instance, getValueList(A, "", ""key)
+	 * For instance, getValueList(A, "", "key")
 	 * will return [3, 1]
 	 *
-	 A
-	 |
-	 |--B
-	 | |
-	 | |--key=3
-	 |
-	 |--foo
-	 | |
-	 | |--key2=3
-	 |
-	 |--
-	 | |
-	 | |--key=1
-	 | |
-	 | |--key2=5
-
+	 * A
+	 * |
+	 * |--B
+	 * | |
+	 * | |--key=3
+	 * |
+	 * |--foo
+	 * | |
+	 * | |--key2=3
+	 * |
+	 * |--
+	 * | |
+	 * | |--key=1
+	 * | |
+	 * | |--key2=5
+	 *
 	 * \param tree
 	 *          the tree to search in
 	 * \param path
 	 *          the path to follow from the root of the tree
+	 * \param key
+	 *          the tag to find
+	 * \param nb_found
+	 *          the number of found values (should be equal to ans->size())
 	 * \param ans
 	 *          the vector where to store the answers
 	 */
@@ -237,7 +262,8 @@ public:
 		// get the values
 		for (vector<ptree>::iterator it = sons.begin(); it < sons.end(); ++it) {
 			bool was_found = false;
-			_T value = getValue<_T> (&(*it), key, Type<_T>::defaultValue(), was_found);
+			_T value = getValue<_T> (&(*it), key, Type<_T>::defaultValue(),
+					was_found);
 			if (was_found) {
 				//				ostringstream msg;
 				//				msg << "value found:" << value;
@@ -248,18 +274,18 @@ public:
 		}
 	}
 
-	/*!
-	 * get a parameter from a config file
-	 *
-	 * \param     filename the file where we can parse the variable (XML, JSON, INI or INFO file)
-	 * \param     variable_name
-	 *              the name of the variable
-	 * \param     default_value
-	 *              the return value  in case of trouble
-	 * \return    the parsed value, or the default value
-	 *            if the file is not found, cannot be parsed or
-	 *            there is no variable with the given name
-	 */
+	//	/*
+	//	 * get a parameter from a config file
+	//	 *
+	//	 * \param     filename the file where we can parse the variable (XML, JSON, INI or INFO file)
+	//	 * \param     variable_name
+	//	 *              the name of the variable
+	//	 * \param     default_value
+	//	 *              the return value  in case of trouble
+	//	 * \return    the parsed value, or the default value
+	//	 *            if the file is not found, cannot be parsed or
+	//	 *            there is no variable with the given name
+	//	 */
 	//	template<class _T>
 	//	static _T autoload(string filename, string variable_name, _T default_value) {
 	//		ConfigFileReader file_reader;
@@ -274,17 +300,16 @@ private:
 	 *          the file to parse
 	 * \param tree
 	 *          the tree to populate with the parsed file
-	 * \param include_allowed
-	 *          if <code>true</code>, allow the xml include tags :
-	 *          will parse the corresponding files and replace them
 	 */
 	static void readFfile(string filename, ptree* tree);
 
 	/*!
-	 * parse a file to be able to extract the variables inside
+	 * check if a tree contains some include tags
 	 *
-	 * \param     filename
-	 *              the file where we can parse the variable (XML, JSON, INI or INFO file)
+	 * \param     relative_path
+	 *              the path of the file that generated the tree
+	 * \param     tree
+	 *              the tree that might contain some include tags
 	 */
 	static void checkIncludes(string relative_path, ptree* tree);
 
