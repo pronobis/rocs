@@ -65,11 +65,11 @@ macro(add_rocs_cpp_module)
 	# Get and add linked module libraries
 	if(NOT "${ARG_LINK_MODULES}" STREQUAL "")
 		foreach(I IN LISTS ARG_LINK_MODULES)
-			add_dependencies(rocs_${ARG_NAME} rocs_${I})                                                                                                                                                                                                                                    
+			add_dependencies(rocs_${ARG_NAME} rocs_${I})
 			target_link_libraries(rocs_${ARG_NAME} rocs_${I})
 		endforeach(I)
 	endif(NOT "${ARG_LINK_MODULES}" STREQUAL "")
-	
+
 	# Install
 	install(TARGETS rocs_${ARG_NAME} LIBRARY DESTINATION lib ARCHIVE DESTINATION lib)
 	install(FILES ${_HEADERS_} DESTINATION include/rocs/${ARG_NAME})
@@ -120,18 +120,18 @@ macro(add_rocs_cpp_test_suite)
 		add_executable(${_TEST_TARGET_} cpp/tests/${ARG_NAME}.cc)
 		target_link_libraries(${_TEST_TARGET_} boost_unit_test_framework)
 		target_link_libraries(${_TEST_TARGET_} rocs_${MODULE_NAME})
-		
+
 		# Say where it should be built
 		set_target_properties(${_TEST_TARGET_} PROPERTIES
 				RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/tests/")
 
 		# Make output of CTest verbose on failure
- 		#$ENV{CTEST_OUTPUT_ON_FAILURE} = 1;	
+ 		#$ENV{CTEST_OUTPUT_ON_FAILURE} = 1;
 
 		# Add the test
-		enable_testing()                                                                                                                                                                                                                                                               
-		get_target_property(LOC ${_TEST_TARGET_} LOCATION)                                                                                                                                                                                                                                
-		add_test(${_TEST_TARGET_} "${LOC}")                                               
+		enable_testing()
+		get_target_property(LOC ${_TEST_TARGET_} LOCATION)
+		add_test(${_TEST_TARGET_} "${LOC}")
 
 	endif(ROCS_BUILD_TESTS)
 endmacro(add_rocs_cpp_test_suite)
