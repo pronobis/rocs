@@ -45,4 +45,3 @@ BOOST_AUTO_TEST_CASE( case2 )
 	BOOST_REQUIRE(0 == 1);
 }
 
-#include "tests_command_line_help.cc"
