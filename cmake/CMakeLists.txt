@@ -3,4 +3,4 @@ set(WARNING "\n# This file was automatically generated from FindROCS.cmake.\n# D
 configure_file(${ROCS_SRC_CMAKE}/FindROCS.cmake ${CMAKE_BINARY_DIR}/cmake/ROCSConfig.cmake ESCAPE_QUOTES @ONLY)
 
 # Install ROCSConfig.cmake
-install(FILES ${CMAKE_BINARY_DIR}/cmake/ROCSConfig.cmake DESTINATION .)
+install(FILES ${CMAKE_BINARY_DIR}/cmake/ROCSConfig.cmake DESTINATION ${ROCS_DIR})

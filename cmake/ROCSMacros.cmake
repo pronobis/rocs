@@ -71,8 +71,8 @@ macro(add_rocs_cpp_module)
 	endif(NOT "${ARG_LINK_MODULES}" STREQUAL "")
 
 	# Install
-	install(TARGETS rocs_${ARG_NAME} LIBRARY DESTINATION lib ARCHIVE DESTINATION lib)
-	install(FILES ${_HEADERS_} DESTINATION include/rocs/${ARG_NAME})
+	install(TARGETS rocs_${ARG_NAME} LIBRARY DESTINATION ${ROCS_DIR}/lib ARCHIVE DESTINATION lib)
+	install(FILES ${_HEADERS_} DESTINATION ${ROCS_DIR}/include/rocs/${ARG_NAME})
 
 	# Make the module available to others
 	include_directories(cpp)
@@ -91,7 +91,7 @@ macro(add_rocs_cpp_app _NAME_ _SOURCES_VAR_)
 	add_executable(${_NAME_} ${_SOURCES_})
 
 	# Install
-	install(TARGETS ${_NAME_} RUNTIME DESTINATION bin)
+	install(TARGETS ${_NAME_} RUNTIME DESTINATION ${ROCS_DIR}/bin)
 endmacro(add_rocs_cpp_app)
 
 
