@@ -15,7 +15,7 @@ inline void test_command_line_help(int argc, char** argv) {
 	debugPrintf_lvl3("test_command_line_help(argc=%i)", argc);
 
 	// set up the mixer
-	InputMixer mixer;
+	Configuration mixer;
 	char filename_in[100];
 	sprintf(filename_in, "%s%s", DATADIR, "configfiles/debug_settings.xml");
 	mixer.addAllowedConfigFile(filename_in);

@@ -19,20 +19,31 @@
 // ==================================================================
 
 /*!
- *
+ * Configuration class.
  * \author Arnaud Ramey
- * \file InputMixer.cc
+ * \file Configuration.cc
  */
 
-#include "InputMixer.h"
 
-rocs::core::InputMixer::InputMixer() {
+#include "Configuration.h"
+
+using namespace rocs::core;
+using namespace std;
+
+
+// ---------------------------------------------
+Configuration::Configuration()
+{
 	clear();
 }
 
-rocs::core::InputMixer::~InputMixer() {
+
+// ---------------------------------------------
+Configuration::~Configuration()
+{
 	clear();
 }
+
 
 /*!
  * determine if a string corresponds to a variable name, that is starts with "-" or "--"
@@ -43,7 +54,8 @@ rocs::core::InputMixer::~InputMixer() {
  *              the cleaned name of the variable, if it was a variable
  * \return
  */
-static inline bool is_variable_name(string& word, string& ans) {
+static inline bool is_variable_name(string& word, string& ans)
+{
 	if (word[0] != '-')
 		return false;
 
@@ -57,18 +69,18 @@ static inline bool is_variable_name(string& word, string& ans) {
 	return true;
 }
 
-void rocs::core::InputMixer::addCommandlineArgs(int argc, char **argv) {
+void rocs::core::Configuration::addCommandlineArgs(int argc, char **argv) {
 	debug3("add_commandline_args(%i args)", argc);
 
 	// check the help
 	for (int word_index = 1; word_index <= argc; ++word_index) {
 		string current_word = argv[word_index];
 		//debug1("Current word:'%s'", current_word.c_str());
-		int word_found = command_line_help.containsName(current_word);
+		int word_found = commandLineHelp.containsName(current_word);
 		//debug1("word_found :'%i'", word_found);
 		if (word_found != -1) {
 			CommandLineHelp::OptionDescription op =
-					command_line_help.options.at(word_found);
+					commandLineHelp.options.at(word_found);
 			debug1("Description:%s", op.description.c_str());
 			if (!op.with_complement)
 				return;
@@ -101,17 +113,17 @@ void rocs::core::InputMixer::addCommandlineArgs(int argc, char **argv) {
 		debug1("New value : '%s'='%s'", variable_name.c_str(), value.c_str());
 
 		// add the variable
-		tree.add(variable_name, value);
+		_tree.add(variable_name, value);
 	} // end loop words
 }
 
-void rocs::core::InputMixer::addAllowedConfigFile(string filename) {
+void rocs::core::Configuration::addConfigFile(string filename) {
 	debug3("add_allowed_config_file('%s')", filename.c_str());
 	// read the new file in a new tree
 	ptree new_tree;
 	ConfigFileReader::readFileAndCheckIncludes(filename, &new_tree, true);
 	// add it to the root of our tree
-	tree.insert(tree.end(), new_tree.begin(), new_tree.end());
+	_tree.insert(_tree.end(), new_tree.begin(), new_tree.end());
 
-	ConfigFileReader::printTree(&tree);
+	ConfigFileReader::printTree(&_tree);
 }

@@ -17,9 +17,9 @@ using rocs::core::InputMixer;
 /*!
  * this builds an input mixer with 2 config files and [argc, argc]
  */
-inline InputMixer test_input_mixer(int argc, char **argv) {
+inline Configuration test_input_mixer(int argc, char **argv) {
 	debugPrintf_lvl3("test_input_mixer(argc=%i)", argc);
-	InputMixer inputMixer;
+	Configuration inputMixer;
 
 	// through an object
 	char filename_in[100];
@@ -40,7 +40,7 @@ inline InputMixer test_input_mixer(int argc, char **argv) {
 /*!
  * this function will break a single line instruction into the usual [argc, argv]
  */
-inline InputMixer test_input_mixer_string(string line_string) {
+inline Configuration test_input_mixer_string(string line_string) {
 	debugPrintf_lvl3("test_input_mixer('%s')", line_string.c_str());
 
 	/* conversion argc argv */
@@ -64,7 +64,7 @@ inline InputMixer test_input_mixer_string(string line_string) {
  *
  */
 inline void test_input_mixer_simple() {
-	InputMixer inputMixer = test_input_mixer_string(
+	Configuration inputMixer = test_input_mixer_string(
 			"./test.exe -command_line_arg OK --toto 25 -x");
 	// read from command line first
 	bool was_found;
@@ -93,7 +93,7 @@ inline void test_input_mixer_simple() {
  */
 inline void test_input_mixer_list() {
 	string instr = "./test.exe -new_item.id xxx -new_item2.id xyz";
-	InputMixer inputMixer = test_input_mixer_string(instr);
+	Configuration inputMixer = test_input_mixer_string(instr);
 
 	// read a list of values
 	vector<string> values;

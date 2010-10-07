@@ -19,55 +19,43 @@
 // ==================================================================
 
 /*!
- *
+ * Configuration class.
  * \author Arnaud Ramey
- * \file InputMixer.h
+ * \file Configuration.h
  */
+
 
 #ifndef _ROCS_CORE_INPUTMIXER_H_
 #define _ROCS_CORE_INPUTMIXER_H_
 
-// stl includes
+// Stl includes
 #include <vector>
 #include <iostream>
-using namespace std;
-
-// rocs includes
+// ROCS includes
 #include "ConfigFileReader.h"
 #include "CommandLineHelp.h"
-/*!
- * A class for I/O with config files
- *
- */
+
 
 namespace rocs {
 namespace core {
 
 using boost::property_tree::ptree;
 
-class InputMixer {
+/*!
+ * Class providing access to configuration options for the ROCS components.
+ */
+class Configuration
+{
 public:
-	InputMixer();
 
-	virtual ~InputMixer();
+	/*! Constructor */
+	Configuration();
 
-	CommandLineHelp command_line_help;
+	/*! Destructor. */
+	virtual ~Configuration();
 
-	/*
-	 * data sources
-	 */
-	ptree tree;
+	CommandLineHelp commandLineHelp;
 
-	/*!
-	 * clear all the info parsed till now
-	 */
-	inline void clear() {
-		tree.clear();
-	}
-
-	/* ********************************************************
-	 * Adding args
-	 **********************************************************/
 	/*!
 	 * Add the manually specified command line args
 	 * \param argc
@@ -75,31 +63,48 @@ public:
 	 */
 	void addCommandlineArgs(int argc, char **argv);
 
-	void addAllowedConfigFile(string filename);
+	void addConfigFile(std::string filename);
 
-	inline void addAllowedConfigFile(vector<string>::iterator first, vector<
-			string>::iterator last) {
-		for (vector<string>::iterator it = first; it != last; ++it)
-			addAllowedConfigFile(*it);
+	inline void addConfigFile(std::vector<std::string>::iterator first,
+			std::vector<std::string>::iterator last)
+	{
+		for (std::vector<std::string>::iterator it = first; it != last; ++it)
+			addConfigFile(*it);
 	}
 
-	/* ********************************************************
-	 * Getting values
-	 **********************************************************/
 	template<class _T>
-	_T getValue(string path, _T default_value, bool& was_found) {
-		return ConfigFileReader::getValue<_T>(&tree, path, default_value,
-				was_found);
-	}
-	void getChildren(string path, int& nb_found, vector<ptree>* answer) {
-		ConfigFileReader::getChildren(&tree, path, nb_found, answer);
-	}
-	template<class _T>
-	void getValueList(string path, string key, int& nb_found, vector<_T>* ans) {
-		ConfigFileReader::getValueList<_T>(&tree, path, key, nb_found, ans);
+	_T getValue(std::string path, _T default_value, bool& was_found)
+	{
+		return ConfigFileReader::getValue<_T>(&_tree, path, default_value, was_found);
 	}
 
-}; // end class inutMixer
+	void getChildren(std::string path, int& nb_found, std::vector<ptree>* answer)
+	{
+		ConfigFileReader::getChildren(&_tree, path, nb_found, answer);
+	}
+
+	template<class _T>
+	void getValueList(std::string path, std::string key, int& nb_found, std::vector<_T>* ans)
+	{
+		ConfigFileReader::getValueList<_T>(&_tree, path, key, nb_found, ans);
+	}
+
+
+private:
+
+	/*! Clear all the info parsed till now */
+	inline void clear()
+	{
+		_tree.clear();
+	}
+
+
+private:
+
+	/** The property tree. */
+	ptree _tree;
+
+}; // Configuration
 
 } // namespace core
 } // namespace rocs
