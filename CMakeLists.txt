@@ -1,4 +1,14 @@
 cmake_minimum_required(VERSION 2.8)
+
+# Using CCache to speed up compilation of ROCS
+if(ROCS_CCACHE)
+	set(CMAKE_CXX_COMPILER "ccache")
+	set(CMAKE_CXX_COMPILER_ARG1 "g++")
+	set(CMAKE_C_COMPILER "ccache")
+	set(CMAKE_C_COMPILER_ARG1 "gcc")
+endif(ROCS_CCACHE)
+
+# Definition of the project starts here
 project(ROCS)
 
 # Define version
