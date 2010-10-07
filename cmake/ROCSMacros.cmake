@@ -114,7 +114,7 @@ macro(add_rocs_cpp_test_suite)
 		set(_TEST_TARGET_ "test_${MODULE_NAME}_${ARG_NAME}") 
 
 		# Add target for the test
-		add_executable(${_TEST_TARGET_} cpp/tests/${ARG_NAME}.cc)
+		add_executable(${_TEST_TARGET_} cpp/tests/test_${ARG_NAME}.cc)
 		target_link_libraries(${_TEST_TARGET_} boost_unit_test_framework)
 		target_link_libraries(${_TEST_TARGET_} rocs_${MODULE_NAME})
 

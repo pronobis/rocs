@@ -20,7 +20,7 @@ Img::~Img() {
 
 /*! Returns the intensity channel L as a matrix of doubles. */
 math::Matrix_<double> *Img::getL(math::Matrix_<double> *L /*= 0*/) const {
-	debug3("getL()");
+	rocsDebug3("getL()");
 
 	/* convert to HLS */
 	// void cvtColor(const Mat& src, Mat& dst, int code, int dstCn=0)
@@ -58,7 +58,7 @@ math::Matrix_<double> *Img::getL(math::Matrix_<double> *L /*= 0*/) const {
 
 	/* create the channel */
 	if (L == 0) {
-		debug3("Creating the L matrix.");
+		rocsDebug3("Creating the L matrix.");
 		L = new math::Matrix_<double>(nbRows(), nbCols());
 	}
 
@@ -67,7 +67,7 @@ math::Matrix_<double> *Img::getL(math::Matrix_<double> *L /*= 0*/) const {
 	//	debugPrintf_lvl3("L before return:%s, (1,1):%f", L->infoCString(), L->get(1,1));
 	//	debugPrintf_lvl3("L before return:%s", L->toString().c_str());
 
-	debug3("getL() finished.");
+	rocsDebug3("getL() finished.");
 
 	/* return the wanted channel */
 	return L;

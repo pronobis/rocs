@@ -2,7 +2,7 @@
 #define MATRIX__H_
 
 #include "rocs/math/Matrix.h"
-#include "rocs/core/Types.h"
+#include "rocs/core/types.h"
 
 /*!
  *

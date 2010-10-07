@@ -39,8 +39,8 @@ namespace rocs {
 namespace core {
 
 // Debug level
-#ifndef DEBUG_LEVEL
-	#define DEBUG_LEVEL 0
+#ifndef ROCS_DEBUG_LEVEL
+	#define ROCS_DEBUG_LEVEL 0
 #endif
 
 
@@ -111,8 +111,8 @@ public:
 /*!
  * Stringified __LINE__
  */
-#define ERROR_STRINGIFY(x) #x
-#define __ERROR_LINE_STR__ ERROR_STRINGIFY(__LINE__)
+#define ROCS_ERROR_STRINGIFY(x) #x
+#define __ROCS_ERROR_LINE_STR__ ROCS_ERROR_STRINGIFY(__LINE__)
 
 
 /*!
@@ -122,7 +122,7 @@ public:
 #ifdef __GNUC__
 	#define __HERE__ 	"a" //__func__ "@" __FILE__ ":" __ERROR_LINE_STR__
 #else
-	#define __HERE__	__FILE__ ":" __ERROR_LINE_STR__
+	#define __HERE__	__FILE__ ":" __ROCS_ERROR_LINE_STR__
 #endif
 
 
@@ -155,25 +155,25 @@ static inline void exitWithError(const Exception& exc)
 /*!
  * Macro reporting a fatal error.
  */
-#define error( ... ) \
+#define rocsError( ... ) \
 		rocs::core::exitWithError(rocs::core::Exception(__HERE__, rocs::core::errMsg(__VA_ARGS__)) )
 
 /*!
  * Macro defining an assertion.
  */
-#define assertion( expr ) { if(!(expr)) \
+#define rocsAssert( expr ) { if(!(expr)) \
 		rocs::core::exitWithError( rocs::core::AssertionException(__HERE__, #expr) ); }
 
 /*!
  * Convenience macro throwing a general exception.
  */
-#define throwException( ... ) \
+#define rocsException( ... ) \
 		throw rocs::core::Exception(__HERE__, rocs::core::errMsg(__VA_ARGS__))
 
 /*!
  * Macro defining an assertion used only when debugging.
  */
-#define debugAssertion( expr ) { if ((DEBUG_LEVEL > 0 ) && (!(expr))) \
+#define rocsDebugAssert( expr ) { if ((ROCS_DEBUG_LEVEL > 0 ) && (!(expr))) \
 		rocs::core::exitWithError( rocs::core::AssertionException(__HERE__, #expr) ); }
 
 

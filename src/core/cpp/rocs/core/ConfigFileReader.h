@@ -1,38 +1,58 @@
-/*
- * ConfigFileReader.h
- *
- *  Created on: Aug 2, 2010
- *      Author: arnaud
- *
- *  More info on http://wiki.github.com/pronobis/rocs/config-files
+// ==================================================================
+// ROCS - Toolkit for Robots Comprehending Space
+// Copyright (C) 2010  Arnaud Ramey, Andrzej Pronobis
+//
+// This file is part of ROCS.
+//
+// ROCS is free software: you can redistribute it and/or modify it
+// under the terms of the GNU Lesser General Public License as
+// published by the Free Software Foundation, either version 3
+// of the License, or (at your option) any later version.
+//
+// ROCS is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU Lesser General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with ROCS. If not, see <http://www.gnu.org/licenses/>.
+// ==================================================================
+
+/*!
+ * ConfigFileReader class.
+ * \author Arnaud Ramey
+ * \file ConfigFileReader.h
  */
 
-#ifndef CONFIGFILEREADER_H_
-#define CONFIGFILEREADER_H_
 
-// stl and BOOST includes
+#ifndef _ROCS_CORE_CONFIGFILEREADER_H_
+#define _ROCS_CORE_CONFIGFILEREADER_H_
+
+// ROCS includes
+#include "rocs/core/debug.h"
+#include "rocs/core/error.h"
+#include "rocs/core/types.h"
+// STl and BOOST includes
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/xml_parser.hpp>
 #include <boost/property_tree/json_parser.hpp>
 #include <boost/property_tree/ini_parser.hpp>
 #include <boost/property_tree/info_parser.hpp>
-
 #include <boost/foreach.hpp>
-// ROCS includes
-#include "rocs/core/debug.h"
-#include "rocs/core/error.h"
-#include "Types.h"
 
-/*!
- * A class for I/O with config files
- *
- */
+
 namespace rocs {
 namespace core {
 
 using boost::property_tree::ptree;
 
-class ConfigFileReader {
+/*!
+ * Class used for performing I/O operations on the config files.
+ * More info on http://wiki.github.com/pronobis/rocs/config-files
+ */
+class ConfigFileReader
+{
+
 public:
 	/*!
 	 * open a file, parse it
@@ -85,7 +105,7 @@ public:
 	 *          the found value in the tree
 	 */
 	static std::string getValueAsString(ptree* tree, std::string path, bool& was_found) {
-		debug3("getValueAsString('%s')", path.c_str());
+		rocsDebug3("getValueAsString('%s')", path.c_str());
 		was_found = false;
 		bool search_for_son_value = false;
 		std::string key_to_search, son_key_to_search;
@@ -101,7 +121,7 @@ public:
 			key_to_search = path.substr(0, dot_position);
 			son_key_to_search = path.substr(dot_position + 1);
 		}
-		debug2("Searching the key '%s' in the sons...", key_to_search.c_str());
+		rocsDebug2("Searching the key '%s' in the sons...", key_to_search.c_str());
 
 		/* serarch it */
 		// backwards search
@@ -110,7 +130,7 @@ public:
 			std::string son_node_name = son_iter->first;
 			ptree son_tree = son_iter->second;
 			std::string son_node_value = son_tree.get_value("");
-			debug3("Node:'%s' = '%s'", son_node_name.c_str(), son_node_value.c_str());
+			rocsDebug3("Node:'%s' = '%s'", son_node_name.c_str(), son_node_value.c_str());
 
 			if (son_node_name == key_to_search) {
 				// we found the key
@@ -124,7 +144,7 @@ public:
 		} // end loop sons
 
 		// we didin't find the key in the sons
-		debug1("Couldn't find the key '%s' in the sons !", key_to_search.c_str());
+		rocsDebug1("Couldn't find the key '%s' in the sons !", key_to_search.c_str());
 		return "";
 	}
 
@@ -144,8 +164,8 @@ public:
 	template<class _T>
 	static _T getValue(ptree* tree, std::string path, _T default_value,
 			bool& was_found) {
-		debug3("getValue<_T>(%s)", path.c_str());
-		error("Templated function non implemented");
+		rocsDebug3("getValue<_T>(%s)", path.c_str());
+		rocsError("Templated function non implemented");
 	}
 
 	/*!
@@ -162,10 +182,10 @@ public:
 	static void getChildren(ptree* tree, std::string path, int& nb_found, std::vector<
 			ptree>* answer) {
 		nb_found = 0;
-		debug3("get_children('%s')", path.c_str());
+		rocsDebug3("get_children('%s')", path.c_str());
 
 		if (path == "") { // we need to return these nodes
-			debug1("We found the key ! Returning the %i sons.", (int) tree->size());
+			rocsDebug1("We found the key ! Returning the %i sons.", (int) tree->size());
 			answer->clear();
 			nb_found = 0;
 			for (ptree::iterator son_iter = tree->begin(); son_iter
@@ -187,7 +207,7 @@ public:
 			key_to_search = path.substr(0, dot_position);
 			son_key_to_search = path.substr(dot_position + 1);
 		}
-		debug2("Searching the key '%s' in the sons...", key_to_search.c_str());
+		rocsDebug2("Searching the key '%s' in the sons...", key_to_search.c_str());
 
 		/* serarch it */
 		// backwards search
@@ -196,7 +216,7 @@ public:
 			std::string son_node_name = son_iter->first;
 			ptree son_tree = son_iter->second;
 			std::string son_node_value = son_tree.get_value("");
-			debug3("Node:'%s' = '%s'", son_node_name.c_str(), son_node_value.c_str());
+			rocsDebug3("Node:'%s' = '%s'", son_node_name.c_str(), son_node_value.c_str());
 
 			if (son_node_name == key_to_search) {
 				getChildren(&son_tree, son_key_to_search, nb_found, answer);
@@ -205,7 +225,7 @@ public:
 		} // end loop sons
 
 		// we didin't find the key in the sons
-		debug1("Couldn't find the key '%s' in the sons !", key_to_search.c_str());
+		rocsDebug1("Couldn't find the key '%s' in the sons !", key_to_search.c_str());
 	}
 
 	/*!
@@ -243,7 +263,7 @@ public:
 	template<class _T>
 	static void getValueList(ptree* tree, std::string path, std::string key,
 			int& nb_found, std::vector<_T>* ans) {
-		debug3("get_children(path:'%s', key:'%s')", path.c_str(), key.c_str());
+		rocsDebug3("get_children(path:'%s', key:'%s')", path.c_str(), key.c_str());
 
 		ans->clear();
 		nb_found = 0;
@@ -252,7 +272,7 @@ public:
 		int nb_sons;
 		std::vector<ptree> sons;
 		getChildren(tree, path, nb_sons, &sons);
-		debug3("children obtained, nb:%i", nb_sons);
+		rocsDebug3("children obtained, nb:%i", nb_sons);
 		if (nb_sons == 0)
 			return;
 
@@ -334,4 +354,4 @@ double ConfigFileReader::getValue(ptree* tree, std::string path,
 } // namespace rocs
 
 
-#endif /* CONFIGFILEREADER_H_ */
+#endif /* _ROCS_CORE_CONFIGFILEREADER_H_ */

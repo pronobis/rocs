@@ -69,19 +69,19 @@ static inline bool is_variable_name(string& word, string& ans)
 	return true;
 }
 
-void rocs::core::Configuration::addCommandlineArgs(int argc, char **argv) {
-	debug3("add_commandline_args(%i args)", argc);
+void rocs::core::Configuration::addCommandLineArgs(int argc, char **argv) {
+	rocsDebug3("add_commandline_args(%i args)", argc);
 
 	// check the help
 	for (int word_index = 1; word_index <= argc; ++word_index) {
 		string current_word = argv[word_index];
-		//debug1("Current word:'%s'", current_word.c_str());
+		//rocsDebug1("Current word:'%s'", current_word.c_str());
 		int word_found = commandLineHelp.containsName(current_word);
-		//debug1("word_found :'%i'", word_found);
+		//rocsDebug1("word_found :'%i'", word_found);
 		if (word_found != -1) {
 			CommandLineHelp::OptionDescription op =
 					commandLineHelp.options.at(word_found);
-			debug1("Description:%s", op.description.c_str());
+			rocsDebug1("Description:%s", op.description.c_str());
 			if (!op.with_complement)
 				return;
 		}
@@ -91,26 +91,26 @@ void rocs::core::Configuration::addCommandlineArgs(int argc, char **argv) {
 	for (int word_index = 1; word_index <= argc; ++word_index) {
 		string current_word = argv[word_index];
 		string variable_name;
-		debug1("Current word:'%s'", current_word.c_str());
+		rocsDebug1("Current word:'%s'", current_word.c_str());
 
 		bool is_correct_variable_name = is_variable_name(current_word,
 				variable_name);
 
 		// if the current variable name is not conform, skip
 		if (!is_correct_variable_name) {
-			debug1("'%s' is not a correct variable name !", current_word.c_str());
+			rocsDebug1("'%s' is not a correct variable name !", current_word.c_str());
 			continue;
 		}
 
 		if (word_index >= argc) {
-			debug1("'%s' is a correct variable name, but the last argument!", current_word.c_str());
+			rocsDebug1("'%s' is a correct variable name, but the last argument!", current_word.c_str());
 			continue;
 		}
 
 		// adding the next value
 		++word_index;
 		string value = argv[word_index];
-		debug1("New value : '%s'='%s'", variable_name.c_str(), value.c_str());
+		rocsDebug1("New value : '%s'='%s'", variable_name.c_str(), value.c_str());
 
 		// add the variable
 		_tree.add(variable_name, value);
@@ -118,7 +118,7 @@ void rocs::core::Configuration::addCommandlineArgs(int argc, char **argv) {
 }
 
 void rocs::core::Configuration::addConfigFile(string filename) {
-	debug3("add_allowed_config_file('%s')", filename.c_str());
+	rocsDebug3("add_allowed_config_file('%s')", filename.c_str());
 	// read the new file in a new tree
 	ptree new_tree;
 	ConfigFileReader::readFileAndCheckIncludes(filename, &new_tree, true);

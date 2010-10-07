@@ -13,7 +13,7 @@
 #include <opencv/cxcore.hpp>
 
 // ROCS
-#include "rocs/core/Types.h"
+#include "rocs/core/types.h"
 
 namespace rocs {
 namespace math {

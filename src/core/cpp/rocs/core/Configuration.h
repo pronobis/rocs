@@ -48,8 +48,14 @@ class Configuration
 {
 public:
 
-	/*! Constructor */
+	/*! Default constructor. */
 	Configuration();
+
+	/*! Constructor, processes command line arguments. */
+	Configuration(int argc, char **argv)
+	{
+		addCommandLineArgs(argc, argv);
+	}
 
 	/*! Destructor. */
 	virtual ~Configuration();
@@ -61,7 +67,7 @@ public:
 	 * \param argc
 	 * \param argv
 	 */
-	void addCommandlineArgs(int argc, char **argv);
+	void addCommandLineArgs(int argc, char **argv);
 
 	void addConfigFile(std::string filename);
 

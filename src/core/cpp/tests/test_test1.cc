@@ -35,13 +35,13 @@
 BOOST_AUTO_TEST_CASE( case1 )
 {
 	BOOST_CHECK( 0 == 0 );
-	BOOST_REQUIRE(0 == 0);
+	BOOST_REQUIRE( 0 == 0 );
 }
 
 /*! Define second test case. */
 BOOST_AUTO_TEST_CASE( case2 )
 {
-	BOOST_CHECK( 0 == 1 );
-	BOOST_REQUIRE(0 == 1);
+	BOOST_CHECK( 1 == 1 );
+	BOOST_REQUIRE( 1 == 1 );
 }
 

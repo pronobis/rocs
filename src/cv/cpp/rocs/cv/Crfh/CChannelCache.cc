@@ -42,7 +42,7 @@ const Matrix_<double> *CChannelCache::getChannel(ChannelType channelType) const 
 		if (_channelTypeList[i] == channelType)
 			return _channelList[i];
 
-	debug1("ERROR: No such channel!");
+	rocsDebug1("ERROR: No such channel!");
 	return 0;
 }
 

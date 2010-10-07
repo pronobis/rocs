@@ -22,7 +22,7 @@ using rocs::math::Matrix_;
 
 // -----------------------------------------
 CSystem::CSystem(string sysDef) {
-	debug3("CSystem::CSystem('%s')", sysDef.c_str());
+	rocsDebug3("CSystem::CSystem('%s')", sysDef.c_str());
 
 	// Exemplar string:
 	// Lxx(8,28)+Lxy(8,28)+Lyy(8,28)+Lxx(2,28)+Lxy(2,28)+Lyy(2,28)
@@ -48,7 +48,7 @@ CSystem::CSystem(string sysDef) {
 						- 1).c_str());
 		// bins = tokens[i].substr(comaPos + 1, bracket2Pos - comaPos - 1).toInt();
 
-		debug3("Name:%s, scale:%f, bins:%i", name.c_str(), scale, bins);
+		rocsDebug3("Name:%s, scale:%f, bins:%i", name.c_str(), scale, bins);
 
 		// Create descriptor
 		_descriptorList.addDescriptor(name, scale, bins);
@@ -57,7 +57,7 @@ CSystem::CSystem(string sysDef) {
 	// Create filters
 	_descriptorList.createAllRequiredFilters(_filterCache);
 
-	debug3("CSystem now initialized.");
+	rocsDebug3("CSystem now initialized.");
 }
 
 // -----------------------------------------
@@ -76,7 +76,7 @@ vector<Matrix_<double> *> CSystem::computeDescriptorOutputs(const Img &image) co
 
 // -----------------------------------------
 CCrfh *CSystem::computeHistogram(const Img &image, int skipBorderPixels) const {
-	debug3("computeHistogram('%s', %i)", image.infoString().c_str(), skipBorderPixels);
+	rocsDebug3("computeHistogram('%s', %i)", image.infoString().c_str(), skipBorderPixels);
 	vector<Matrix_<double> *> outputs = computeDescriptorOutputs(image);
 	CCrfh *crfh = new CCrfh(outputs, _descriptorList, skipBorderPixels);
 	for (unsigned int i = 0; i < outputs.size(); ++i)

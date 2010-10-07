@@ -10,6 +10,9 @@
 #ifndef TYPES_H_
 #define TYPES_H_
 
+#include <cmath>
+
+
 /* **** short defs from openCV */
 #define  CV_1F            0x3f800000
 #define CV_8U   0
@@ -90,6 +93,8 @@
 
 namespace rocs {
 namespace core {
+
+
 
 /*!
  *

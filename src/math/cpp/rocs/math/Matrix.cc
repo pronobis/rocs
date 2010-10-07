@@ -12,7 +12,7 @@ Matrix::~Matrix() {
 }
 
 void Matrix::copyTo(Matrix dst) const{
-	debug3("copyTo(%s, %s)", infoString().c_str(), dst.infoString().c_str());
+	rocsDebug3("copyTo(%s, %s)", infoString().c_str(), dst.infoString().c_str());
 
 	// TODO what if data types are not similar ?
 	assert(getDataType() == dst.getDataType());

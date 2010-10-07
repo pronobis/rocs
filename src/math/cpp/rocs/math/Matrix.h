@@ -12,7 +12,7 @@ namespace opencv = cv;
 #define MAT_DECOMP_CHOLESKY	DECOMP_CHOLESKY
 
 #include "rocs/math/ElemMath.h"
-#include "rocs/core/Types.h"
+#include "rocs/core/types.h"
 #include "rocs/core/error.h"
 #include "rocs/core/debug.h"
 
@@ -125,7 +125,7 @@ public:
 	 */
 	inline void dbgAssertRangeCheck(const int row, const int col) const {
 		//debugPrintf_lvl3("dbgAssertRangeCheck(%i, %i)", row, col);
-		debugAssertion( row >= 0 && row < nbRows() && col >=0 && col < nbCols());
+		rocsDebugAssert( row >= 0 && row < nbRows() && col >=0 && col < nbCols());
 	}
 
 	/*!
@@ -179,7 +179,7 @@ public:
 
 	template<typename _Tsrc, typename _Tdst>
 	void copyTo_(Matrix dst) {
-		debug3("copyTo_(%s, %s)", infoString().c_str(), dst.infoString().c_str());
+		rocsDebug3("copyTo_(%s, %s)", infoString().c_str(), dst.infoString().c_str());
 
 		/* resize if needed */
 		if (dst.nbCols() != nbCols() || dst.nbRows() != nbRows()) {
@@ -190,7 +190,7 @@ public:
 			//					nbRows(), nbCols(), dst.nbRows(), dst.nbCols());
 			//			Error (-1, msg);
 			// bug - resize not working
-			debug3("Resizing the target to %ix%i", nbRows(), nbCols());
+			rocsDebug3("Resizing the target to %ix%i", nbRows(), nbCols());
 			dst.resize(nbRows(), nbCols());
 		}
 
@@ -243,9 +243,9 @@ public:
 
 	/*! Resizes the matrix if the current size if different than given. */
 	inline void resize(int rows, int cols) {
-		debug3("resize(%ix%i)", rows, cols);
+		rocsDebug3("resize(%ix%i)", rows, cols);
 		asOpenCvMat()->create(rows, cols, getDataType());
-		debug3("new format(%s)", infoString().c_str());
+		rocsDebug3("new format(%s)", infoString().c_str());
 	}
 
 	/* sub matrices */
@@ -295,7 +295,7 @@ public:
 	 */
 	template<typename _T>
 	void convolveWith(const Matrix &m) {
-		debug3("convolveWith(m:%s)", m.infoString().c_str());
+		rocsDebug3("convolveWith(m:%s)", m.infoString().c_str());
 
 		/* Do noting for empty matrices or kernels */
 		if ((isEmpty()) || (m.isEmpty()))
@@ -365,7 +365,7 @@ public:
 	 */
 	template<typename _T>
 	static Matrix *convolve(const Matrix &mA, const Matrix &mB, Matrix *mC = 0) {
-		debug3("convolve(mA:%s, mB:%s)", mA.infoString().c_str(), mB.infoString().c_str() );
+		rocsDebug3("convolve(mA:%s, mB:%s)", mA.infoString().c_str(), mB.infoString().c_str() );
 		// Do noting for empty matrices
 		if (mA.isEmpty() || mB.isEmpty())
 			return mC;
@@ -384,13 +384,13 @@ public:
 		// Create the resulting matrix
 		if (mC) {
 			if (mC->nbCols() == mACols && mC->nbRows() == mARows) {
-				debug3("mC of the good size.");
+				rocsDebug3("mC of the good size.");
 			} else {
-				debug3("resizing mC...");
+				rocsDebug3("resizing mC...");
 				mC->resize(mARows, mACols);
 			}
 		} else { //mC = null
-			debug3("Creating mC...");
+			rocsDebug3("Creating mC...");
 			//int data_type  = mA.getDataType();
 			mC = new Matrix(mARows, mACols, mA.getDataType());
 		}
@@ -423,7 +423,7 @@ public:
 		//		debugPrint_lvl3("deleting mC...");
 		//		delete mC;
 
-		debug3("convolve() finished");
+		rocsDebug3("convolve() finished");
 		return mC;
 	}
 
@@ -463,7 +463,7 @@ private:
 	template<typename _T>
 	inline Matrix* plus(const Matrix &m) const {
 		// size check
-		debugAssertion( (nbCols() == m.nbCols() && nbRows() == m.nbRows()) );
+		rocsDebugAssert( (nbCols() == m.nbCols() && nbRows() == m.nbRows()) );
 
 		Matrix* ans = new Matrix(nbRows(), nbCols(), data_type);
 		/// check for every value
@@ -479,7 +479,7 @@ private:
 	template<typename _T>
 	inline Matrix* minus(const Matrix &m) const {
 		// size check
-		debugAssertion( (nbCols() == m.nbCols() && nbRows() == m.nbRows()) );
+		rocsDebugAssert( (nbCols() == m.nbCols() && nbRows() == m.nbRows()) );
 
 		Matrix* ans = new Matrix(nbRows(), nbCols(), data_type);
 		/// check for every value
@@ -495,7 +495,7 @@ private:
 	template<typename _T>
 	inline Matrix* times(const Matrix &m) const {
 		// size check
-		debugAssertion( nbCols() == m.nbRows() );
+		rocsDebugAssert( nbCols() == m.nbRows() );
 
 		Matrix* ans = new Matrix(nbRows(), nbCols(), data_type);
 		/// check for every value

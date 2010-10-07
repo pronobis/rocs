@@ -22,7 +22,7 @@ using namespace rocs::cv;
 #endif
 
 Img* ImageIO::load(std::string filename_in) {
-	debug3("load(%s)", filename_in.c_str());
+	rocsDebug3("load(%s)", filename_in.c_str());
 
 #if IO_METHOD == USE_OPEN_CV
 	/* load the image with OpenCV imread */
@@ -33,7 +33,7 @@ Img* ImageIO::load(std::string filename_in) {
 	Img* ans = new Img(opencv_img.rows, opencv_img.cols, MAT_8SC1);
 	//	debugPrintf_lvl3("ans:channels;%i, depth:%i", ans->channels(), ans->depth());
 	opencv_img.copyTo( *ans->asOpenCvMat());
-	debug3("ans after copy:channels;%i, depth:%i", ans->channels(), ans->depth());
+	rocsDebug3("ans after copy:channels;%i, depth:%i", ans->channels(), ans->depth());
 	return ans;
 
 #else //if IO_METHOD == USE_CIMG
