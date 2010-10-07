@@ -43,7 +43,7 @@ Matrix_<double> *CFilterCache::applyFilter(const CFilterInfo &filterInfo,
 
 	/* Find the filter */
 	CFilter *filter = 0;
-	for (uint i = 0; (i < _filterList.size()) && (!filter); ++i) {
+	for (unsigned int i = 0; (i < _filterList.size()) && (!filter); ++i) {
 		if (_filterList[i]->getFilterInfo() == filterInfo)
 			filter = _filterList[i];
 	}
