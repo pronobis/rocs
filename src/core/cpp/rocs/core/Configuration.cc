@@ -24,11 +24,20 @@
  * \file Configuration.cc
  */
 
-
 #include "Configuration.h"
 
 using namespace rocs::core;
 using namespace std;
+
+// cf http://www.boost.org/doc/libs/1_41_0/doc/html/boost_propertytree/parsers.html
+#define TYPE_UNKNOWN  -1
+#define TYPE_XML      1
+#define TYPE_JSON     2
+#define TYPE_INI      3
+#define TYPE_INFO     4
+
+// reference to the boost ptree
+//using boost::property_tree::ptree;
 
 
 // ---------------------------------------------
@@ -37,22 +46,21 @@ Configuration::Configuration()
 	clear();
 }
 
-
 // ---------------------------------------------
 Configuration::~Configuration()
 {
 	clear();
 }
 
-
 // ---------------------------------------------
-bool Configuration::isVariableName(const string& word, string& varName) const
+bool Configuration::isVariableName(const string& word, string& varName)
 {
 	if (word[0] != '-')
 		return false;
 
 	uint variable_name_begin_index = 0;
-	while (word[variable_name_begin_index] == '-') {
+	while (word[variable_name_begin_index] == '-')
+	{
 		++variable_name_begin_index;
 		if (variable_name_begin_index >= word.size())
 			return false;
@@ -61,21 +69,22 @@ bool Configuration::isVariableName(const string& word, string& varName) const
 	return true;
 }
 
-
 // ---------------------------------------------
 void Configuration::addCommandLineArgs(int argc, char const **argv)
 {
 	rocsDebug3("add_commandline_args(%i args)", argc);
 
 	// check the help
-	for (int word_index = 1; word_index <= argc; ++word_index) {
+	for (int word_index = 1; word_index <= argc; ++word_index)
+	{
 		string current_word = argv[word_index];
 		//rocsDebug1("Current word:'%s'", current_word.c_str());
 		int word_found = commandLineHelp.containsName(current_word);
 		//rocsDebug1("word_found :'%i'", word_found);
-		if (word_found != -1) {
-			CommandLineHelp::OptionDescription op =
-					commandLineHelp.options.at(word_found);
+		if (word_found != -1)
+		{
+			CommandLineHelp::OptionDescription op = commandLineHelp.options.at(
+					word_found);
 			rocsDebug1("Description:%s", op.description.c_str());
 			if (!op.with_complement)
 				return;
@@ -83,7 +92,8 @@ void Configuration::addCommandLineArgs(int argc, char const **argv)
 	}
 
 	// parse the tree
-	for (int word_index = 1; word_index <= argc; ++word_index) {
+	for (int word_index = 1; word_index <= argc; ++word_index)
+	{
 		string current_word = argv[word_index];
 		string variable_name;
 		rocsDebug1("Current word:'%s'", current_word.c_str());
@@ -92,20 +102,26 @@ void Configuration::addCommandLineArgs(int argc, char const **argv)
 				variable_name);
 
 		// if the current variable name is not conform, skip
-		if (!is_correct_variable_name) {
-			rocsDebug1("'%s' is not a correct variable name !", current_word.c_str());
+		if (!is_correct_variable_name)
+		{
+			rocsDebug1("'%s' is not a correct variable name !",
+					current_word.c_str());
 			continue;
 		}
 
-		if (word_index >= argc) {
-			rocsDebug1("'%s' is a correct variable name, but the last argument!", current_word.c_str());
+		if (word_index >= argc)
+		{
+			rocsDebug1(
+					"'%s' is a correct variable name, but the last argument!",
+					current_word.c_str());
 			continue;
 		}
 
 		// adding the next value
 		++word_index;
 		string value = argv[word_index];
-		rocsDebug1("New value : '%s'='%s'", variable_name.c_str(), value.c_str());
+		rocsDebug1("New value : '%s'='%s'", variable_name.c_str(),
+				value.c_str());
 
 		// add the variable
 		_tree.add(variable_name, value);
@@ -113,15 +129,257 @@ void Configuration::addCommandLineArgs(int argc, char const **argv)
 	} // end loop words
 }
 
-
 // ---------------------------------------------
 void rocs::core::Configuration::addConfigFile(string filename)
 {
 	rocsDebug3("add_allowed_config_file('%s')", filename.c_str());
 	// read the new file in a new tree
 	ptree new_tree;
-	ConfigFileReader::readFileAndCheckIncludes(filename, &new_tree, true);
+	readFileAndCheckIncludes(filename, &new_tree, true);
 	// add it to the root of our tree
 	_tree.insert(_tree.end(), new_tree.begin(), new_tree.end());
 }
 
+/*!
+ * guess the type of file according to the extension
+ * \param     filename the config filename
+ * \return    the guess type of file
+ */
+inline int guessType(std::string filename)
+{
+	size_t last_dot_pos = filename.find_last_of('.');
+	//	cout << "last_dot_pos:" << last_dot_pos << endl;
+	// if there is no dot in the filename, return unknown type
+	// TODO soemthing smarter ? (read the file and see if it starts with a tag ?
+	if (last_dot_pos == std::string::npos)
+		return TYPE_UNKNOWN;
+
+	// get the extension of the filename
+	std::string extension = filename.substr(last_dot_pos + 1);
+	//	cout << "extension:" << extension << endl;
+	if (extension == "xml")
+		return TYPE_XML;
+	else if (extension == "json" || extension == "jso" || extension == "jsn")
+		return TYPE_JSON;
+	else if (extension == "ini")
+		return TYPE_INI;
+	else if (extension == "info" || extension == "inf" || extension == "nfo")
+		return TYPE_INFO;
+	return TYPE_UNKNOWN;
+}
+
+void rocs::core::Configuration::checkIncludes(string relative_path, ptree* tree)
+{
+	//rocsDebug3("checkIncludes()");
+	const char* tag_to_find1 = "xi:include";
+	const char* tag_to_find2 = "<xmlattr>.href";
+
+	// if we allow the include tags, check if there are some
+	for (ptree::iterator son_iter = tree->begin(); son_iter != tree->end(); ++son_iter)
+	{
+		string son_node_name = son_iter->first;
+		//rocsDebug3("Son-node_name:'%s'", son_node_name.c_str());
+
+		boost::optional<ptree &> found_son =
+				son_iter->second.get_child_optional(tag_to_find2);
+		bool found_tag1 = (son_node_name == tag_to_find1);
+		bool found_tag2 = (found_son != NULL);
+		bool is_include = found_tag1 && found_tag2;
+		//debugPrintf_lvl2("found_tag1:%d, found_tag2:%d, is_include:%d", found_tag1, found_tag2, is_include);
+
+		if (is_include)
+		{
+			rocsDebug3("'%s' found !", tag_to_find2);
+			/*
+			 * get the filename
+			 */
+			ptree real_found_son = (*found_son);
+			string file_to_include = real_found_son.get_value("");
+			file_to_include = relative_path + file_to_include;
+			rocsDebug3("Including the file:'%s'", file_to_include.c_str());
+			/*
+			 * parse the file
+			 */
+			ptree pt;
+			readFileAndCheckIncludes(file_to_include, &pt, true);
+			/*
+			 * remove the node
+			 */
+			son_iter = tree->erase(son_iter);
+			//son_iter = tree->begin();
+			//tree->erase(son_iter);
+			/*
+			 * insert the created tree at this place
+			 */
+			// typedef basic_ptree<Key, Data, KeyCompare> self_type;
+			// typedef std::pair<const Key, self_type>      value_type;
+			// iterator insert(iterator where, const value_type &value);
+			//ptree::value_type vt("", pt);
+			//tree->insert(son_iter, vt);
+			tree->insert(son_iter, pt.begin(), pt.end());
+			son_iter--;
+		}
+		else
+			// node is not an include - check if it contains some includes
+			checkIncludes(relative_path, &(son_iter->second));
+	} // end loop on sons
+}
+
+void rocs::core::Configuration::readFfile(string filename, ptree* tree)
+{
+	rocsDebug3("read_file('%s')", filename.c_str());
+
+	// store the filename
+	//	this->filename = filename;
+
+	// guess the type of the file
+	int guessed_filetype = guessType(filename);
+
+	// read the file
+	switch (guessed_filetype)
+	{
+	case TYPE_XML:
+		read_xml(filename, *tree);
+		break;
+	case TYPE_JSON:
+		read_json(filename, *tree);
+		break;
+	case TYPE_INI:
+		read_ini(filename, *tree);
+		break;
+	case TYPE_INFO:
+		read_info(filename, *tree);
+		break;
+	case TYPE_UNKNOWN:
+	default:
+		rocsDebug1("Impossible to guess the config file type")
+		;
+		break;
+	}
+}
+
+void rocs::core::Configuration::removeXmlattr(ptree* tree)
+{
+	//rocsDebug3("removeXmlattr()");
+	//printTree(tree);
+
+	for (ptree::iterator son_iter = tree->begin(); son_iter != tree->end(); ++son_iter)
+	{
+		string son_node_name = son_iter->first;
+		ptree* son_tree = &son_iter->second;
+		//string node_value = son_tree.getValue("");
+		//rocsDebug3("node_name:'%s'", son_node_name.c_str());
+
+		if (son_node_name == "<xmlattr>")
+		{
+			rocsDebug3("<xmlattr> found !");
+			/* insert the sons */
+			for (ptree::iterator sonson = son_tree->begin(); sonson
+					!= son_tree->end(); ++sonson)
+			{
+				son_iter = tree->insert(son_iter, *sonson);
+				son_iter++;
+				//rocsDebug3("node_name:'%s'", node_name.c_str());
+			} // end loop sons
+
+			/* remove the node */
+			son_iter = tree->erase(son_iter);
+			son_iter--;
+		}
+		else
+			removeXmlattr(son_tree);
+	}
+}
+
+void rocs::core::Configuration::readFileAndCheckIncludes(string filename,
+		ptree* tree, bool include_allowed)
+{
+	rocsDebug3("read_file_and_check_includes('%s') - tree version",
+			filename.c_str());
+	/*
+	 * parsing
+	 */
+	readFfile(filename, tree);
+	/*
+	 * taking care of the includes
+	 */
+	if (include_allowed)
+	{
+		// get the relative path
+		string relative_path = "./";
+		size_t last_slash_pos = filename.find_last_of('/');
+		if (last_slash_pos != string::npos)
+			relative_path = filename.substr(0, last_slash_pos + 1);
+		rocsDebug3("relative_path:'%s'", relative_path.c_str());
+		rocsDebug3("check_includes()");
+		checkIncludes(relative_path, tree);
+	}
+	/*
+	 * remove the <xmlattr>
+	 */
+	rocsDebug3("remove_xmlattr()");
+	removeXmlattr(tree);
+}
+
+//void rocs::core::Configuration::readFileAndCheckIncludes(
+//		string filename, bool include_allowed /*= true*/) {
+//	rocsDebug3("readFileAndCheckIncludes('%s')", filename.c_str());
+//	readFileAndCheckIncludes(filename, &pt, include_allowed);
+//}
+
+void rocs::core::Configuration::printPtreeRec(ptree* tree, int depth)
+{
+	++depth;
+	for (ptree::iterator son_iter = tree->begin(); son_iter != tree->end(); ++son_iter)
+	{
+		string son_node_name = son_iter->first;
+		ptree son_tree = son_iter->second;
+		string son_node_value = son_tree.get_value("");
+		//cout << "second:" << typeid(i->second).name() << endl;
+		for (int var = 0; var < depth; ++var)
+			cout << ". ";
+		cout << "Node: '" << son_node_name;
+		cout << "' = '" << son_node_value << "'";
+		int nb_sons = son_tree.size();
+		if (nb_sons > 0)
+			cout << "(" << nb_sons << " sons)";
+		cout << endl;
+		printPtreeRec(&son_tree, depth);
+	}
+}
+
+/* template specifications */
+// string
+template<>
+string rocs::core::Configuration::getValue<string>(ptree* tree, string path,
+		string default_value, bool& was_found)
+{
+	rocsDebug3("getValue<string>('%s')", path.c_str());
+	string return_value = getValueAsString(tree, path, was_found);
+	return (was_found ? return_value : default_value);
+}
+// int
+template<>
+int rocs::core::Configuration::getValue<int>(ptree* tree, string path,
+		int default_value, bool& was_found)
+{
+	rocsDebug3("getValue<int>('%s')", path.c_str());
+	string return_value = getValueAsString(tree, path, was_found);
+	return (was_found ? atoi(return_value.c_str()) : default_value);
+}
+// double
+template<>
+double rocs::core::Configuration::getValue<double>(ptree* tree, string path,
+		double default_value, bool& was_found)
+{
+	rocsDebug3("getValue<double>('%s')", path.c_str());
+	string return_value = getValueAsString(tree, path, was_found);
+	return (was_found ? atof(return_value.c_str()) : default_value);
+}
+
+void rocs::core::Configuration::printTree(ptree* tree)
+{
+	cout << "<root>";
+	cout << " (" << tree->size() << " sons)" << endl;
+	printPtreeRec(tree, 0);
+}
