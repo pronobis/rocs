@@ -34,10 +34,19 @@
 using namespace rocs::core;
 
 
-/*! Define first test case. */
-BOOST_AUTO_TEST_CASE( case1 )
+/*!
+ * Case 1
+ * Testing command line argument parsing.
+ */
+BOOST_AUTO_TEST_CASE( command_line_args )
 {
-	Configuration c;
+	int argc = 1;
+	char *argv[] = {"ala.ma.kota", "1"};
+	// Testing
+	Configuration config(argc, argv);
+	printf("\ntree:\n");
+	config.printConfiguration();
+	rocsError("asdasd");
 
 	/*BOOST_CHECK( 0 == 0 );
 	BOOST_REQUIRE( 0 == 0 );*/

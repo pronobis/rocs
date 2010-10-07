@@ -65,6 +65,10 @@ include(ROCSDeps)
 # Finding external dependencies
 include(ROCSExtDeps)
 
+# Debug level
+set(ROCS_DEBUG_LEVEL 0 CACHE PATH "Debug level used by ROCS (0-3).")
+ADD_DEFINITIONS(-DROCS_DEBUG_LEVEL=${ROCS_DEBUG_LEVEL})
+
 
 # ------------------------------------------------------------------
 # Subprojects

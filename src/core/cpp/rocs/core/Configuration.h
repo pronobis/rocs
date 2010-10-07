@@ -60,7 +60,6 @@ public:
 	/*! Destructor. */
 	virtual ~Configuration();
 
-	CommandLineHelp commandLineHelp;
 
 	/*!
 	 * Add the manually specified command line args
@@ -95,6 +94,11 @@ public:
 		ConfigFileReader::getValueList<_T>(&_tree, path, key, nb_found, ans);
 	}
 
+	void printConfiguration()
+	{
+		rocs::core::ConfigFileReader::printTree(&_tree);
+	}
+
 
 private:
 
@@ -106,6 +110,8 @@ private:
 
 
 private:
+
+	CommandLineHelp commandLineHelp;
 
 	/** The property tree. */
 	ptree _tree;

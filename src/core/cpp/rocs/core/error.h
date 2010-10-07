@@ -108,11 +108,9 @@ public:
 };
 
 
-/*!
- * Stringified __LINE__
- */
+/*! Convertion to string. */
 #define ROCS_ERROR_STRINGIFY(x) #x
-#define __ROCS_ERROR_LINE_STR__ ROCS_ERROR_STRINGIFY(__LINE__)
+#define ROCS_ERROR_TO_STRING(x) ROCS_ERROR_STRINGIFY(x)
 
 
 /*!
@@ -120,9 +118,9 @@ public:
  * Accepts message in the printf like fashion.
  */
 #ifdef __GNUC__
-	#define __HERE__ 	"a" //__func__ "@" __FILE__ ":" __ERROR_LINE_STR__
+	#define __HERE__ 	std::string(__PRETTY_FUNCTION__)+"@"+__FILE__+":"+ROCS_ERROR_TO_STRING(__LINE__)
 #else
-	#define __HERE__	__FILE__ ":" __ROCS_ERROR_LINE_STR__
+	#define __HERE__	std::string(__FILE__)+":"+ROCS_ERROR_TO_STRING(__LINE__)
 #endif
 
 

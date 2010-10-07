@@ -42,22 +42,24 @@ namespace core {
 
 /*! Stringified __LINE__ */
 #define ROCS_DEBUG_STRINGIFY(x) #x
-#define __ROCS_DEBUG_LINE_STR__ ROCS_DEBUG_STRINGIFY(__LINE__)
+#define ROCS_DEBUG_TO_STRING(x) ROCS_DEBUG_STRINGIFY(x)
 
 /*!
  * The primitive macro for debugging.
  * Accepts message in the printf like fashion.
  */
-#define ROCS_DEBUG(...) \
-	printf("[" __FILE__ ":" __ROCS_DEBUG_LINE_STR__ "] " __VA_ARGS__); \
-	printf("\n");
+#define ROCS_DEBUG(...) { \
+	printf("[" __FILE__ ":" ROCS_DEBUG_TO_STRING(__LINE__) "] " __VA_ARGS__); \
+	printf("\n"); \
+}
 
 /*!
  * Debugging macro including debug level. Prints out
  * debug messages when ROCS_DEBUG_LEVEL is > 0.
  */
-#define rocsDebug( level, ... ) \
-	if ( ROCS_DEBUG_LEVEL >= level ) ROCS_DEBUG(__VA_ARGS__)
+#define rocsDebug( level, ... ) { \
+	if ( ROCS_DEBUG_LEVEL >= level ) ROCS_DEBUG(__VA_ARGS__) \
+}
 
 /*!
  *  Define debug() for each level of verbosity.
