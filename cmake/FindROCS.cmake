@@ -31,13 +31,15 @@
 # Sets the following variables:
 # ROCS_FOUND - When false, ROCS could not be found.
 # ROCS_DIR - Path to the directory where ROCS is installed.
+# ROCS_LIBRARY_DIR
+# ROCS_INCLUDE_DIR
 # ------------------------------------------------------------------
 
 
 # Check if this script is executed from within ROCS source tree.
 if(NOT INSIDE_ROCS)
 	find_path(ROCS_DIR
-		NAMES include/RCore/global.h
+		NAMES include/rocs/core/error.h
 		PATHS $ENV{ROCS_DIR}
 			/opt/rocs
 			/usr/local/rocs
@@ -50,26 +52,13 @@ if(NOT INSIDE_ROCS)
 
 	if(ROCS_DIR)
 		set(ROCS_FOUND "YES")
+		set(ROCS_LIBRARY_DIR ${ROCS_DIR}/lib)
+		set(ROCS_INCLUDE_DIR ${ROCS_DIR}/include)
 	else(ROCS_DIR)
   		message("The ROCS installation directory was not found.")
                 message("Try to set the ROCS_DIR environment variable.")
   		set(ROCS_DIR "" CACHE PATH "Path to the ROCS installation directory." )
 	endif(ROCS_DIR)
-
-	# Replacement for the macro in ROCSMacros.cmake when not built inside ROCS
-	macro(add_rocs_cpp_test_app _NAME_ _SOURCES_VAR_)
-		# Get sources
-		set(_SOURCES_ "")
-		foreach(I ${${_SOURCES_VAR_}})
-			set(_SOURCES_ "${I}" ${_SOURCES_})
-		endforeach(I)
-
-		# Add target
-		add_executable(${_NAME_} ${_SOURCES_})
-
-		# Install
-		install(TARGETS ${_NAME_} RUNTIME DESTINATION .)
-	endmacro(add_rocs_cpp_test_app)
 else(NOT INSIDE_ROCS)
 	set(ROCS_FOUND "YES")
 endif(NOT INSIDE_ROCS)
