@@ -75,13 +75,14 @@ BOOST_AUTO_TEST_CASE( command_line_args_list1 )
 	// Let configuration parse the arguments
 	Configuration config(argc, argv);
 	vector<int> values;
-	config.getValueList("list", "key", values);
+	int nbFound;
+	config.getValueList("list", "key", nbFound, values);
 
 	// Print the configuration
 	config.printConfiguration();
 
 	// Check the output
-	BOOST_REQUIRE( values.size() == 2 );
+	BOOST_REQUIRE( nbFound == 2 );
 	BOOST_REQUIRE( values[0] == 1 );
 	BOOST_REQUIRE( values[1] == 2 );
 }
@@ -100,13 +101,14 @@ BOOST_AUTO_TEST_CASE( command_line_args_list2 )
 	// Let configuration parse the arguments
 	Configuration config(argc, argv);
 	vector<int> values;
-	config.getValueList("list", "key", values);
+	int nbFound;
+	config.getValueList("list", "key", nbFound, values);
 
 	// Print the configuration
 	config.printConfiguration();
 
 	// Check the output
-	BOOST_REQUIRE( values.size() == 3 );
+	BOOST_REQUIRE( nbFound == 3 );
 	BOOST_REQUIRE( values[0] == 1 );
 	BOOST_REQUIRE( values[1] == 2 );
 	BOOST_REQUIRE( values[2] == 4 );

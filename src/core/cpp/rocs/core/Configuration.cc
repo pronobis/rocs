@@ -327,13 +327,14 @@ void rocs::core::Configuration::readFileAndCheckIncludes(string filename,
 //	readFileAndCheckIncludes(filename, &pt, include_allowed);
 //}
 
-void rocs::core::Configuration::printPtreeRec(ptree* tree, int depth)
+void rocs::core::Configuration::printPtreeRec(const ptree* tree, int depth)
 {
 	++depth;
-	for (ptree::iterator son_iter = tree->begin(); son_iter != tree->end(); ++son_iter)
+	for (ptree::const_iterator son_iter = tree->begin(); son_iter
+			!= tree->end(); ++son_iter)
 	{
 		string son_node_name = son_iter->first;
-		ptree son_tree = son_iter->second;
+		const ptree son_tree = son_iter->second;
 		string son_node_value = son_tree.get_value("");
 		//cout << "second:" << typeid(i->second).name() << endl;
 		for (int var = 0; var < depth; ++var)
@@ -348,11 +349,145 @@ void rocs::core::Configuration::printPtreeRec(ptree* tree, int depth)
 	}
 }
 
+void rocs::core::Configuration::printTree(const ptree* tree)
+{
+	cout << "<root>";
+	cout << " (" << tree->size() << " sons)" << endl;
+	printPtreeRec(tree, 0);
+}
+
+std::string rocs::core::Configuration::getValueAsString(const ptree* tree,
+		const std::string path, bool& was_found)
+{
+	rocsDebug3("getValueAsString('%s')", path.c_str());
+	was_found = false;
+	bool search_for_son_value = false;
+	std::string key_to_search, son_key_to_search;
+
+	if (path == "")
+	{
+		rocsDebug3("Returning the value of the current tree.");
+		was_found = true;
+		return tree->get_value("");
+	}
+
+	/* determine the key to search */
+	size_t dot_position = path.find_first_of('.');
+	if (dot_position == std::string::npos)
+	{
+		// there is no dot in the path -> last step, find the good son
+		search_for_son_value = true;
+		key_to_search = path;
+	}
+	else
+	{
+		search_for_son_value = false;
+		key_to_search = path.substr(0, dot_position);
+		son_key_to_search = path.substr(dot_position + 1);
+	}
+	rocsDebug2("Searching the key '%s' in the sons...",
+			key_to_search.c_str());
+
+	/* serarch it */
+	// backwards search
+	for (ptree::const_reverse_iterator son_iter = tree->rbegin(); son_iter
+			!= tree->rend(); ++son_iter)
+	{
+		std::string son_node_name = son_iter->first;
+		ptree son_tree = son_iter->second;
+		std::string son_node_value = son_tree.get_value("");
+		rocsDebug3("Node:'%s' = '%s'", son_node_name.c_str(),
+				son_node_value.c_str());
+
+		if (son_node_name == key_to_search)
+		{
+			// we found the key
+			if (search_for_son_value)
+			{
+				was_found = true;
+				return son_node_value;
+			}
+			else
+				return getValueAsString(&son_tree, son_key_to_search, was_found);
+		}
+	} // end loop sons
+
+	// we didin't find the key in the sons
+	rocsDebug1("Couldn't find the key '%s' in the sons !",
+			key_to_search.c_str());
+	return "";
+}
+
+void rocs::core::Configuration::getChildren(const ptree* tree,
+		const std::string path, int& nb_found, std::vector<ptree>* answer)
+{
+	nb_found = 0;
+	rocsDebug3("get_children(path:'%s')", path.c_str());
+
+	if (path == "")
+	{ // we need to return these nodes
+		rocsDebug1(
+				"Searched path is empty, meaning we want the sons ! Returning the %i sons.",
+				(int) tree->size());
+		//printTree(tree);
+		answer->clear();
+		nb_found = 0;
+		for (ptree::const_iterator son_iter = tree->begin(); son_iter
+				!= tree->end(); ++son_iter)
+		{
+			ptree sonTree = son_iter->second;
+			//rocsDebug3("pushing back :");
+			//printTree(&sonTree);
+			answer->push_back(sonTree);
+			++nb_found;
+		} // end loop sons
+		return;
+	} // end path empty
+
+	/* determine the key to search */
+	std::string key_to_search, son_key_to_search;
+	size_t dot_position = path.find_first_of('.');
+	if (dot_position == std::string::npos)
+	{
+		key_to_search = path;
+		son_key_to_search = "";
+	}
+	else
+	{
+		key_to_search = path.substr(0, dot_position);
+		son_key_to_search = path.substr(dot_position + 1);
+	}
+	rocsDebug2("Searching the key '%s' in the sons...",
+			key_to_search.c_str());
+
+	/* serarch it */
+	// backwards search
+	for (ptree::const_reverse_iterator son_iter = tree->rbegin(); son_iter
+			!= tree->rend(); ++son_iter)
+	{
+		std::string son_node_name = son_iter->first;
+		ptree son_tree = son_iter->second;
+		std::string son_node_value = son_tree.get_value("");
+		rocsDebug3("Node:'%s' = '%s'", son_node_name.c_str(),
+				son_node_value.c_str());
+
+		if (son_node_name == key_to_search)
+		{
+			getChildren(&son_tree, son_key_to_search, nb_found, answer);
+			return;
+		}
+	} // end loop sons
+
+	// we didin't find the key in the sons
+	rocsDebug1("Couldn't find the key '%s' in the sons !",
+			key_to_search.c_str());
+}
+
 /* template specifications */
 // string
 template<>
-string rocs::core::Configuration::getValue<string>(ptree* tree, string path,
-		string default_value, bool& was_found)
+string rocs::core::Configuration::getValue<string>(const ptree* tree,
+		const string path, const string default_value, bool& was_found)
 {
 	rocsDebug3("getValue<string>('%s')", path.c_str());
 	string return_value = getValueAsString(tree, path, was_found);
@@ -360,8 +495,8 @@ string rocs::core::Configuration::getValue<string>(ptree* tree, string path,
 }
 // int
 template<>
-int rocs::core::Configuration::getValue<int>(ptree* tree, string path,
-		int default_value, bool& was_found)
+int rocs::core::Configuration::getValue<int>(const ptree* tree,
+		const string path, const int default_value, bool& was_found)
 {
 	rocsDebug3("getValue<int>('%s')", path.c_str());
 	string return_value = getValueAsString(tree, path, was_found);
@@ -369,17 +504,10 @@ int rocs::core::Configuration::getValue<int>(ptree* tree, string path,
 }
 // double
 template<>
-double rocs::core::Configuration::getValue<double>(ptree* tree, string path,
-		double default_value, bool& was_found)
+double rocs::core::Configuration::getValue<double>(const ptree* tree,
+		const string path, const double default_value, bool& was_found)
 {
 	rocsDebug3("getValue<double>('%s')", path.c_str());
 	string return_value = getValueAsString(tree, path, was_found);
 	return (was_found ? atof(return_value.c_str()) : default_value);
-}
-
-void rocs::core::Configuration::printTree(ptree* tree)
-{
-	cout << "<root>";
-	cout << " (" << tree->size() << " sons)" << endl;
-	printPtreeRec(tree, 0);
 }
