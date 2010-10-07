@@ -113,13 +113,13 @@ macro(add_rocs_cpp_test_suite)
 		# Full test suite name
 		set(_TEST_TARGET_ "test_${MODULE_NAME}_${ARG_NAME}") 
 
-		# Special definitions used by Boost 
-		add_definitions("-DBOOST_TEST_DYN_LINK" "-DBOOST_TEST_MODULE=${_TEST_TARGET_}")   
-
 		# Add target for the test
 		add_executable(${_TEST_TARGET_} cpp/tests/${ARG_NAME}.cc)
 		target_link_libraries(${_TEST_TARGET_} boost_unit_test_framework)
 		target_link_libraries(${_TEST_TARGET_} rocs_${MODULE_NAME})
+
+		# Special definitions used by Boost 
+		set_property(TARGET ${_TEST_TARGET_} PROPERTY COMPILE_DEFINITIONS "BOOST_TEST_DYN_LINK" "BOOST_TEST_MODULE=${_TEST_TARGET_}")   
 
 		# Say where it should be built
 		set_target_properties(${_TEST_TARGET_} PROPERTIES
