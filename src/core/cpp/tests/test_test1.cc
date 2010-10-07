@@ -23,7 +23,7 @@
  * For more information see:
  * http://www.boost.org/doc/libs/1_44_0/libs/test/doc/html/utf/user-guide.html
  * \author Andrzej Pronobis
- * \file test1.cc
+ * \file test_test1.cc
  */
 
 // Boost

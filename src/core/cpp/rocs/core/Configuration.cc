@@ -45,16 +45,8 @@ Configuration::~Configuration()
 }
 
 
-/*!
- * determine if a string corresponds to a variable name, that is starts with "-" or "--"
- *
- * \param     word
- *              the string to analyze
- * \param     ans
- *              the cleaned name of the variable, if it was a variable
- * \return
- */
-static inline bool is_variable_name(string& word, string& ans)
+// ---------------------------------------------
+bool Configuration::isVariableName(const string& word, string& varName) const
 {
 	if (word[0] != '-')
 		return false;
@@ -65,11 +57,14 @@ static inline bool is_variable_name(string& word, string& ans)
 		if (variable_name_begin_index >= word.size())
 			return false;
 	}
-	ans = word.substr(variable_name_begin_index);
+	varName = word.substr(variable_name_begin_index);
 	return true;
 }
 
-void rocs::core::Configuration::addCommandLineArgs(int argc, char **argv) {
+
+// ---------------------------------------------
+void Configuration::addCommandLineArgs(int argc, char const **argv)
+{
 	rocsDebug3("add_commandline_args(%i args)", argc);
 
 	// check the help
@@ -93,7 +88,7 @@ void rocs::core::Configuration::addCommandLineArgs(int argc, char **argv) {
 		string variable_name;
 		rocsDebug1("Current word:'%s'", current_word.c_str());
 
-		bool is_correct_variable_name = is_variable_name(current_word,
+		bool is_correct_variable_name = isVariableName(current_word,
 				variable_name);
 
 		// if the current variable name is not conform, skip
@@ -117,13 +112,15 @@ void rocs::core::Configuration::addCommandLineArgs(int argc, char **argv) {
 	} // end loop words
 }
 
-void rocs::core::Configuration::addConfigFile(string filename) {
+
+// ---------------------------------------------
+void rocs::core::Configuration::addConfigFile(string filename)
+{
 	rocsDebug3("add_allowed_config_file('%s')", filename.c_str());
 	// read the new file in a new tree
 	ptree new_tree;
 	ConfigFileReader::readFileAndCheckIncludes(filename, &new_tree, true);
 	// add it to the root of our tree
 	_tree.insert(_tree.end(), new_tree.begin(), new_tree.end());
-
-	ConfigFileReader::printTree(&_tree);
 }
+

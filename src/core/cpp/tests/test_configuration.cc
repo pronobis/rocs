@@ -21,34 +21,96 @@
 /*!
  * Configuration test suite.
  * \author Andrzej Pronobis
- * \file configuration.cc
+ * \file test_configuration.cc
  */
 
 // Set debug level
 #define ROCS_DEBUG_LEVEL 3
 
-// Boost
+
+// Boost & Stl
+#include <vector>
 #include <boost/test/unit_test.hpp>
 // ROCS
 #include <rocs/core/Configuration.h>
+
 using namespace rocs::core;
+using namespace std;
 
 
 /*!
  * Case 1
- * Testing command line argument parsing.
+ * Testing command line argument parsing for single keys.
  */
-BOOST_AUTO_TEST_CASE( command_line_args )
+BOOST_AUTO_TEST_CASE( command_line_args_single )
 {
-	int argc = 1;
-	char *argv[] = {"ala.ma.kota", "1"};
-	// Testing
-	Configuration config(argc, argv);
-	printf("\ntree:\n");
-	config.printConfiguration();
-	rocsError("asdasd");
+	// Define some arguments
+	int argc = 2;
+	char const *argv[] = {"test", "--one.two.three", "1"};
 
-	/*BOOST_CHECK( 0 == 0 );
-	BOOST_REQUIRE( 0 == 0 );*/
+	// Let configuration parse the arguments
+	Configuration config(argc, argv);
+	bool wasFound;
+	int value1 = config.getValue("one.two.three", 2, wasFound);
+	int value2 = config.getValue("one.two.three", 2);
+
+	// Print the configuration
+	config.printConfiguration();
+
+	// Check the output
+	BOOST_REQUIRE( wasFound );
+	BOOST_REQUIRE( value1 == 1 );
+	BOOST_REQUIRE( value2 == 1 );
+}
+
+
+/*!
+ * Case 2
+ * Testing command line argument parsing for lists.
+ */
+BOOST_AUTO_TEST_CASE( command_line_args_list1 )
+{
+	// Define some arguments
+	int argc = 4;
+	char const *argv[] = {"test", "--list.item1.key", "1", "--list.item2.key", "2"};
+
+	// Let configuration parse the arguments
+	Configuration config(argc, argv);
+	vector<int> values;
+	config.getValueList("list", "key", values);
+
+	// Print the configuration
+	config.printConfiguration();
+
+	// Check the output
+	BOOST_REQUIRE( values.size() == 2 );
+	BOOST_REQUIRE( values[0] == 1 );
+	BOOST_REQUIRE( values[1] == 2 );
+}
+
+
+
+/*!
+ * Case 2
+ * Testing command line argument parsing for lists.
+ */
+BOOST_AUTO_TEST_CASE( command_line_args_list2 )
+{
+	// Define some arguments
+	int argc = 4;
+	char const *argv[] = {"test", "--list.item.key", "1", "--list.item.key", "2"};
+
+	// Let configuration parse the arguments
+	Configuration config(argc, argv);
+	vector<int> values;
+	config.getValueList("list", "key", values);
+
+	// Print the configuration
+	config.printConfiguration();
+
+	// Check the output
+	BOOST_REQUIRE( values.size() == 2 );
+	BOOST_REQUIRE( values[0] == 1 );
+	BOOST_REQUIRE( values[1] == 2 );
 }
 

@@ -52,7 +52,7 @@ public:
 	Configuration();
 
 	/*! Constructor, processes command line arguments. */
-	Configuration(int argc, char **argv)
+	Configuration(int argc, char const **argv)
 	{
 		addCommandLineArgs(argc, argv);
 	}
@@ -60,15 +60,18 @@ public:
 	/*! Destructor. */
 	virtual ~Configuration();
 
+	/*!
+	 * Add command line arguments to be processed.
+	 * \param argc	Number of arguments
+	 * \param argv	Arrays of arguments. The first argument is ignored.
+	 */
+	void addCommandLineArgs(int argc, char const **argv);
 
 	/*!
-	 * Add the manually specified command line args
-	 * \param argc
-	 * \param argv
+	 * Adds a single config file.
+	 * \param fileName	Full path to the file.
 	 */
-	void addCommandLineArgs(int argc, char **argv);
-
-	void addConfigFile(std::string filename);
+	void addConfigFile(std::string fileName);
 
 	inline void addConfigFile(std::vector<std::string>::iterator first,
 			std::vector<std::string>::iterator last)
@@ -77,23 +80,45 @@ public:
 			addConfigFile(*it);
 	}
 
+	/*!
+	 *
+	 */
 	template<class _T>
 	_T getValue(std::string path, _T default_value, bool& was_found)
 	{
 		return ConfigFileReader::getValue<_T>(&_tree, path, default_value, was_found);
 	}
 
+	/*!
+	 *
+	 */
+	template<class _T>
+	_T getValue(std::string path, _T default_value)
+	{
+		bool wasFound;
+		return getValue<_T>(path, default_value, wasFound);
+	}
+
+	/*!
+	 *
+	 */
 	void getChildren(std::string path, int& nb_found, std::vector<ptree>* answer)
 	{
 		ConfigFileReader::getChildren(&_tree, path, nb_found, answer);
 	}
 
+	/*!
+	 *
+	 */
 	template<class _T>
-	void getValueList(std::string path, std::string key, int& nb_found, std::vector<_T>* ans)
+	void getValueList(std::string path, std::string key, std::vector<_T>& ans)
 	{
-		ConfigFileReader::getValueList<_T>(&_tree, path, key, nb_found, ans);
+		ConfigFileReader::getValueList<_T>(&_tree, path, key, ans);
 	}
 
+	/*!
+	 * Prints the the whole configuration loaded.
+	 */
 	void printConfiguration()
 	{
 		rocs::core::ConfigFileReader::printTree(&_tree);
@@ -107,6 +132,15 @@ private:
 	{
 		_tree.clear();
 	}
+
+	/*!
+	 * Determine if a string corresponds to a variable name,
+	 * that is starts with "-" or "--".
+	 * \param word		The string to analyze.
+	 * \param varName	The cleaned name of the variable, if it was a variable.
+	 * \return			True if valid variable name.
+	 */
+	bool isVariableName(const std::string& word, std::string& varName) const;
 
 
 private:

@@ -262,11 +262,10 @@ public:
 	 */
 	template<class _T>
 	static void getValueList(ptree* tree, std::string path, std::string key,
-			int& nb_found, std::vector<_T>* ans) {
+				std::vector<_T>& ans) {
 		rocsDebug3("get_children(path:'%s', key:'%s')", path.c_str(), key.c_str());
 
-		ans->clear();
-		nb_found = 0;
+		ans.clear();
 
 		// get the wanted sons
 		int nb_sons;
@@ -285,8 +284,7 @@ public:
 				//				ostringstream msg;
 				//				msg << "value found:" << value;
 				//				debugPrint_lvl3(msg.str().c_str());
-				++nb_found;
-				ans->push_back(value);
+				ans.push_back(value);
 			}
 		}
 	}
