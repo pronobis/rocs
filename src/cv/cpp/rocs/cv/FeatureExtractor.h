@@ -5,6 +5,11 @@
 #ifndef FEATUREEXTRACTOR_H_
 #define FEATUREEXTRACTOR_H_
 
+// STD includes
+#include <string>
+using std::string;
+
+
 /*!
  * a pure virtual class
  */

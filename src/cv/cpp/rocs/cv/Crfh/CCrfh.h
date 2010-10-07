@@ -7,12 +7,15 @@
 #ifndef CCRFH_H_
 #define CCRFH_H_
 
+// STD includes
 #include <vector>
 using std::vector;
 #include <sstream>
 using std::ostream;
 #include <map>
 using std::map;
+
+// type declaration
 typedef std::map<int, double> MapType;
 
 namespace rocs {
@@ -28,10 +31,11 @@ class CDescriptorList;
 /*!
  * Node of a libsvm sparse vector.
  */
-struct CSvmNode {
-	int index;
-	double value;
-};
+//struct CSvmNode {
+//	int index;
+//	double value;
+//};
+typedef std::pair<int, double> CSvmNode;
 
 class CCrfh: public MapType {
 

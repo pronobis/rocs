@@ -8,6 +8,10 @@
 #ifndef CRFHINTERFACE_H_
 #define CRFHINTERFACE_H_
 
+// STD includes
+#include <string>
+using std::string;
+
 namespace rocs {
 namespace cv {
 

@@ -147,12 +147,12 @@ CSvmNode *CCrfh::getLibSvmVector() {
 
 	int nr = 0;
 	for (map<int, double>::const_iterator i = begin(); i != end(); ++i, ++nr) {
-		vector[nr].index = i->first;//key();
-		vector[nr].value = i->second;//.value();
+		vector[nr].first = i->first;//key();
+		vector[nr].second = i->second;//.value();
 	}
 
-	vector[size()].index = -1;
-	vector[size()].value = 0.0;
+	vector[size()].first = -1;
+	vector[size()].second = 0.0;
 
 	return vector;
 }

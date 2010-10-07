@@ -27,7 +27,6 @@
 // Set debug level
 #define ROCS_DEBUG_LEVEL 3
 
-
 // Boost & Stl
 #include <vector>
 #include <boost/test/unit_test.hpp>
@@ -37,7 +36,6 @@
 using namespace rocs::core;
 using namespace std;
 
-
 /*!
  * Case 1
  * Testing command line argument parsing for single keys.
@@ -46,7 +44,7 @@ BOOST_AUTO_TEST_CASE( command_line_args_single )
 {
 	// Define some arguments
 	int argc = 2;
-	char const *argv[] = {"test", "--one.two.three", "1"};
+	char const *argv[] = { "test", "--one.two.three", "1" };
 
 	// Let configuration parse the arguments
 	Configuration config(argc, argv);
@@ -63,7 +61,6 @@ BOOST_AUTO_TEST_CASE( command_line_args_single )
 	BOOST_REQUIRE( value2 == 1 );
 }
 
-
 /*!
  * Case 2
  * Testing command line argument parsing for lists.
@@ -72,7 +69,8 @@ BOOST_AUTO_TEST_CASE( command_line_args_list1 )
 {
 	// Define some arguments
 	int argc = 4;
-	char const *argv[] = {"test", "--list.item1.key", "1", "--list.item2.key", "2"};
+	char const *argv[] = { "test", "--list.item1.key", "1", "--list.item2.key",
+			"2" };
 
 	// Let configuration parse the arguments
 	Configuration config(argc, argv);
@@ -88,7 +86,6 @@ BOOST_AUTO_TEST_CASE( command_line_args_list1 )
 	BOOST_REQUIRE( values[1] == 2 );
 }
 
-
 /*!
  * Case 2
  * Testing command line argument parsing for lists.
@@ -96,8 +93,9 @@ BOOST_AUTO_TEST_CASE( command_line_args_list1 )
 BOOST_AUTO_TEST_CASE( command_line_args_list2 )
 {
 	// Define some arguments
-	int argc = 4;
-	char const *argv[] = {"test", "--list.item.key", "1", "--list.item.key", "2"};
+	int argc = 6;
+	char const *argv[] = { "test", "--list.item.key", "1", "--list.item.key",
+			"2", "--list.item.key3", "3" };
 
 	// Let configuration parse the arguments
 	Configuration config(argc, argv);
