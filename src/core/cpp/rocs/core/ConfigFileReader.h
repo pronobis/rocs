@@ -293,9 +293,8 @@ public:
 		rocsDebug3("We remove the first path, keyHead, '%s', keyTail:'%s'", keyHead.c_str(), keyTail.c_str());
 		for (std::vector<ptree>::iterator son_it = sons.begin(); son_it
 				< sons.end(); ++son_it) {
-			rocsDebug3("Current son:");
-			printTree(&(*son_it));
-
+			//rocsDebug3("Current son:");
+			//printTree(&(*son_it));
 			for (ptree::iterator sonson_it = (*son_it).begin(); sonson_it
 					!= (*son_it).end(); ++sonson_it) {
 				if (sonson_it->first != keyHead)
@@ -306,7 +305,7 @@ public:
 						Type<_T>::defaultValue(), was_found);
 				if (was_found)
 					ans.push_back(value);
-			}
+			} // end loop grandsons
 		} // end loop sons
 	}
 

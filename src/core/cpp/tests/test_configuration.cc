@@ -93,9 +93,9 @@ BOOST_AUTO_TEST_CASE( command_line_args_list1 )
 BOOST_AUTO_TEST_CASE( command_line_args_list2 )
 {
 	// Define some arguments
-	int argc = 6;
+	int argc = 8;
 	char const *argv[] = { "test", "--list.item.key", "1", "--list.item.key",
-			"2", "--list.item.key3", "3" };
+			"2", "--list.item.key3", "3" , "--list.item4.key", "4"};
 
 	// Let configuration parse the arguments
 	Configuration config(argc, argv);
@@ -106,8 +106,9 @@ BOOST_AUTO_TEST_CASE( command_line_args_list2 )
 	config.printConfiguration();
 
 	// Check the output
-	BOOST_REQUIRE( values.size() == 2 );
+	BOOST_REQUIRE( values.size() == 3 );
 	BOOST_REQUIRE( values[0] == 1 );
 	BOOST_REQUIRE( values[1] == 2 );
+	BOOST_REQUIRE( values[2] == 4 );
 }
 
