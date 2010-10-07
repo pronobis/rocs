@@ -7,6 +7,10 @@
 
 #include "CrfhInterface.h"
 
+namespace rocs {
+namespace cv {
+
+
 CrfhInterface::CrfhInterface() {
 	// TODO Auto-generated constructor stub
 
@@ -15,3 +19,6 @@ CrfhInterface::CrfhInterface() {
 CrfhInterface::~CrfhInterface() {
 	// TODO Auto-generated destructor stub
 }
+
+} // end namespace cv
+} // end namespace rocs

@@ -239,7 +239,7 @@ void rocs::core::ConfigFileReader::printPtreeRec(ptree* tree, int depth) {
 template<>
 string rocs::core::ConfigFileReader::getValue<string>(ptree* tree,
 		string path, string default_value, bool& was_found) {
-	rocsDebug3("getValue<string>(%s)", path.c_str());
+	rocsDebug3("getValue<string>('%s')", path.c_str());
 	string return_value = getValueAsString(tree, path, was_found);
 	return (was_found ? return_value : default_value);
 }
@@ -247,7 +247,7 @@ string rocs::core::ConfigFileReader::getValue<string>(ptree* tree,
 template<>
 int rocs::core::ConfigFileReader::getValue<int>(ptree* tree, string path,
 		int default_value, bool& was_found) {
-	rocsDebug3("getValue<int>(%s)", path.c_str());
+	rocsDebug3("getValue<int>('%s')", path.c_str());
 	string return_value = getValueAsString(tree, path, was_found);
 	return (was_found ? atoi(return_value.c_str()) : default_value);
 }
@@ -255,7 +255,7 @@ int rocs::core::ConfigFileReader::getValue<int>(ptree* tree, string path,
 template<>
 double rocs::core::ConfigFileReader::getValue<double>(ptree* tree,
 		string path, double default_value, bool& was_found) {
-	rocsDebug3("getValue<double>(%s)", path.c_str());
+	rocsDebug3("getValue<double>('%s')", path.c_str());
 	string return_value = getValueAsString(tree, path, was_found);
 	return (was_found ? atof(return_value.c_str()) : default_value);
 }

@@ -24,7 +24,6 @@
  * \file ConfigFileReader.h
  */
 
-
 #ifndef _ROCS_CORE_CONFIGFILEREADER_H_
 #define _ROCS_CORE_CONFIGFILEREADER_H_
 
@@ -40,7 +39,6 @@
 #include <boost/property_tree/info_parser.hpp>
 #include <boost/foreach.hpp>
 
-
 namespace rocs {
 namespace core {
 
@@ -50,8 +48,7 @@ using boost::property_tree::ptree;
  * Class used for performing I/O operations on the config files.
  * More info on http://wiki.github.com/pronobis/rocs/config-files
  */
-class ConfigFileReader
-{
+class ConfigFileReader {
 
 public:
 	/*!
@@ -104,11 +101,18 @@ public:
 	 * \return
 	 *          the found value in the tree
 	 */
-	static std::string getValueAsString(ptree* tree, std::string path, bool& was_found) {
+	static std::string getValueAsString(ptree* tree, std::string path,
+			bool& was_found) {
 		rocsDebug3("getValueAsString('%s')", path.c_str());
 		was_found = false;
 		bool search_for_son_value = false;
 		std::string key_to_search, son_key_to_search;
+
+		if (path == "") {
+			rocsDebug3("Returning the value of the current tree.");
+			was_found = true;
+			return tree->get_value("");
+		}
 
 		/* determine the key to search */
 		size_t dot_position = path.find_first_of('.');
@@ -179,19 +183,22 @@ public:
 	 * \param answer
 	 *          the vector to populate with the answers
 	 */
-	static void getChildren(ptree* tree, std::string path, int& nb_found, std::vector<
-			ptree>* answer) {
+	static void getChildren(ptree* tree, std::string path, int& nb_found,
+			std::vector<ptree>* answer) {
 		nb_found = 0;
-		rocsDebug3("get_children('%s')", path.c_str());
+		rocsDebug3("get_children(path:'%s')", path.c_str());
 
 		if (path == "") { // we need to return these nodes
-			rocsDebug1("We found the key ! Returning the %i sons.", (int) tree->size());
+			rocsDebug1("Searched path is empty, meaning we want the sons ! Returning the %i sons.", (int) tree->size());
+			//printTree(tree);
 			answer->clear();
 			nb_found = 0;
 			for (ptree::iterator son_iter = tree->begin(); son_iter
 					!= tree->end(); ++son_iter) {
-				ptree son_tree = son_iter->second;
-				answer->push_back(son_tree);
+				ptree sonTree = son_iter->second;
+				//rocsDebug3("pushing back :");
+				//printTree(&sonTree);
+				answer->push_back(sonTree);
 				++nb_found;
 			} // end loop sons
 			return;
@@ -262,8 +269,8 @@ public:
 	 */
 	template<class _T>
 	static void getValueList(ptree* tree, std::string path, std::string key,
-				std::vector<_T>& ans) {
-		rocsDebug3("get_children(path:'%s', key:'%s')", path.c_str(), key.c_str());
+			std::vector<_T>& ans) {
+		rocsDebug3("getValueList(path:'%s', key:'%s')", path.c_str(), key.c_str());
 
 		ans.clear();
 
@@ -272,21 +279,35 @@ public:
 		std::vector<ptree> sons;
 		getChildren(tree, path, nb_sons, &sons);
 		rocsDebug3("children obtained, nb:%i", nb_sons);
+		for (std::vector<ptree>::iterator it = sons.begin(); it < sons.end(); ++it)
+			printTree(&(*it));
 		if (nb_sons == 0)
 			return;
 
-		// get the values
-		for (std::vector<ptree>::iterator it = sons.begin(); it < sons.end(); ++it) {
-			bool was_found = false;
-			_T value = getValue<_T> (&(*it), key, Type<_T>::defaultValue(),
-					was_found);
-			if (was_found) {
-				//				ostringstream msg;
-				//				msg << "value found:" << value;
-				//				debugPrint_lvl3(msg.str().c_str());
-				ans.push_back(value);
+		/* get the values */
+		std::string::size_type dot_pos = key.find(".");
+		std::string keyHead = (dot_pos == std::string::npos ? key : key.substr(
+				0, dot_pos - 1));
+		std::string keyTail = (dot_pos == std::string::npos ? "" : key.substr(
+				dot_pos + 1));
+		rocsDebug3("We remove the first path, keyHead, '%s', keyTail:'%s'", keyHead.c_str(), keyTail.c_str());
+		for (std::vector<ptree>::iterator son_it = sons.begin(); son_it
+				< sons.end(); ++son_it) {
+			rocsDebug3("Current son:");
+			printTree(&(*son_it));
+
+			for (ptree::iterator sonson_it = (*son_it).begin(); sonson_it
+					!= (*son_it).end(); ++sonson_it) {
+				if (sonson_it->first != keyHead)
+					continue;
+				bool was_found = false;
+				ptree sonson = sonson_it->second;
+				_T value = getValue<_T> (&sonson, keyTail,
+						Type<_T>::defaultValue(), was_found);
+				if (was_found)
+					ans.push_back(value);
 			}
-		}
+		} // end loop sons
 	}
 
 	//	/*
@@ -342,8 +363,8 @@ template<> // string
 std::string ConfigFileReader::getValue(ptree* tree, std::string path,
 		std::string default_value, bool& was_found);
 template<> // int
-int ConfigFileReader::getValue(ptree* tree, std::string path, int default_value,
-		bool& was_found);
+int ConfigFileReader::getValue(ptree* tree, std::string path,
+		int default_value, bool& was_found);
 template<> // double
 double ConfigFileReader::getValue(ptree* tree, std::string path,
 		double default_value, bool& was_found);

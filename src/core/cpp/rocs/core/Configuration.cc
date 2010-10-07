@@ -109,6 +109,7 @@ void Configuration::addCommandLineArgs(int argc, char const **argv)
 
 		// add the variable
 		_tree.add(variable_name, value);
+		//printConfiguration();
 	} // end loop words
 }
 
