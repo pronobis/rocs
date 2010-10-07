@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 2.8)
+cmake_minimum_required(VERSION 2.6)
 
 # Using CCache to speed up compilation of ROCS
 if(ROCS_CCACHE)

@@ -44,13 +44,13 @@ macro(add_rocs_cpp_module)
 
 	# Get sources
 	set(_SOURCES_ "")
-	foreach(I IN LISTS ARG_SOURCES)
+	foreach(I ${ARG_SOURCES})
 		set(_SOURCES_ "cpp/rocs/${ARG_NAME}/${I}" ${_SOURCES_})
 	endforeach(I)
 
 	# Get headers
 	set(_HEADERS_ "")
-	foreach(I IN LISTS ARG_HEADERS)
+	foreach(I ${ARG_HEADERS})
 		set(_HEADERS_ "cpp/rocs/${ARG_NAME}/${I}" ${_HEADERS_})
 	endforeach(I)
 
@@ -64,7 +64,7 @@ macro(add_rocs_cpp_module)
 
 	# Get and add linked module libraries
 	if(NOT "${ARG_LINK_MODULES}" STREQUAL "")
-		foreach(I IN LISTS ARG_LINK_MODULES)
+		foreach(I ${ARG_LINK_MODULES})
 			add_dependencies(rocs_${ARG_NAME} rocs_${I})
 			target_link_libraries(rocs_${ARG_NAME} rocs_${I})
 		endforeach(I)
