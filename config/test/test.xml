@@ -1,0 +1,26 @@
+<one1>1</one1>
+<one2> 2.3 </one2>
+<one3>This is text</one3>
+<one4>
+    <two4_1> 1 </two4_1>
+    <two4_2>This is text</two4_2>
+</one4>
+<one5>
+    <two5>2.3</two5>
+</one5>
+<one6>
+    <two6 three6="6" />
+</one6>
+<list1>
+    <item  key1  = "1" />
+    <item  key1  = "2" />
+    <item  key1X = "3" />
+    <itemX key1  = "4" />
+</list1>
+<list2>
+    <item>  <key2>  1 </key2>   </item>
+    <item>  <key2>  2 </key2>   </item>
+    <item>  <key2X> 3 </key2X>  </item>
+    <itemX> <key2>  4 </key2>   </item>
+</list2>
+
