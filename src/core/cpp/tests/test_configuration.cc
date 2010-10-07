@@ -89,7 +89,6 @@ BOOST_AUTO_TEST_CASE( command_line_args_list1 )
 }
 
 
-
 /*!
  * Case 2
  * Testing command line argument parsing for lists.
