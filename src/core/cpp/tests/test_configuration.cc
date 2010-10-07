@@ -49,8 +49,8 @@ BOOST_AUTO_TEST_CASE( command_line_args_single )
 	// Let configuration parse the arguments
 	Configuration config(argc, argv);
 	bool wasFound;
-	int value1 = config.getValue("one.two.three", 2, wasFound);
-	int value2 = config.getValue("one.two.three", 2);
+	int value1 = config.getValue<int>("one.two.three", 2, wasFound);
+	int value2 = config.getValue<int>("one.two.three", 2);
 
 	// Print the configuration
 	config.printConfiguration();

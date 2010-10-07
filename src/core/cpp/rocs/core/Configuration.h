@@ -19,7 +19,6 @@
 // ==================================================================
 
 /*!
- * Configuration class.
  * \author Arnaud Ramey
  * \file Configuration.h
  */
