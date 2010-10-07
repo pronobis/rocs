@@ -57,7 +57,7 @@ public:
 		return nbRows();
 	}
 
-	inline string toString() {
+	inline std::string toString() {
 		return (static_cast<Matrix*> (this))->toString();
 	}
 };

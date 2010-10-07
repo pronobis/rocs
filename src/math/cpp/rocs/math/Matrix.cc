@@ -12,7 +12,7 @@ Matrix::~Matrix() {
 }
 
 void Matrix::copyTo(Matrix dst) const{
-	debugPrintf_lvl3("copyTo(%s, %s)", infoString().c_str(), dst.infoString().c_str());
+	debug3("copyTo(%s, %s)", infoString().c_str(), dst.infoString().c_str());
 
 	// TODO what if data types are not similar ?
 	assert(getDataType() == dst.getDataType());
@@ -23,7 +23,7 @@ void Matrix::copyTo(Matrix dst) const{
 
 	for (int i = 0; i < nbRows(); ++i) {
 		for (int j = 0; j < nbCols(); ++j) {
-			string value = "";
+			std::string value = "";
 			switch (data_type) {
 			case MAT_1U:
 				dst.set<bool> (i, j, get<bool> (i, j));
@@ -191,10 +191,10 @@ int Matrix::nbRows() const {
 	return size().height;
 }
 
-string Matrix::toString() {
-	ostringstream buffer;
+std::string Matrix::toString() {
+	std::ostringstream buffer;
 	// adding size
-	buffer << nbCols() << "x" << nbRows() << " : " << endl;
+	buffer << nbCols() << "x" << nbRows() << " : " << std::endl;
 	// adding line after line
 	for (int i = 0; i < nbRows(); ++i) {
 		for (int j = 0; j < nbCols(); ++j) {
@@ -232,7 +232,7 @@ string Matrix::toString() {
 			}
 			buffer << "\t";
 		} // end loop cols
-		buffer << endl;
+		buffer << std::endl;
 	} // end loop rows
 	return buffer.str();
 }

@@ -33,7 +33,7 @@ CFilter *CFilter::createFilter(const CFilterInfo &fi) {
 
 // -----------------------------------------
 void CGaussianFilter::createGaussHorizontalKernel(double sigma2) {
-	debugPrintf_lvl3("createGaussHorizontalKernel(%f)", sigma2);
+	debug3("createGaussHorizontalKernel(%f)", sigma2);
 
 	double sigma = sqrt(sigma2);
 	int gaussSize = rocs::math::aMax<int>(static_cast<int> (ceil(sigma
@@ -41,7 +41,7 @@ void CGaussianFilter::createGaussHorizontalKernel(double sigma2) {
 	int kernelSize = 2 * gaussSize + 1;
 
 	// Allocate memory for the kernel
-	debugPrintf_lvl3("_horizontalKernel:%s, is_empty:%i", _horizontalKernel.infoString().c_str(), _horizontalKernel.isEmpty());
+	debug3("_horizontalKernel:%s, is_empty:%i", _horizontalKernel.infoString().c_str(), _horizontalKernel.isEmpty());
 	_horizontalKernel.resize(1, kernelSize);
 
 	// Be robust to sigma = 0
@@ -67,7 +67,7 @@ void CGaussianFilter::createGaussHorizontalKernel(double sigma2) {
 
 // -----------------------------------------
 void CGaussianFilter::createGaussVerticalKernel(double sigma2) {
-	debugPrintf_lvl3("createGaussVerticalKernel(%f)", sigma2);
+	debug3("createGaussVerticalKernel(%f)", sigma2);
 
 	double sigma = sqrt(sigma2);
 	int gaussSize = rocs::math::aMax<int>(static_cast<int> (ceil(sigma
@@ -86,7 +86,7 @@ void CGaussianFilter::createGaussVerticalKernel(double sigma2) {
 	}
 
 	// Fill in the values
-	debugPrintf_lvl3("_verticalKernel:%s", _verticalKernel.infoString().c_str());
+	debug3("_verticalKernel:%s", _verticalKernel.infoString().c_str());
 	double sum = 0;
 	for (int i = 0; i < kernelSize; ++i) {
 		//		debugPrintf_lvl3("foo %i", i);
@@ -104,17 +104,17 @@ void CGaussianFilter::createGaussVerticalKernel(double sigma2) {
 // -----------------------------------------
 Matrix_<double> *CGaussianFilter::apply(const Matrix_<double> &input, Matrix_<
 		double> *result) const {
-	debugPrintf_lvl3("CGaussianFilter::apply('%s', result non null:%i", input.infoString().c_str(), (result ? 1 : 0));
-	debugPrintf_lvl3("step1: _verticalKernel('%s')", _verticalKernel.infoString().c_str());
+	debug3("CGaussianFilter::apply('%s', result non null:%i", input.infoString().c_str(), (result ? 1 : 0));
+	debug3("step1: _verticalKernel('%s')", _verticalKernel.infoString().c_str());
 	result = Matrix_<double>::convolve(input, _verticalKernel, result);
-	debugPrintf_lvl3("step2: _horizontalKernel('%s')", _horizontalKernel.infoString().c_str());
+	debug3("step2: _horizontalKernel('%s')", _horizontalKernel.infoString().c_str());
 	result->convolveWith(_horizontalKernel);
 	return result;
 }
 
 // -----------------------------------------
 void CCartesianFilter::createXKernel(int dx) {
-	debugPrintf_lvl3("createXKernel(%i)", dx);
+	debug3("createXKernel(%i)", dx);
 
 	if (dx == 1) {
 		// Allocate memory for the kernel
@@ -137,7 +137,7 @@ void CCartesianFilter::createXKernel(int dx) {
 
 // -----------------------------------------
 void CCartesianFilter::createYKernel(int dy) {
-	debugPrintf_lvl3("createYKernel(%i)", dy);
+	debug3("createYKernel(%i)", dy);
 
 	if (dy == 1) {
 		// Allocate memory for the kernel
@@ -161,7 +161,7 @@ void CCartesianFilter::createYKernel(int dy) {
 // -----------------------------------------
 Matrix_<double> *CCartesianFilter::apply(const Matrix_<double> &input, Matrix_<
 		double> *result) const {
-	debugPrintf_lvl3("CCartesianFilter::apply('%s', result non null:%i", input.infoString().c_str(), (result ? 1 : 0));
+	debug3("CCartesianFilter::apply('%s', result non null:%i", input.infoString().c_str(), (result ? 1 : 0));
 
 	if (_xKernel.nbCols()) {
 		result = Matrix_<double>::convolve(input, _xKernel, result);

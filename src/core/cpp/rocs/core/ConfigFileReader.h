@@ -18,8 +18,9 @@
 #include <boost/property_tree/info_parser.hpp>
 
 #include <boost/foreach.hpp>
-// rocs includes
-#include "Core.h"
+// ROCS includes
+#include "rocs/core/debug.h"
+#include "rocs/core/error.h"
 #include "Types.h"
 
 /*!
@@ -43,7 +44,7 @@ public:
 	 * 	        if <code>true</code>, allow the xml include tags :
 	 *          will parse the corresponding files and replace them
 	 */
-	static void readFileAndCheckIncludes(string filename, ptree* tree,
+	static void readFileAndCheckIncludes(std::string filename, ptree* tree,
 			bool include_allowed);
 
 	//	/*
@@ -70,11 +71,7 @@ public:
 	/*!
 	 * display the structure of the tree inside the config file
 	 */
-	static inline void printTree(ptree* tree) {
-		cout << "<root>";
-		cout << " (" << tree->size() << " sons)" << endl;
-		printPtreeRec(tree, 0);
-	}
+	static void printTree(ptree* tree);
 
 	/*!
 	 *
@@ -87,15 +84,15 @@ public:
 	 * \return
 	 *          the found value in the tree
 	 */
-	static string getValueAsString(ptree* tree, string path, bool& was_found) {
-		debugPrintf_lvl3("getValueAsString('%s')", path.c_str());
+	static std::string getValueAsString(ptree* tree, std::string path, bool& was_found) {
+		debug3("getValueAsString('%s')", path.c_str());
 		was_found = false;
 		bool search_for_son_value = false;
-		string key_to_search, son_key_to_search;
+		std::string key_to_search, son_key_to_search;
 
 		/* determine the key to search */
 		size_t dot_position = path.find_first_of('.');
-		if (dot_position == string::npos) {
+		if (dot_position == std::string::npos) {
 			// there is no dot in the path -> last step, find the good son
 			search_for_son_value = true;
 			key_to_search = path;
@@ -104,16 +101,16 @@ public:
 			key_to_search = path.substr(0, dot_position);
 			son_key_to_search = path.substr(dot_position + 1);
 		}
-		debugPrintf_lvl2("Searching the key '%s' in the sons...", key_to_search.c_str());
+		debug2("Searching the key '%s' in the sons...", key_to_search.c_str());
 
 		/* serarch it */
 		// backwards search
 		for (ptree::reverse_iterator son_iter = tree->rbegin(); son_iter
 				!= tree->rend(); ++son_iter) {
-			string son_node_name = son_iter->first;
+			std::string son_node_name = son_iter->first;
 			ptree son_tree = son_iter->second;
-			string son_node_value = son_tree.get_value("");
-			debugPrintf_lvl3("Node:'%s' = '%s'", son_node_name.c_str(), son_node_value.c_str());
+			std::string son_node_value = son_tree.get_value("");
+			debug3("Node:'%s' = '%s'", son_node_name.c_str(), son_node_value.c_str());
 
 			if (son_node_name == key_to_search) {
 				// we found the key
@@ -127,7 +124,7 @@ public:
 		} // end loop sons
 
 		// we didin't find the key in the sons
-		debugPrintf_lvl1("Couldn't find the key '%s' in the sons !", key_to_search.c_str());
+		debug1("Couldn't find the key '%s' in the sons !", key_to_search.c_str());
 		return "";
 	}
 
@@ -145,10 +142,10 @@ public:
 	 *          the found value in the tree
 	 */
 	template<class _T>
-	static _T getValue(ptree* tree, string path, _T default_value,
+	static _T getValue(ptree* tree, std::string path, _T default_value,
 			bool& was_found) {
-		debugPrintf_lvl3("getValue<_T>(%s)", path.c_str());
-		Error(-1, "Templated function non implemented");
+		debug3("getValue<_T>(%s)", path.c_str());
+		error("Templated function non implemented");
 	}
 
 	/*!
@@ -162,13 +159,13 @@ public:
 	 * \param answer
 	 *          the vector to populate with the answers
 	 */
-	static void getChildren(ptree* tree, string path, int& nb_found, vector<
+	static void getChildren(ptree* tree, std::string path, int& nb_found, std::vector<
 			ptree>* answer) {
 		nb_found = 0;
-		debugPrintf_lvl3("get_children('%s')", path.c_str());
+		debug3("get_children('%s')", path.c_str());
 
 		if (path == "") { // we need to return these nodes
-			debugPrintf_lvl1("We found the key ! Returning the %i sons.", (int) tree->size());
+			debug1("We found the key ! Returning the %i sons.", (int) tree->size());
 			answer->clear();
 			nb_found = 0;
 			for (ptree::iterator son_iter = tree->begin(); son_iter
@@ -181,25 +178,25 @@ public:
 		} // end path empty
 
 		/* determine the key to search */
-		string key_to_search, son_key_to_search;
+		std::string key_to_search, son_key_to_search;
 		size_t dot_position = path.find_first_of('.');
-		if (dot_position == string::npos) {
+		if (dot_position == std::string::npos) {
 			key_to_search = path;
 			son_key_to_search = "";
 		} else {
 			key_to_search = path.substr(0, dot_position);
 			son_key_to_search = path.substr(dot_position + 1);
 		}
-		debugPrintf_lvl2("Searching the key '%s' in the sons...", key_to_search.c_str());
+		debug2("Searching the key '%s' in the sons...", key_to_search.c_str());
 
 		/* serarch it */
 		// backwards search
 		for (ptree::reverse_iterator son_iter = tree->rbegin(); son_iter
 				!= tree->rend(); ++son_iter) {
-			string son_node_name = son_iter->first;
+			std::string son_node_name = son_iter->first;
 			ptree son_tree = son_iter->second;
-			string son_node_value = son_tree.get_value("");
-			debugPrintf_lvl3("Node:'%s' = '%s'", son_node_name.c_str(), son_node_value.c_str());
+			std::string son_node_value = son_tree.get_value("");
+			debug3("Node:'%s' = '%s'", son_node_name.c_str(), son_node_value.c_str());
 
 			if (son_node_name == key_to_search) {
 				getChildren(&son_tree, son_key_to_search, nb_found, answer);
@@ -208,7 +205,7 @@ public:
 		} // end loop sons
 
 		// we didin't find the key in the sons
-		debugPrintf_lvl1("Couldn't find the key '%s' in the sons !", key_to_search.c_str());
+		debug1("Couldn't find the key '%s' in the sons !", key_to_search.c_str());
 	}
 
 	/*!
@@ -244,23 +241,23 @@ public:
 	 *          the vector where to store the answers
 	 */
 	template<class _T>
-	static void getValueList(ptree* tree, string path, string key,
-			int& nb_found, vector<_T>* ans) {
-		debugPrintf_lvl3("get_children(path:'%s', key:'%s')", path.c_str(), key.c_str());
+	static void getValueList(ptree* tree, std::string path, std::string key,
+			int& nb_found, std::vector<_T>* ans) {
+		debug3("get_children(path:'%s', key:'%s')", path.c_str(), key.c_str());
 
 		ans->clear();
 		nb_found = 0;
 
 		// get the wanted sons
 		int nb_sons;
-		vector<ptree> sons;
+		std::vector<ptree> sons;
 		getChildren(tree, path, nb_sons, &sons);
-		debugPrintf_lvl3("children obtained, nb:%i", nb_sons);
+		debug3("children obtained, nb:%i", nb_sons);
 		if (nb_sons == 0)
 			return;
 
 		// get the values
-		for (vector<ptree>::iterator it = sons.begin(); it < sons.end(); ++it) {
+		for (std::vector<ptree>::iterator it = sons.begin(); it < sons.end(); ++it) {
 			bool was_found = false;
 			_T value = getValue<_T> (&(*it), key, Type<_T>::defaultValue(),
 					was_found);
@@ -301,7 +298,7 @@ private:
 	 * \param tree
 	 *          the tree to populate with the parsed file
 	 */
-	static void readFfile(string filename, ptree* tree);
+	static void readFfile(std::string filename, ptree* tree);
 
 	/*!
 	 * check if a tree contains some include tags
@@ -311,7 +308,7 @@ private:
 	 * \param     tree
 	 *              the tree that might contain some include tags
 	 */
-	static void checkIncludes(string relative_path, ptree* tree);
+	static void checkIncludes(std::string relative_path, ptree* tree);
 
 	/*!
 	 * delete the \<xmlattr\> nodes made by RapidXML
@@ -324,13 +321,13 @@ private:
 
 /* template specs */
 template<> // string
-string ConfigFileReader::getValue(ptree* tree, string path,
-		string default_value, bool& was_found);
+std::string ConfigFileReader::getValue(ptree* tree, std::string path,
+		std::string default_value, bool& was_found);
 template<> // int
-int ConfigFileReader::getValue(ptree* tree, string path, int default_value,
+int ConfigFileReader::getValue(ptree* tree, std::string path, int default_value,
 		bool& was_found);
 template<> // double
-double ConfigFileReader::getValue(ptree* tree, string path,
+double ConfigFileReader::getValue(ptree* tree, std::string path,
 		double default_value, bool& was_found);
 
 } // namespace core

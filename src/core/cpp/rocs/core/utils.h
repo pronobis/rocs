@@ -1,6 +1,6 @@
 // ==================================================================
 // ROCS - Toolkit for Robots Comprehending Space
-// Copyright (C) 2010  Andrzej Pronobis
+// Copyright (C) 2010  Arnaud Ramey, Andrzej Pronobis
 //
 // This file is part of ROCS.
 //
@@ -19,29 +19,31 @@
 // ==================================================================
 
 /*!
- * Example test suite.
- * For more information see:
- * http://www.boost.org/doc/libs/1_44_0/libs/test/doc/html/utf/user-guide.html
- * \author Andrzej Pronobis
- * \file test1.cc
+ * General utilities.
+ * \author Arnaud Ramey, Andrzej Pronobis
+ * \file utils.h
  */
 
-// Boost
-#include <boost/test/unit_test.hpp>
-// ROCS
-/* Nothing for now. This is just an example*/
+#ifndef _ROCS_CORE_UTILS_H_
+#define _ROCS_CORE_UTILS_H_
 
-/*! Define first test case. */
-BOOST_AUTO_TEST_CASE( case1 )
+// STL & Boost includes
+#include <vector>
+#include <boost/algorithm/string.hpp>
+
+
+namespace rocs {
+namespace core {
+
+/*! Splits string into substrings. */
+static inline void splitString(std::string sentence, std::string separators,
+		std::vector<std::string>& sentenceWords)
 {
-	BOOST_CHECK( 0 == 0 );
-	BOOST_REQUIRE(0 == 0);
+	boost::split(sentenceWords, sentence, boost::is_any_of(separators));
 }
 
-/*! Define second test case. */
-BOOST_AUTO_TEST_CASE( case2 )
-{
-	BOOST_CHECK( 0 == 1 );
-	BOOST_REQUIRE(0 == 1);
-}
+} // namespace core
+} // namespace rocs
 
+
+#endif /* _ROCS_CORE_UTILS_H_ */

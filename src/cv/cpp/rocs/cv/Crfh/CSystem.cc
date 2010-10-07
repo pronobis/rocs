@@ -13,6 +13,7 @@
 #include "rocs/cv/Img.h"
 
 #include "rocs/cv/Crfh/CSystem.h"
+#include "rocs/core/utils.h"
 
 namespace rocs {
 namespace cv {
@@ -21,7 +22,7 @@ using rocs::math::Matrix_;
 
 // -----------------------------------------
 CSystem::CSystem(string sysDef) {
-	debugPrintf_lvl3("CSystem::CSystem('%s')", sysDef.c_str());
+	debug3("CSystem::CSystem('%s')", sysDef.c_str());
 
 	// Exemplar string:
 	// Lxx(8,28)+Lxy(8,28)+Lyy(8,28)+Lxx(2,28)+Lxy(2,28)+Lyy(2,28)
@@ -29,7 +30,7 @@ CSystem::CSystem(string sysDef) {
 	// Extract tokens
 	//stringList tokens = sysDef.split('+');
 	vector<string> tokens;
-	rocs::core::split_string(sysDef, tokens, "+");
+	rocs::core::splitString(sysDef, "+", tokens);
 
 	// Create descriptors
 	for (unsigned int i = 0; i < tokens.size(); ++i) {
@@ -47,7 +48,7 @@ CSystem::CSystem(string sysDef) {
 						- 1).c_str());
 		// bins = tokens[i].substr(comaPos + 1, bracket2Pos - comaPos - 1).toInt();
 
-		debugPrintf_lvl3("Name:%s, scale:%f, bins:%i", name.c_str(), scale, bins);
+		debug3("Name:%s, scale:%f, bins:%i", name.c_str(), scale, bins);
 
 		// Create descriptor
 		_descriptorList.addDescriptor(name, scale, bins);
@@ -56,7 +57,7 @@ CSystem::CSystem(string sysDef) {
 	// Create filters
 	_descriptorList.createAllRequiredFilters(_filterCache);
 
-	debugPrint_lvl3("CSystem now initialized.");
+	debug3("CSystem now initialized.");
 }
 
 // -----------------------------------------
@@ -75,7 +76,7 @@ vector<Matrix_<double> *> CSystem::computeDescriptorOutputs(const Img &image) co
 
 // -----------------------------------------
 CCrfh *CSystem::computeHistogram(const Img &image, int skipBorderPixels) const {
-	debugPrintf_lvl3("computeHistogram('%s', %i)", image.infoString().c_str(), skipBorderPixels);
+	debug3("computeHistogram('%s', %i)", image.infoString().c_str(), skipBorderPixels);
 	vector<Matrix_<double> *> outputs = computeDescriptorOutputs(image);
 	CCrfh *crfh = new CCrfh(outputs, _descriptorList, skipBorderPixels);
 	for (unsigned int i = 0; i < outputs.size(); ++i)

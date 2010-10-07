@@ -1,8 +1,27 @@
-/*
- * InputMixer.cc
+// ==================================================================
+// ROCS - Toolkit for Robots Comprehending Space
+// Copyright (C) 2010  Arnaud Ramey, Andrzej Pronobis
+//
+// This file is part of ROCS.
+//
+// ROCS is free software: you can redistribute it and/or modify it
+// under the terms of the GNU Lesser General Public License as
+// published by the Free Software Foundation, either version 3
+// of the License, or (at your option) any later version.
+//
+// ROCS is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU Lesser General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with ROCS. If not, see <http://www.gnu.org/licenses/>.
+// ==================================================================
+
+/*!
  *
- *  Created on: Aug 17, 2010
- *      Author: arnaud
+ * \author Arnaud Ramey
+ * \file InputMixer.cc
  */
 
 #include "InputMixer.h"
@@ -39,18 +58,18 @@ static inline bool is_variable_name(string& word, string& ans) {
 }
 
 void rocs::core::InputMixer::addCommandlineArgs(int argc, char **argv) {
-	debugPrintf_lvl3("add_commandline_args(%i args)", argc);
+	debug3("add_commandline_args(%i args)", argc);
 
 	// check the help
 	for (int word_index = 1; word_index <= argc; ++word_index) {
 		string current_word = argv[word_index];
-		//debugPrintf_lvl1("Current word:'%s'", current_word.c_str());
+		//debug1("Current word:'%s'", current_word.c_str());
 		int word_found = command_line_help.containsName(current_word);
-		//debugPrintf_lvl1("word_found :'%i'", word_found);
+		//debug1("word_found :'%i'", word_found);
 		if (word_found != -1) {
 			CommandLineHelp::OptionDescription op =
 					command_line_help.options.at(word_found);
-			debugPrintf_lvl1("Description:%s", op.description.c_str());
+			debug1("Description:%s", op.description.c_str());
 			if (!op.with_complement)
 				return;
 		}
@@ -60,26 +79,26 @@ void rocs::core::InputMixer::addCommandlineArgs(int argc, char **argv) {
 	for (int word_index = 1; word_index <= argc; ++word_index) {
 		string current_word = argv[word_index];
 		string variable_name;
-		debugPrintf_lvl1("Current word:'%s'", current_word.c_str());
+		debug1("Current word:'%s'", current_word.c_str());
 
 		bool is_correct_variable_name = is_variable_name(current_word,
 				variable_name);
 
 		// if the current variable name is not conform, skip
 		if (!is_correct_variable_name) {
-			debugPrintf_lvl1("'%s' is not a correct variable name !", current_word.c_str());
+			debug1("'%s' is not a correct variable name !", current_word.c_str());
 			continue;
 		}
 
 		if (word_index >= argc) {
-			debugPrintf_lvl1("'%s' is a correct variable name, but the last argument!", current_word.c_str());
+			debug1("'%s' is a correct variable name, but the last argument!", current_word.c_str());
 			continue;
 		}
 
 		// adding the next value
 		++word_index;
 		string value = argv[word_index];
-		debugPrintf_lvl1("New value : '%s'='%s'", variable_name.c_str(), value.c_str());
+		debug1("New value : '%s'='%s'", variable_name.c_str(), value.c_str());
 
 		// add the variable
 		tree.add(variable_name, value);
@@ -87,7 +106,7 @@ void rocs::core::InputMixer::addCommandlineArgs(int argc, char **argv) {
 }
 
 void rocs::core::InputMixer::addAllowedConfigFile(string filename) {
-	debugPrintf_lvl3("add_allowed_config_file('%s')", filename.c_str());
+	debug3("add_allowed_config_file('%s')", filename.c_str());
 	// read the new file in a new tree
 	ptree new_tree;
 	ConfigFileReader::readFileAndCheckIncludes(filename, &new_tree, true);

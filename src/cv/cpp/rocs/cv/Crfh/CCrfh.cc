@@ -6,7 +6,6 @@
 
 #include <limits>
 
-#include "rocs/core/Core.h"
 #include "rocs/cv/Crfh/CDescriptorList.h"
 #include "rocs/math/Matrix_.h"
 
@@ -21,7 +20,7 @@ CCrfh::CCrfh(vector<Matrix_<double> *> outputs,
 		const CDescriptorList &descrList, int skipBorderPixels) {
 	// Check whether the descriptor list matches the output list
 	if (outputs.size() != descrList.size()) {
-		Error(-1, "ERROR: The size of the descriptor list does not match the size of the outputs list. ");
+		error("The size of the descriptor list does not match the size of the outputs list. ");
 		return;
 	}
 
@@ -41,7 +40,7 @@ CCrfh::CCrfh(vector<Matrix_<double> *> outputs,
 		minVect.push_back(descrList[i]->getMin());
 		maxVect.push_back(descrList[i]->getMax());
 		if ((rows != outputs[i]->nbRows()) || (cols != outputs[i]->nbCols())) {
-			Error(-1, "ERROR: the filter outputs have different dimensions. ");
+			error("The filter outputs have different dimensions. ");
 			return;
 		}
 	}
@@ -56,7 +55,7 @@ CCrfh::CCrfh(vector<Matrix_<double> *> outputs,
 	vector<double> factorsVect;
 	for (int i = 0; i < ndims; ++i) {
 		factorsVect.push_back(((double) bins[i]
-				- numeric_limits<double>::epsilon()) / (max[i] - min[i]));
+				- std::numeric_limits<double>::epsilon()) / (max[i] - min[i]));
 	}
 	double *factors = factorsVect.data();
 
@@ -101,7 +100,7 @@ CCrfh::CCrfh(vector<Matrix_<double> *> outputs,
 
 // -----------------------------------------
 void CCrfh::serialize(ostream &stream) {
-	debugPrint_lvl3("serialize()");
+	debug3("serialize()");
 
 	for (map<int, double>::const_iterator i = begin(); i != end(); ++i) {
 		//stream << i.key() << ":" << i.value() << " ";
@@ -111,7 +110,7 @@ void CCrfh::serialize(ostream &stream) {
 
 // -----------------------------------------
 void CCrfh::filter(double min_val) {
-	debugPrintf_lvl3("filter(%f)", min_val);
+	debug3("filter(%f)", min_val);
 
 	double tmp = min_val * _sum;
 
@@ -130,7 +129,7 @@ void CCrfh::filter(double min_val) {
 
 // -----------------------------------------
 void CCrfh::normalize() {
-	debugPrintf_lvl3("normalize() - sum:%f", _sum);
+	debug3("normalize() - sum:%f", _sum);
 
 	for (map<int, double>::iterator i = begin(); i != end(); ++i) {
 		//i.value() /= _sum; TODO check this
@@ -141,7 +140,7 @@ void CCrfh::normalize() {
 
 // -----------------------------------------
 CSvmNode *CCrfh::getLibSvmVector() {
-	debugPrint_lvl3("getLibSvmVector()");
+	debug3("getLibSvmVector()");
 
 	//CSvmNode *vector = aMalloc<CSvmNode> (size() + 1);
 	CSvmNode *vector = new CSvmNode[size() + 1];

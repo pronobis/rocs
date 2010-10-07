@@ -24,7 +24,7 @@ CScaleSpaceCache::~CScaleSpaceCache() {
 // -----------------------------------------
 void CScaleSpaceCache::createScaleSpaceSample(ChannelType channelType,
 		double scale) {
-	debugPrintf_lvl3("createScaleSpaceSample(%i, %f)", channelType, scale);
+	debug3("createScaleSpaceSample(%i, %f)", channelType, scale);
 
 	// Check if we don't have the sample in the cache
 	for (unsigned int i = 0; i < _scaleSpaceSamplesList.size(); ++i)
@@ -38,7 +38,7 @@ void CScaleSpaceCache::createScaleSpaceSample(ChannelType channelType,
 	sssi.scale = scale;
 
 	CGaussianFilterInfo gfi(scale);
-	debugPrintf_lvl3("in:(%s)", (_channelCache->getChannel(
+	debug3("in:(%s)", (_channelCache->getChannel(
 							channelType))->infoString().c_str());
 	sssi.matrix = _filterCache->applyFilter(gfi, *(_channelCache->getChannel(
 			channelType)));

@@ -1,14 +1,31 @@
-/*
- * InputMixer.h
+// ==================================================================
+// ROCS - Toolkit for Robots Comprehending Space
+// Copyright (C) 2010  Arnaud Ramey, Andrzej Pronobis
+//
+// This file is part of ROCS.
+//
+// ROCS is free software: you can redistribute it and/or modify it
+// under the terms of the GNU Lesser General Public License as
+// published by the Free Software Foundation, either version 3
+// of the License, or (at your option) any later version.
+//
+// ROCS is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU Lesser General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with ROCS. If not, see <http://www.gnu.org/licenses/>.
+// ==================================================================
+
+/*!
  *
- *  Created on: Aug 17, 2010
- *      Author: arnaud
- *
- *  More info on http://wiki.github.com/pronobis/rocs/config-files
+ * \author Arnaud Ramey
+ * \file InputMixer.h
  */
 
-#ifndef INPUTMIXER_H_
-#define INPUTMIXER_H_
+#ifndef _ROCS_CORE_INPUTMIXER_H_
+#define _ROCS_CORE_INPUTMIXER_H_
 
 // stl includes
 #include <vector>
@@ -16,7 +33,6 @@
 using namespace std;
 
 // rocs includes
-#include "Core.h"
 #include "ConfigFileReader.h"
 #include "CommandLineHelp.h"
 /*!
@@ -88,4 +104,4 @@ public:
 } // namespace core
 } // namespace rocs
 
-#endif /* INPUTMIXER_H_ */
+#endif /* _ROCS_CORE_INPUTMIXER_H_ */

@@ -12,7 +12,7 @@
 #include <opencv/cv.h>
 #include <opencv/cxcore.hpp>
 
-#include "rocs/core/Core.h"
+// ROCS
 #include "rocs/core/Types.h"
 
 namespace rocs {

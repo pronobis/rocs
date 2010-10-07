@@ -541,7 +541,7 @@ public:
 	}
 };
 
-template<> class Type<string> {
+template<> class Type<std::string> {
 public:
 	static const char* string() {
 		static const char * const s = "string";

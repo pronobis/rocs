@@ -11,9 +11,10 @@ namespace opencv = cv;
 #define MAT_DECOMP_LU		2//DECOMP_LU
 #define MAT_DECOMP_CHOLESKY	DECOMP_CHOLESKY
 
-#include "rocs/core/Core.h"
 #include "rocs/math/ElemMath.h"
 #include "rocs/core/Types.h"
+#include "rocs/core/error.h"
+#include "rocs/core/debug.h"
 
 namespace rocs {
 namespace math {
@@ -103,8 +104,8 @@ public:
 	 * Create a string of information about the Matrix : its size, type...
 	 * \return    the created string
 	 */
-	string infoString() const {
-		ostringstream m;
+	std::string infoString() const {
+		std::ostringstream m;
 		m << "Matrix:";
 		m << nbCols() << 'x' << nbRows() << ", ";
 		m << "data_type:" << getDataType() << ", ";
@@ -124,7 +125,7 @@ public:
 	 */
 	inline void dbgAssertRangeCheck(const int row, const int col) const {
 		//debugPrintf_lvl3("dbgAssertRangeCheck(%i, %i)", row, col);
-		DbgAssert( row >= 0 && row < nbRows() && col >=0 && col < nbCols());
+		debugAssertion( row >= 0 && row < nbRows() && col >=0 && col < nbCols());
 	}
 
 	/*!
@@ -178,7 +179,7 @@ public:
 
 	template<typename _Tsrc, typename _Tdst>
 	void copyTo_(Matrix dst) {
-		debugPrintf_lvl3("copyTo_(%s, %s)", infoString().c_str(), dst.infoString().c_str());
+		debug3("copyTo_(%s, %s)", infoString().c_str(), dst.infoString().c_str());
 
 		/* resize if needed */
 		if (dst.nbCols() != nbCols() || dst.nbRows() != nbRows()) {
@@ -189,7 +190,7 @@ public:
 			//					nbRows(), nbCols(), dst.nbRows(), dst.nbCols());
 			//			Error (-1, msg);
 			// bug - resize not working
-			debugPrintf_lvl3("Resizing the target to %ix%i", nbRows(), nbCols());
+			debug3("Resizing the target to %ix%i", nbRows(), nbCols());
 			dst.resize(nbRows(), nbCols());
 		}
 
@@ -242,9 +243,9 @@ public:
 
 	/*! Resizes the matrix if the current size if different than given. */
 	inline void resize(int rows, int cols) {
-		debugPrintf_lvl3("resize(%ix%i)", rows, cols);
+		debug3("resize(%ix%i)", rows, cols);
 		asOpenCvMat()->create(rows, cols, getDataType());
-		debugPrintf_lvl3("new format(%s)", infoString().c_str());
+		debug3("new format(%s)", infoString().c_str());
 	}
 
 	/* sub matrices */
@@ -294,7 +295,7 @@ public:
 	 */
 	template<typename _T>
 	void convolveWith(const Matrix &m) {
-		debugPrintf_lvl3("convolveWith(m:%s)", m.infoString().c_str());
+		debug3("convolveWith(m:%s)", m.infoString().c_str());
 
 		/* Do noting for empty matrices or kernels */
 		if ((isEmpty()) || (m.isEmpty()))
@@ -364,7 +365,7 @@ public:
 	 */
 	template<typename _T>
 	static Matrix *convolve(const Matrix &mA, const Matrix &mB, Matrix *mC = 0) {
-		debugPrintf_lvl3("convolve(mA:%s, mB:%s)", mA.infoString().c_str(), mB.infoString().c_str() );
+		debug3("convolve(mA:%s, mB:%s)", mA.infoString().c_str(), mB.infoString().c_str() );
 		// Do noting for empty matrices
 		if (mA.isEmpty() || mB.isEmpty())
 			return mC;
@@ -383,13 +384,13 @@ public:
 		// Create the resulting matrix
 		if (mC) {
 			if (mC->nbCols() == mACols && mC->nbRows() == mARows) {
-				debugPrint_lvl3("mC of the good size.");
+				debug3("mC of the good size.");
 			} else {
-				debugPrint_lvl3("resizing mC...");
+				debug3("resizing mC...");
 				mC->resize(mARows, mACols);
 			}
 		} else { //mC = null
-			debugPrint_lvl3("Creating mC...");
+			debug3("Creating mC...");
 			//int data_type  = mA.getDataType();
 			mC = new Matrix(mARows, mACols, mA.getDataType());
 		}
@@ -422,14 +423,14 @@ public:
 		//		debugPrint_lvl3("deleting mC...");
 		//		delete mC;
 
-		debugPrint_lvl3("convolve() finished");
+		debug3("convolve() finished");
 		return mC;
 	}
 
 	/*!
 	 * @return a string version of the matrix values
 	 */
-	string toString();
+	std::string toString();
 
 private:
 	/*! the data_type of data inside the matrix */
@@ -462,7 +463,7 @@ private:
 	template<typename _T>
 	inline Matrix* plus(const Matrix &m) const {
 		// size check
-		DbgAssert( (nbCols() == m.nbCols() && nbRows() == m.nbRows()) );
+		debugAssertion( (nbCols() == m.nbCols() && nbRows() == m.nbRows()) );
 
 		Matrix* ans = new Matrix(nbRows(), nbCols(), data_type);
 		/// check for every value
@@ -478,7 +479,7 @@ private:
 	template<typename _T>
 	inline Matrix* minus(const Matrix &m) const {
 		// size check
-		DbgAssert( (nbCols() == m.nbCols() && nbRows() == m.nbRows()) );
+		debugAssertion( (nbCols() == m.nbCols() && nbRows() == m.nbRows()) );
 
 		Matrix* ans = new Matrix(nbRows(), nbCols(), data_type);
 		/// check for every value
@@ -494,7 +495,7 @@ private:
 	template<typename _T>
 	inline Matrix* times(const Matrix &m) const {
 		// size check
-		DbgAssert( nbCols() == m.nbRows() );
+		debugAssertion( nbCols() == m.nbRows() );
 
 		Matrix* ans = new Matrix(nbRows(), nbCols(), data_type);
 		/// check for every value

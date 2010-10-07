@@ -39,7 +39,7 @@ bool CFilterCache::createFilter(const CFilterInfo &filterInfo) {
 // -----------------------------------------
 Matrix_<double> *CFilterCache::applyFilter(const CFilterInfo &filterInfo,
 		const Matrix_<double> &input, Matrix_<double> *result /* =0 */) const {
-	debugPrintf_lvl3("CFilterCache::applyFilter(%i, input:'%s')", filterInfo.getFilterType(), input.infoString().c_str());
+	debug3("CFilterCache::applyFilter(%i, input:'%s')", filterInfo.getFilterType(), input.infoString().c_str());
 
 	/* Find the filter */
 	CFilter *filter = 0;
@@ -50,11 +50,11 @@ Matrix_<double> *CFilterCache::applyFilter(const CFilterInfo &filterInfo,
 
 	/* Filter not found? */
 	if (!filter) {
-		debugPrint_lvl1("ERROR: filter not found");
+		debug1("ERROR: filter not found");
 		return result;
 	}
 	else {
-		debugPrintf_lvl3("Filter found:%i", filter->getFilterInfo().getFilterType());
+		debug3("Filter found:%i", filter->getFilterInfo().getFilterType());
 	}
 
 	/* Apply the filter */

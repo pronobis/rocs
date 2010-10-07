@@ -13,7 +13,6 @@
 #define SURF_LOCATING_MIN_PAIRS      10
 
 /* ROCS includes */
-#include "rocs/core/Core.h"
 #include "rocs/cv/FeatureExtractor.h"
 #include "rocs/cv/Img.h"
 
@@ -35,8 +34,8 @@ public:
 	void defineObjectImage(Img* object_frame);
 
 	bool 						DISPLAY;			//!< display windows
-	string						video_input;		//!< the file showed if INPUT_MODE = video
-	string						image_input;		//!< the file showed if INPUT_MODE = image
+	std::string						video_input;		//!< the file showed if INPUT_MODE = video
+	std::string						image_input;		//!< the file showed if INPUT_MODE = image
 
 	/////
 	///// general fields
@@ -57,8 +56,8 @@ public:
 	(const float* vec, int laplacian,  const CvSeq* model_keypoints, const CvSeq* model_descriptors);
 	void surf_findPairs
 	(const CvSeq* objectKeypoints, const CvSeq* objectDescriptors,
-			const CvSeq* imageKeypoints, const CvSeq* imageDescriptors, vector<int>& ptpairs);
-	vector<int> 				ptpairs;
+			const CvSeq* imageKeypoints, const CvSeq* imageDescriptors, std::vector<int>& ptpairs);
+	std::vector<int> 				ptpairs;
 
 	bool surf_locatePlanarObject
 	(const CvSeq* objectKeypoints,  const CvSeq* objectDescriptors, const CvSeq* imageKeypoints,

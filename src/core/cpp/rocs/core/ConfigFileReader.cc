@@ -16,22 +16,23 @@
 
 // reference to the boost ptree
 using boost::property_tree::ptree;
+using namespace std;
 
 /*!
  * guess the type of file according to the extension
  * \param     filename the config filename
  * \return    the guess type of file
  */
-inline int guessType(string filename) {
+inline int guessType(std::string filename) {
 	size_t last_dot_pos = filename.find_last_of('.');
 	//	cout << "last_dot_pos:" << last_dot_pos << endl;
 	// if there is no dot in the filename, return unknown type
 	// TODO soemthing smarter ? (read the file and see if it starts with a tag ?
-	if (last_dot_pos == string::npos)
+	if (last_dot_pos == std::string::npos)
 		return TYPE_UNKNOWN;
 
 	// get the extension of the filename
-	string extension = filename.substr(last_dot_pos + 1);
+	std::string extension = filename.substr(last_dot_pos + 1);
 	//	cout << "extension:" << extension << endl;
 	if (extension == "xml")
 		return TYPE_XML;
@@ -46,14 +47,14 @@ inline int guessType(string filename) {
 
 void rocs::core::ConfigFileReader::checkIncludes(string relative_path,
 		ptree* tree) {
-	//debugPrint_lvl3("checkIncludes()");
+	//debug3("checkIncludes()");
 	const char* tag_to_find1 = "xi:include";
 	const char* tag_to_find2 = "<xmlattr>.href";
 
 	// if we allow the include tags, check if there are some
 	for (ptree::iterator son_iter = tree->begin(); son_iter != tree->end(); ++son_iter) {
 		string son_node_name = son_iter->first;
-		//debugPrintf_lvl3("Son-node_name:'%s'", son_node_name.c_str());
+		//debug3("Son-node_name:'%s'", son_node_name.c_str());
 
 		boost::optional<ptree &> found_son =
 				son_iter->second.get_child_optional(tag_to_find2);
@@ -64,14 +65,14 @@ void rocs::core::ConfigFileReader::checkIncludes(string relative_path,
 
 		if (is_include) {
 			// TODO
-			debugPrintf_lvl3("'%s' found !", tag_to_find2);
+			debug3("'%s' found !", tag_to_find2);
 			/*
 			 * get the filename
 			 */
 			ptree real_found_son = (*found_son);
 			string file_to_include = real_found_son.get_value("");
 			file_to_include = relative_path + file_to_include;
-			debugPrintf_lvl3("Including the file:'%s'", file_to_include.c_str());
+			debug3("Including the file:'%s'", file_to_include.c_str());
 			/*
 			 * parse the file
 			 */
@@ -99,8 +100,9 @@ void rocs::core::ConfigFileReader::checkIncludes(string relative_path,
 	} // end loop on sons
 }
 
-void rocs::core::ConfigFileReader::readFfile(string filename, ptree* tree) {
-	debugPrintf_lvl3("read_file('%s')", filename.c_str());
+void rocs::core::ConfigFileReader::readFfile(string filename, ptree* tree)
+{
+	debug3("read_file('%s')", filename.c_str());
 
 	// store the filename
 	//	this->filename = filename;
@@ -109,48 +111,45 @@ void rocs::core::ConfigFileReader::readFfile(string filename, ptree* tree) {
 	int guessed_filetype = guessType(filename);
 
 	// read the file
-	try {
-		switch (guessed_filetype) {
-		case TYPE_XML:
-			read_xml(filename, *tree);
-			break;
-		case TYPE_JSON:
-			read_json(filename, *tree);
-			break;
-		case TYPE_INI:
-			read_ini(filename, *tree);
-			break;
-		case TYPE_INFO:
-			read_info(filename, *tree);
-			break;
-		case TYPE_UNKNOWN:
-		default:
-			debugPrint_lvl1("Impossible to guess the config file type");
-			break;
-		}
-	} catch (std::exception &e) {
-		Error(-1, e.what());
+	switch (guessed_filetype)
+	{
+	case TYPE_XML:
+		read_xml(filename, *tree);
+		break;
+	case TYPE_JSON:
+		read_json(filename, *tree);
+		break;
+	case TYPE_INI:
+		read_ini(filename, *tree);
+		break;
+	case TYPE_INFO:
+		read_info(filename, *tree);
+		break;
+	case TYPE_UNKNOWN:
+	default:
+		debug1("Impossible to guess the config file type");
+		break;
 	}
 }
 
 void rocs::core::ConfigFileReader::removeXmlattr(ptree* tree) {
-	//debugPrint_lvl3("removeXmlattr()");
+	//debug3("removeXmlattr()");
 	//printTree(tree);
 
 	for (ptree::iterator son_iter = tree->begin(); son_iter != tree->end(); ++son_iter) {
 		string son_node_name = son_iter->first;
 		ptree* son_tree = &son_iter->second;
 		//string node_value = son_tree.getValue("");
-		//debugPrintf_lvl3("node_name:'%s'", son_node_name.c_str());
+		//debug3("node_name:'%s'", son_node_name.c_str());
 
 		if (son_node_name == "<xmlattr>") {
-			debugPrint_lvl3("<xmlattr> found !");
+			debug3("<xmlattr> found !");
 			/* insert the sons */
 			for (ptree::iterator sonson = son_tree->begin(); sonson
 					!= son_tree->end(); ++sonson) {
 				son_iter = tree->insert(son_iter, *sonson);
 				son_iter++;
-				//debugPrintf_lvl3("node_name:'%s'", node_name.c_str());
+				//debug3("node_name:'%s'", node_name.c_str());
 			} // end loop sons
 
 			/* remove the node */
@@ -163,7 +162,7 @@ void rocs::core::ConfigFileReader::removeXmlattr(ptree* tree) {
 
 void rocs::core::ConfigFileReader::readFileAndCheckIncludes(
 		string filename, ptree* tree, bool include_allowed) {
-	debugPrintf_lvl3("read_file_and_check_includes('%s') - tree version",
+	debug3("read_file_and_check_includes('%s') - tree version",
 			filename.c_str());
 	/*
 	 * parsing
@@ -178,20 +177,20 @@ void rocs::core::ConfigFileReader::readFileAndCheckIncludes(
 		size_t last_slash_pos = filename.find_last_of('/');
 		if (last_slash_pos != string::npos)
 			relative_path = filename.substr(0, last_slash_pos + 1);
-		debugPrintf_lvl3("relative_path:'%s'", relative_path.c_str());
-		debugPrint_lvl3("check_includes()");
+		debug3("relative_path:'%s'", relative_path.c_str());
+		debug3("check_includes()");
 		checkIncludes(relative_path, tree);
 	}
 	/*
 	 * remove the <xmlattr>
 	 */
-	debugPrint_lvl3("remove_xmlattr()");
+	debug3("remove_xmlattr()");
 	removeXmlattr(tree);
 }
 
 //void rocs::core::ConfigFileReader::readFileAndCheckIncludes(
 //		string filename, bool include_allowed /*= true*/) {
-//	debugPrintf_lvl3("readFileAndCheckIncludes('%s')", filename.c_str());
+//	debug3("readFileAndCheckIncludes('%s')", filename.c_str());
 //	readFileAndCheckIncludes(filename, &pt, include_allowed);
 //}
 
@@ -219,7 +218,7 @@ void rocs::core::ConfigFileReader::printPtreeRec(ptree* tree, int depth) {
 template<>
 string rocs::core::ConfigFileReader::getValue<string>(ptree* tree,
 		string path, string default_value, bool& was_found) {
-	debugPrintf_lvl3("getValue<string>(%s)", path.c_str());
+	debug3("getValue<string>(%s)", path.c_str());
 	string return_value = getValueAsString(tree, path, was_found);
 	return (was_found ? return_value : default_value);
 }
@@ -227,7 +226,7 @@ string rocs::core::ConfigFileReader::getValue<string>(ptree* tree,
 template<>
 int rocs::core::ConfigFileReader::getValue<int>(ptree* tree, string path,
 		int default_value, bool& was_found) {
-	debugPrintf_lvl3("getValue<int>(%s)", path.c_str());
+	debug3("getValue<int>(%s)", path.c_str());
 	string return_value = getValueAsString(tree, path, was_found);
 	return (was_found ? atoi(return_value.c_str()) : default_value);
 }
@@ -235,8 +234,15 @@ int rocs::core::ConfigFileReader::getValue<int>(ptree* tree, string path,
 template<>
 double rocs::core::ConfigFileReader::getValue<double>(ptree* tree,
 		string path, double default_value, bool& was_found) {
-	debugPrintf_lvl3("getValue<double>(%s)", path.c_str());
+	debug3("getValue<double>(%s)", path.c_str());
 	string return_value = getValueAsString(tree, path, was_found);
 	return (was_found ? atof(return_value.c_str()) : default_value);
 }
 
+
+void rocs::core::ConfigFileReader::printTree(ptree* tree)
+{
+	cout << "<root>";
+	cout << " (" << tree->size() << " sons)" << endl;
+	printPtreeRec(tree, 0);
+}

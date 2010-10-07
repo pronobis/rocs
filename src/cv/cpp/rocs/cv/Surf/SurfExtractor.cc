@@ -16,7 +16,7 @@ SurfExtractor::~SurfExtractor() {
 }
 
 void SurfExtractor::start() {
-	debugPrint_lvl3("start()");
+	debug3("start()");
 
 	window1Name = "original image";
 	window2Name = "correspondance image";
@@ -49,7 +49,7 @@ void SurfExtractor::start() {
  * terminate the SurfExtractor mode
  */
 void SurfExtractor::end() {
-	debugPrint_lvl3("end()");
+	debug3("end()");
 	sleep(1); // wait a little bit...
 
 	// stopping the capture
@@ -66,7 +66,7 @@ void SurfExtractor::end() {
 /////// main loop                  ////////
 
 void SurfExtractor::defineObjectImage(Img* object_frame) {
-	debugPrintf_lvl3("define_object_image() : img:%s", object_frame->infoString().c_str());
+	debug3("define_object_image() : img:%s", object_frame->infoString().c_str());
 
 	/* load the object images */
 	//	object_BW_image = cvLoadImage(object_filename.c_str(),
@@ -74,7 +74,7 @@ void SurfExtractor::defineObjectImage(Img* object_frame) {
 	//	object_color_image = cvLoadImage(object_filename.c_str(),
 	//			CV_LOAD_IMAGE_COLOR);
 	if (object_BW_image != NULL) {
-		debugPrint_lvl3("Releasing the object images...");
+		debug3("Releasing the object images...");
 		cvReleaseImage(&object_color_image);
 		cvReleaseImage(&object_BW_image);
 	}
@@ -95,7 +95,7 @@ void SurfExtractor::defineObjectImage(Img* object_frame) {
 	cvClearMemStorage(storage);
 	cvExtractSURF(object_BW_image, 0, &object_keypoints, &object_descriptors,
 			storage, surf_params);
-	debugPrintf_lvl3("Object Descriptors:%i", object_descriptors->total);
+	debug3("Object Descriptors:%i", object_descriptors->total);
 
 	/* init the corners of the object */
 	src_corners[0] = cvPoint(0, 0);
@@ -108,20 +108,20 @@ void SurfExtractor::defineObjectImage(Img* object_frame) {
  * main loop of the SurfExtractor mode
  */
 void SurfExtractor::process(Img* frame_img) {
-	debugPrint_lvl3("process()");
+	debug3("process()");
 
-	Assert(frame_img != NULL);
+	assertion(frame_img != NULL);
 	IplImage frame_as_ipl = *(frame_img->asOpenCvMat());
 	this->frame = &frame_as_ipl;
 
 	/* create the buffers */
 	if (frameOut == NULL) {
-		debugPrint_lvl3("creating the buffers...");
+		debug3("creating the buffers...");
 		frameBW
 				= cvCreateImage(cvGetSize(&frame_as_ipl), frame_as_ipl.depth, 1);
 		frameOut = cvCreateImage(cvGetSize(&frame_as_ipl), frame_as_ipl.depth,
 				frame_as_ipl.nChannels);
-		debugPrint_lvl3("Moving the windows...");
+		debug3("Moving the windows...");
 		//		cvMoveWindow(window1Name, 0, 0);
 		//		cvMoveWindow(window2Name, frame->width, 0);
 	}
@@ -147,7 +147,7 @@ void SurfExtractor::process(Img* frame_img) {
  * initiate the things required for for surf method
  */
 void SurfExtractor::surf_init() {
-	debugPrint_lvl3("surf_init()");
+	debug3("surf_init()");
 
 	/* init the storage */
 	storage = cvCreateMemStorage(0);
@@ -243,8 +243,8 @@ int SurfExtractor::surf_naiveNearestNeighbor(const float* vec, int laplacian,
  */
 void SurfExtractor::surf_findPairs(const CvSeq* objectKeypoints,
 		const CvSeq* objectDescriptors, const CvSeq* imageKeypoints,
-		const CvSeq* imageDescriptors, vector<int>& ptpairs) {
-	debugPrint_lvl3("surf_findPairs()");
+		const CvSeq* imageDescriptors, std::vector<int>& ptpairs) {
+	debug3("surf_findPairs()");
 
 	CvSeqReader reader, kreader;
 	cvStartReadSeq(objectKeypoints, &kreader);
@@ -280,7 +280,7 @@ bool SurfExtractor::surf_locatePlanarObject(const CvSeq* objectKeypoints,
 		const CvSeq* objectDescriptors, const CvSeq* imageKeypoints,
 		const CvSeq* imageDescriptors, const CvPoint src_corners[4],
 		CvPoint dst_corners[4]) {
-	debugPrint_lvl3( "surf_locatePlanarObject()");
+	debug3( "surf_locatePlanarObject()");
 
 	/* find pairs */
 	ptpairs.clear();
@@ -291,7 +291,7 @@ bool SurfExtractor::surf_locatePlanarObject(const CvSeq* objectKeypoints,
 		return 0; // not enough points
 
 	/* copy points in CvPoint2D32f */
-	vector<CvPoint2D32f> pt1, pt2;
+	std::vector<CvPoint2D32f> pt1, pt2;
 	pt1.resize(n);
 	pt2.resize(n);
 	for (int i = 0; i < n; i++) {
@@ -334,7 +334,7 @@ bool SurfExtractor::surf_locatePlanarObject(const CvSeq* objectKeypoints,
  * returns true if it manages to compute the homography
  */
 bool SurfExtractor::surf_process() {
-	debugPrint_lvl3( "surf_process()");
+	debug3( "surf_process()");
 
 	cvCvtColor(frame, frameBW, CV_BGR2GRAY); // grayscale conversion
 	//	cvEqualizeHist(frameBW, frameBW);
@@ -351,7 +351,7 @@ bool SurfExtractor::surf_process() {
 			object_descriptors, image_keypoints, image_descriptors,
 			src_corners, dst_corners);
 
-	debugPrintf_lvl3( "image descriptors: %i- nb pairs:%i- matching:%i",
+	debug3( "image descriptors: %i- nb pairs:%i- matching:%i",
 			image_descriptors->total,
 			numberCorrespondances(),
 			planar_object_located );
@@ -374,7 +374,7 @@ int SurfExtractor::numberCorrespondances() {
  * draw the results in the image correspondances_image
  */
 void SurfExtractor::surf_draw() {
-	debugPrint_lvl3("surf_draw()");
+	debug3("surf_draw()");
 
 	/* draw the surf points of the image frameOut and object_color_image */
 	for (int i = 0; i < image_keypoints->total; i++) {
@@ -388,7 +388,7 @@ void SurfExtractor::surf_draw() {
 	int obj_width = object_BW_image->width;
 	int obj_height = object_BW_image->height;
 	if (!correspondances_image) {
-		debugPrint_lvl3("Creating correspondances_image...");
+		debug3("Creating correspondances_image...");
 		correspondances_image = cvCreateImage(cvSize(frame->width + obj_width,
 				frame->height), 8, 3);
 	}
