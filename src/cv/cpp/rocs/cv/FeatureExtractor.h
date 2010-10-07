@@ -21,6 +21,7 @@ public:
 	virtual void start() = 0;
 	virtual void end() = 0;
 	virtual void process(Img* frame) = 0;
+	virtual void process(string filename) = 0;
 };
 
 } // end namespace cv

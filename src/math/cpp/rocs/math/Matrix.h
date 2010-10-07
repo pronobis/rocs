@@ -124,7 +124,7 @@ public:
 	 *          the col to check
 	 */
 	inline void dbgAssertRangeCheck(const int row, const int col) const {
-		//debugPrintf_lvl3("dbgAssertRangeCheck(%i, %i)", row, col);
+		//rocsDebug3("dbgAssertRangeCheck(%i, %i)", row, col);
 		rocsDebugAssert( row >= 0 && row < nbRows() && col >=0 && col < nbCols());
 	}
 
@@ -409,13 +409,13 @@ public:
 
 				for (int k = startRow; k <= endRow; ++k)
 					for (int l = startCol; l <= endCol; ++l) {
-						//						debugPrintf_lvl3("-(%i,%i) : add %f", k, l, mA.get<_T> (k, l) * mB.get<_T> (mBPreMidRow
+						//						rocsDebug3("-(%i,%i) : add %f", k, l, mA.get<_T> (k, l) * mB.get<_T> (mBPreMidRow
 						//										- (i - k), mBPreMidCol - (j - l)));
 						newData += mA.get<_T> (k, l) * mB.get<_T> (mBPreMidRow
 								- (i - k), mBPreMidCol - (j - l));
 					}
 
-				//				debugPrintf_lvl3("(%i,%i) : set %f", i, j, newData);
+				//				rocsDebug3("(%i,%i) : set %f", i, j, newData);
 				mC->set<_T> (i, j, newData);
 				//++newDataPtr;
 			}
