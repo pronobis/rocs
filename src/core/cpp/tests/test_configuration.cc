@@ -60,8 +60,8 @@ BOOST_AUTO_TEST_CASE( command_line_args_single )
 
 	// Check the output
 	BOOST_REQUIRE( wasFound );
-	BOOST_REQUIRE( value1 == 1 );
-	BOOST_REQUIRE( value2 == 1 );
+	BOOST_REQUIRE_EQUAL( value1, 1 );
+	BOOST_REQUIRE_EQUAL( value2, 1 );
 }
 
 /*!
@@ -87,8 +87,8 @@ BOOST_AUTO_TEST_CASE( command_line_args_list1 )
 
 	// Check the output
 	BOOST_REQUIRE( values.size() == 2 );
-	BOOST_REQUIRE( values[0] == 1 );
-	BOOST_REQUIRE( values[1] == 2 );
+	BOOST_REQUIRE_EQUAL( values[0], 1 );
+	BOOST_REQUIRE_EQUAL( values[1], 2 );
 }
 
 /*!
@@ -113,10 +113,10 @@ BOOST_AUTO_TEST_CASE( command_line_args_list2 )
 	config.getValueList("list", "key", values);
 
 	// Check the output
-	BOOST_REQUIRE( values.size() == 3 );
-	BOOST_REQUIRE( values[0] == 1 );
-	BOOST_REQUIRE( values[1] == 2 );
-	BOOST_REQUIRE( values[2] == 4 );
+	BOOST_REQUIRE_EQUAL( values.size(), 3 );
+	BOOST_REQUIRE_EQUAL( values[0], 1 );
+	BOOST_REQUIRE_EQUAL( values[1], 2 );
+	BOOST_REQUIRE_EQUAL( values[2], 4 );
 }
 
 /*!
@@ -140,11 +140,12 @@ BOOST_AUTO_TEST_CASE( ini_simple )
 
 	// Check the output
 	BOOST_REQUIRE( wasFound1 );
-	BOOST_REQUIRE( value1 == 1 );
+	BOOST_REQUIRE_EQUAL( value1, 1 );
 	BOOST_REQUIRE( wasFound2 );
-	BOOST_REQUIRE( value2 == string("This is text") );
+	BOOST_REQUIRE_EQUAL( value2, string("This is text") );
 	BOOST_REQUIRE( wasFound3 );
-	BOOST_REQUIRE( (value3 > 2.29) && (value3 < 2.31) );
+	BOOST_REQUIRE_GT( value3, 2.29 );
+	BOOST_REQUIRE_LT( value3, 2.31 );
 }
 
 
@@ -283,9 +284,3 @@ BOOST_AUTO_TEST_CASE( xml_simple )
 }
 
 
-// TODO: add char* getValue
-// TODO: add parsed config arguments
-// TODO: add includes in the command line and in the other config file formats
-// TODO: add tests for includes
-// TODO: add error handling in the config file reader
-// TODO: remove printChildren if not explicitly run!!
