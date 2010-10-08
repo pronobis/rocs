@@ -1,0 +1,126 @@
+/*!
+\page configFile Config Files
+
+\section types Supported types of config files
+
+You can use the following formats in rocs :
+\li "XML":http://en.wikipedia.org/wiki/XML#Example
+\li "JSON":http://en.wikipedia.org/wiki/JSON#Data_types.2C_syntax_and_example
+\li "INI":http://en.wikipedia.org/wiki/INI_file#Example
+\li "INFO":http://live.boost.org/doc/libs/1_42_0/doc/html/boost_propertytree/parsers.html#boost_propertytree.parsers.info_parser
+
+All of these data formats give files which are structured as trees.
+
+\section reading Reading and accessing a config file.
+
+You need to create a Configuration object, and then pass it the given file.
+The Configuration objects also allow to pass values through the command line arguments.
+
+\code
+Configuration configuration;
+configuration.addConfigFile("configfiles/debug_settings.xml");
+configuration.addCommandLineArgs(argc, argv);
+configuration.printConfiguration();
+\endcode
+
+How to access a single value :
+
+\code
+bool was_found;
+string query, result;
+query = "debug.filename";
+result = configuration.getValue<string> (query, "default_value", was_found);
+\endcode
+
+How to get the sons of a given node :
+
+\code
+vector<ptree> sons;
+int nb_found;
+configuration.getChildren("listName", nb_found, &sons);
+for (vector<ptree>::iterator it = sons.begin(); it < sons.end(); ++it)
+  configuration.printTree(&(*it));
+\endcode
+
+\subsection xmlSpecs XML files
+
+The XML format has a particularity : it makes the distinction between an attribute and a child.
+For instance, in
+
+\code
+<car size="2">
+  <door color="red"/>
+</car>
+\endcode
+
+\c size is an attribute of car, while \c door is a son of car.
+
+However, in our parser, during the file parsing phase we convert all attributes into sons.
+Thus, the previous example would be equivalent to :
+\code
+<car>
+  <size="2">
+  <door>
+    <color="red"/>
+  </door>
+</car>
+\endcode
+
+\section lists Special infos for lists
+
+\subsection conventions Conventions
+
+To represent a list of items, there are a few conventions.
+
+\li The items of a list do not contain values.
+\li The item names are not taken into account.
+
+So, here is a correct repesentation of a list. The values \c B and \c foo won't be read, it is equivalent to put an empty node name.
+
+\code
+A
+|
+|--B
+|  |
+|  |--key=3
+|
+|--foo
+|  |
+|  |--key2=3
+|
+|--
+|  |
+|  |--key=1
+|  |
+|  |--key2=5
+\endcode
+
+Here is an incorrect representation. The \c key2 son has a value.
+
+\code
+A
+|
+|--B
+|  |
+|  |--key=3
+|
+|--key2=5
+\endcode
+
+\subsection example Example
+
+Here is an example of XML file
+\code
+<?xml version="1.0"?>
+  <listName>
+    <item foo="bar" />
+    <item>
+      <prop>2</prop>
+    </item>
+    <item prop="3"/>
+  </listName>
+\endcode
+
+<tt>configuration.getValueList<string> ("listName", "prop", nb_found, &values);</tt>
+will return [2, 3]. The first item, that doesn't contain any <tt>prop</tt> field, won't trigger an error.
+*/
