@@ -7,7 +7,7 @@ if(ROCS_BUILD_MODULE_CV)
 		LINK_MODULES core math)
 
 	# Tests
-	add_rocs_cpp_test_suite(test1)
+	add_rocs_cpp_test_suite(imageIo)
 
 endif(ROCS_BUILD_MODULE_CV)
 

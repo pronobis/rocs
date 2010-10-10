@@ -20,9 +20,13 @@
 
 
 /*!
- * \file Types.h
+ * \file types.h
  *
  * The different types of data we can store
+ *
+ * Define the traits that will be used to determine the best data type to work with.
+ *
+ * partly taken from the library CImg
  *
  * \date Jun 18, 2010
  * \author Arnaud Ramey, Andrzej Pronobis
@@ -115,13 +119,9 @@
 namespace rocs {
 namespace core {
 
-
-
 /*!
  *
- * Define the traits that will be used to determine the best data type to work with.
- *
- * partly taken from the library CImg
+ * The general templated declaration for a type
  */
 template<typename T> class Type {
 public:
@@ -165,6 +165,9 @@ public:
 	}
 };
 
+/*!
+ * The specialisation of the template Type for the type "bool"
+ */
 template<> class Type<bool> {
 public:
 	static const char* string() {
@@ -200,6 +203,9 @@ public:
 	}
 };
 
+/*!
+ * The specialisation of the template Type for the type "unsigned char"
+ */
 template<> class Type<unsigned char> {
 public:
 	static const char* string() {
@@ -233,6 +239,9 @@ public:
 	}
 };
 
+/*!
+ * The specialisation of the template Type for the type "char"
+ */
 template<> class Type<char> {
 public:
 	static const char* string() {
@@ -266,6 +275,9 @@ public:
 	}
 };
 
+/*!
+ * The specialisation of the template Type for the type "signed char"
+ */
 template<> class Type<signed char> {
 public:
 	static const char* string() {
@@ -299,6 +311,9 @@ public:
 	}
 };
 
+/*!
+ * The specialisation of the template Type for the type "unsigned short"
+ */
 template<> class Type<unsigned short> {
 public:
 	static const char* string() {
@@ -332,6 +347,9 @@ public:
 	}
 };
 
+/*!
+ * The specialisation of the template Type for the type "short"
+ */
 template<> class Type<short> {
 public:
 	static const char* string() {
@@ -365,6 +383,9 @@ public:
 	}
 };
 
+/*!
+ * The specialisation of the template Type for the type "unsigned int"
+ */
 template<> class Type<unsigned int> {
 public:
 	static const char* string() {
@@ -398,6 +419,9 @@ public:
 	}
 };
 
+/*!
+ * The specialisation of the template Type for the type "int"
+ */
 template<> class Type<int> {
 public:
 	static const char* string() {
@@ -489,6 +513,9 @@ public:
 //	}
 //};
 
+/*!
+ * The specialisation of the template Type for the type "float"
+ */
 template<> class Type<float> {
 public:
 	static const char* string() {
@@ -528,6 +555,9 @@ public:
 	}
 };
 
+/*!
+ * The specialisation of the template Type for the type "double"
+ */
 template<> class Type<double> {
 public:
 	static const char* string() {
@@ -567,6 +597,9 @@ public:
 	}
 };
 
+/*!
+ * The specialisation of the template Type for the type "string"
+ */
 template<> class Type<std::string> {
 public:
 	static const char* string() {

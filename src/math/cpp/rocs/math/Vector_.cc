@@ -19,7 +19,7 @@
 // ==================================================================
 
 /*!
- * \file Vector_.cpp
+ * \file Vector_.cc
  *
  * \date Jun 18, 2010
  * \author Arnaud Ramey, Andrzej Pronobis

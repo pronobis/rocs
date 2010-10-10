@@ -289,8 +289,6 @@ private:
 	 *          the path to follow from the root of the tree
 	 * \param key
 	 *          the tag to find
-	 * \param nbFound
-	 *          the number of found values (should be equal to ans->size())
 	 * \param ans
 	 *          the vector where to store the answers
 	 */

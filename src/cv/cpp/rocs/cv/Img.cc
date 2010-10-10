@@ -19,7 +19,7 @@
 // ==================================================================
 
 /*!
- * \file Img.cpp
+ * \file Img.cc
  *
  * \date Jul 3, 2010
  * \author Arnaud Ramey, Andrzej Pronobis

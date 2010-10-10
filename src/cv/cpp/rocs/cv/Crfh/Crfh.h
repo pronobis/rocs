@@ -58,6 +58,9 @@ class DescriptorList;
 //};
 typedef std::pair<int, double> CSvmNode;
 
+/*!
+ * the representation of a Crfh feature
+ */
 class Crfh: public MapType {
 
 public:

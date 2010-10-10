@@ -30,13 +30,13 @@
 #include "rocs/math/Matrix.h"
 #include "rocs/core/types.h"
 
+namespace rocs {
+namespace math {
+
 /*!
  * a template declaration, inherit from Mat_
  * cf http://opencv.willowgarage.com/documentation/cpp/basic_structures.html?highlight=mat#id4
  */
-namespace rocs {
-namespace math {
-
 template<class _T>
 class Matrix_: public Matrix {
 public:

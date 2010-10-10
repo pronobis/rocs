@@ -23,11 +23,12 @@
  * For more information see:
  * http://www.boost.org/doc/libs/1_44_0/libs/test/doc/html/utf/user-guide.html
  * \author Andrzej Pronobis
- * \file test_test1.cc
+ * \file test_imageIo.cc
  */
 
 // Boost
 #include <boost/test/unit_test.hpp>
+#include "rocs/cv/ImageIO.h"
 // ROCS
 /* Nothing for now. This is just an example*/
 
@@ -36,12 +37,5 @@ BOOST_AUTO_TEST_CASE( case1 )
 {
 	BOOST_CHECK( 0 == 0 );
 	BOOST_REQUIRE( 0 == 0 );
-}
-
-/*! Define second test case. */
-BOOST_AUTO_TEST_CASE( case2 )
-{
-	BOOST_CHECK( 1 == 1 );
-	BOOST_REQUIRE( 1 == 1 );
 }
 

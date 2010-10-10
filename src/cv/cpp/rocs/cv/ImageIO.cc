@@ -19,7 +19,7 @@
 // ==================================================================
 
 /*!
- * \file ImageIO.cpp
+ * \file ImageIO.cc
  *
  * \date Jul 3, 2010
  * \author Arnaud Ramey, Andrzej Pronobis

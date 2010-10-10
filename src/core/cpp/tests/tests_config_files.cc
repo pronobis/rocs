@@ -19,7 +19,7 @@
 // ==================================================================
 
 /*!
- * \file test_config_files.cc
+ * \file tests_config_files.cc
  *
  * \date Aug 17, 2010
  * \author Arnaud Ramey, Andrzej Pronobis

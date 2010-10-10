@@ -502,9 +502,10 @@ public:
 	 *          The number of arrays must match channels() .
 	 *          The arrays themselves will be reallocated if needed
 	 */
-	void split2(std::vector< opencv::Mat >& channels)
+	void split(std::vector< Matrix >& channels)
 	{
-		opencv::split(asConstOpenCvMat(), channels);
+		// conversion to a Matrix array ( Matrix* )
+		split(&(*channels.begin()) );
 	}
 
 	/*!
