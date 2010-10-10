@@ -41,8 +41,10 @@ namespace opencv = cv;
 #include "rocs/core/error.h"
 #include "rocs/core/debug.h"
 
-namespace rocs {
-namespace math {
+namespace rocs
+{
+namespace math
+{
 
 /*!
  * the Matrix class declaration
@@ -66,14 +68,16 @@ namespace math {
  *  Matrix_<...>             Vector_<...>
  *
  */
-class Matrix: private opencv::Mat {
+class Matrix: private opencv::Mat
+{
 public:
 	/* constructors and destructors */
 	//	Matrix(cv::Mat cv_matrix) {	};
 
 	/*! an empty constructor */
 	Matrix() :
-		opencv::Mat() {
+		opencv::Mat()
+	{
 	}
 
 	/*!
@@ -91,22 +95,26 @@ public:
 
 	/* data access */
 	/*! \return the type of data stored inside the matrix */
-	inline int getDataType() const {
+	inline int getDataType() const
+	{
 		return data_type;
 	}
 
 	/*! a cast to the opencv underlying matrix */
-	const opencv::Mat asConstOpenCvMat() const {
+	const opencv::Mat asConstOpenCvMat() const
+	{
 		return (const opencv::Mat) (*this);
 	}
 
 	/*! a cast to the opencv underlying matrix */
-	inline opencv::Mat* asOpenCvMat() {
+	inline opencv::Mat* asOpenCvMat()
+	{
 		return (opencv::Mat*) this;
 	}
 
 	/*! the number of channels in the matrix */
-	inline int channels() const {
+	inline int channels() const
+	{
 		return MAT_MAT_CN(flags);
 	}
 
@@ -129,7 +137,8 @@ public:
 	 * Create a string of information about the Matrix : its size, type...
 	 * \return    the created string
 	 */
-	std::string infoString() const {
+	std::string infoString() const
+	{
 		std::ostringstream m;
 		m << "Matrix:";
 		m << nbCols() << 'x' << nbRows() << ", ";
@@ -148,7 +157,8 @@ public:
 	 * \param col
 	 *          the col to check
 	 */
-	inline void dbgAssertRangeCheck(const int row, const int col) const {
+	inline void dbgAssertRangeCheck(const int row, const int col) const
+	{
 		//rocsDebug3("dbgAssertRangeCheck(%i, %i)", row, col);
 		rocsDebugAssert( row >= 0 && row < nbRows() && col >=0 && col < nbCols());
 	}
@@ -161,7 +171,8 @@ public:
 	 * \return the value at (row, col)
 	 */
 	//	template<typename _T> _T get(const int row, const int col) const {
-	template<typename _T> _T get(int row, int col) const {
+	template<typename _T> _T get(int row, int col) const
+	{
 		dbgAssertRangeCheck(row, col);
 		return at<_T> (row, col);
 	}
@@ -174,7 +185,8 @@ public:
 	 * \param value the new value
 	 */
 	template<typename _T>
-	inline void set(int row, int col, _T value) {
+	inline void set(int row, int col, _T value)
+	{
 		dbgAssertRangeCheck(row, col);
 		this->at<_T> (row, col) = value;
 	}
@@ -203,11 +215,13 @@ public:
 	void copyTo(Matrix dst) const;
 
 	template<typename _Tsrc, typename _Tdst>
-	void copyTo_(Matrix dst) {
+	void copyTo_(Matrix dst)
+	{
 		rocsDebug3("copyTo_(%s, %s)", infoString().c_str(), dst.infoString().c_str());
 
 		/* resize if needed */
-		if (dst.nbCols() != nbCols() || dst.nbRows() != nbRows()) {
+		if (dst.nbCols() != nbCols() || dst.nbRows() != nbRows())
+		{
 			//			char msg[300];
 			//			sprintf(
 			//					msg,
@@ -230,9 +244,12 @@ public:
 	 * \param value the value to fill with
 	 */
 	template<typename _T>
-	inline void fill(_T value) {
-		for (int col = 0; col < nbCols(); ++col) {
-			for (int row = 0; row < nbRows(); ++row) {
+	inline void fill(_T value)
+	{
+		for (int col = 0; col < nbCols(); ++col)
+		{
+			for (int row = 0; row < nbRows(); ++row)
+			{
 				set<_T> (row, col, value);
 				//at<_T> (row, col) = value;
 			}
@@ -241,7 +258,8 @@ public:
 
 	/*! return the length of the data inside the matrix */
 	template<typename _T>
-	inline long dataLength() {
+	inline long dataLength()
+	{
 		return sizeof(_T) * nbCols() * nbRows();
 	}
 
@@ -251,23 +269,27 @@ public:
 	 * (cf http://www.cppreference.com/wiki/c/string/memset )
 	 */
 	template<typename _T>
-	inline void fillWithZeros() {
+	inline void fillWithZeros()
+	{
 		memset((static_cast<opencv::Mat*> (this))->data, '\0',
 				dataLength<_T> ());
 	}
 
 	/*! Returns true if the matrix is empty. */
-	inline bool isEmpty() const {
+	inline bool isEmpty() const
+	{
 		return (static_cast<const opencv::Mat*> (this))->empty();
 	}
 
 	/*! the depth of the data  */
-	inline int depth() const {
+	inline int depth() const
+	{
 		return (static_cast<const opencv::Mat*> (this))->depth();
 	}
 
 	/*! Resizes the matrix if the current size if different than given. */
-	inline void resize(int rows, int cols) {
+	inline void resize(int rows, int cols)
+	{
 		rocsDebug3("resize(%ix%i)", rows, cols);
 		asOpenCvMat()->create(rows, cols, getDataType());
 		rocsDebug3("new format(%s)", infoString().c_str());
@@ -319,7 +341,8 @@ public:
 	 *          the matrix to convolove with
 	 */
 	template<typename _T>
-	void convolveWith(const Matrix &m) {
+	void convolveWith(const Matrix &m)
+	{
 		rocsDebug3("convolveWith(m:%s)", m.infoString().c_str());
 
 		/* Do noting for empty matrices or kernels */
@@ -343,7 +366,8 @@ public:
 
 		/* Compute convolution */
 		for (int i = 0; i < nbRows(); ++i)
-			for (int j = 0; j < nbCols(); ++j) {
+			for (int j = 0; j < nbCols(); ++j)
+			{
 				int startRow = aMax<int> (i - mPreMidRow, 0);
 				int endRow = aMin<int> (i + mPostMidRow, nbRows() - 1);
 				int startCol = aMax<int> (j - mPreMidCol, 0);
@@ -354,9 +378,6 @@ public:
 
 				for (int k = startRow; k <= endRow; ++k)
 					for (int l = startCol; l <= endCol; ++l)
-						// TODO check formula
-						//					(*newDataPtr) += get(k, l) * m.get(mPreMidRow - (i
-						//							- k), mPreMidCol - (j - l));
 						newData += this->get<_T> (k, l) * m.get<_T> (mPreMidRow
 								- (i - k), mPreMidCol - (j - l));
 				mC->set<_T> (i, j, newData);
@@ -389,7 +410,8 @@ public:
 	 *          A convolved with B
 	 */
 	template<typename _T>
-	static Matrix *convolve(const Matrix &mA, const Matrix &mB, Matrix *mC = 0) {
+	static Matrix *convolve(const Matrix &mA, const Matrix &mB, Matrix *mC = 0)
+	{
 		rocsDebug3("convolve(mA:%s, mB:%s)", mA.infoString().c_str(), mB.infoString().c_str() );
 		// Do noting for empty matrices
 		if (mA.isEmpty() || mB.isEmpty())
@@ -407,14 +429,20 @@ public:
 		int mBPostMidCol = mBCols - 1 - mBPreMidCol;
 
 		// Create the resulting matrix
-		if (mC) {
-			if (mC->nbCols() == mACols && mC->nbRows() == mARows) {
+		if (mC)
+		{
+			if (mC->nbCols() == mACols && mC->nbRows() == mARows)
+			{
 				rocsDebug3("mC of the good size.");
-			} else {
+			}
+			else
+			{
 				rocsDebug3("resizing mC...");
 				mC->resize(mARows, mACols);
 			}
-		} else { //mC = null
+		}
+		else
+		{ //mC = null
 			rocsDebug3("Creating mC...");
 			//int data_type  = mA.getDataType();
 			mC = new Matrix(mARows, mACols, mA.getDataType());
@@ -423,7 +451,8 @@ public:
 
 		// Compute convolution
 		for (int i = 0; i < mARows; ++i)
-			for (int j = 0; j < mACols; ++j) {
+			for (int j = 0; j < mACols; ++j)
+			{
 				int startRow = aMax<int> (i - mBPreMidRow, 0);
 				int endRow = aMin<int> (i + mBPostMidRow, mARows - 1);
 				int startCol = aMax<int> (j - mBPreMidCol, 0);
@@ -433,7 +462,8 @@ public:
 				double newData = 0;
 
 				for (int k = startRow; k <= endRow; ++k)
-					for (int l = startCol; l <= endCol; ++l) {
+					for (int l = startCol; l <= endCol; ++l)
+					{
 						//						rocsDebug3("-(%i,%i) : add %f", k, l, mA.get<_T> (k, l) * mB.get<_T> (mBPreMidRow
 						//										- (i - k), mBPreMidCol - (j - l)));
 						newData += mA.get<_T> (k, l) * mB.get<_T> (mBPreMidRow
@@ -453,6 +483,31 @@ public:
 	}
 
 	/*!
+	 * Divides multi-channel array into several single-channel arrays
+	 *
+	 * \param channels
+	 *          The destination array;
+	 *          The number of arrays must match channels() .
+	 *          The arrays themselves will be reallocated if needed
+	 */
+	void split(Matrix* channels)
+	{
+		opencv::split(asConstOpenCvMat(), channels);
+	}
+	/*!
+	 * Divides multi-channel array into several single-channel arrays
+	 *
+	 * \param channels
+	 *          The vector of arrays;
+	 *          The number of arrays must match channels() .
+	 *          The arrays themselves will be reallocated if needed
+	 */
+	void split2(std::vector< opencv::Mat >& channels)
+	{
+		opencv::split(asConstOpenCvMat(), channels);
+	}
+
+	/*!
 	 * @return a string version of the matrix values
 	 */
 	std::string toString();
@@ -464,7 +519,8 @@ private:
 	///// operators
 	/*! templated == operator */
 	template<typename _T>
-	inline bool equals(const Matrix &m) const {
+	inline bool equals(const Matrix &m) const
+	{
 		// sizes check
 		if (!(nbCols() == m.nbCols() && nbRows() == m.nbRows()))
 			return false;
@@ -474,8 +530,10 @@ private:
 			return false;
 
 		// check for every value
-		for (int i = 0; i < nbRows(); ++i) {
-			for (int j = 0; j < nbCols(); ++j) {
+		for (int i = 0; i < nbRows(); ++i)
+		{
+			for (int j = 0; j < nbCols(); ++j)
+			{
 				if (get<_T> (i, j) != m.get<_T> (i, j))
 					return false;
 			}
@@ -486,14 +544,17 @@ private:
 
 	/*! templated + operator */
 	template<typename _T>
-	inline Matrix* plus(const Matrix &m) const {
+	inline Matrix* plus(const Matrix &m) const
+	{
 		// size check
 		rocsDebugAssert( (nbCols() == m.nbCols() && nbRows() == m.nbRows()) );
 
 		Matrix* ans = new Matrix(nbRows(), nbCols(), data_type);
 		/// check for every value
-		for (int i = 0; i < nbRows(); ++i) {
-			for (int j = 0; j < nbCols(); ++j) {
+		for (int i = 0; i < nbRows(); ++i)
+		{
+			for (int j = 0; j < nbCols(); ++j)
+			{
 				ans->set<_T> (i, j, get<_T> (i, j) + m.get<_T> (i, j));
 			}
 		}
@@ -502,14 +563,17 @@ private:
 
 	/*! templated - operator */
 	template<typename _T>
-	inline Matrix* minus(const Matrix &m) const {
+	inline Matrix* minus(const Matrix &m) const
+	{
 		// size check
 		rocsDebugAssert( (nbCols() == m.nbCols() && nbRows() == m.nbRows()) );
 
 		Matrix* ans = new Matrix(nbRows(), nbCols(), data_type);
 		/// check for every value
-		for (int i = 0; i < nbRows(); ++i) {
-			for (int j = 0; j < nbCols(); ++j) {
+		for (int i = 0; i < nbRows(); ++i)
+		{
+			for (int j = 0; j < nbCols(); ++j)
+			{
 				ans->set<_T> (i, j, get<_T> (i, j) - m.get<_T> (i, j));
 			}
 		}
@@ -518,14 +582,17 @@ private:
 
 	/*! templated * operator */
 	template<typename _T>
-	inline Matrix* times(const Matrix &m) const {
+	inline Matrix* times(const Matrix &m) const
+	{
 		// size check
 		rocsDebugAssert( nbCols() == m.nbRows() );
 
 		Matrix* ans = new Matrix(nbRows(), nbCols(), data_type);
 		/// check for every value
-		for (int j = 0; j < m.nbCols(); j++) {
-			for (int i = 0; i < nbRows(); i++) {
+		for (int j = 0; j < m.nbCols(); j++)
+		{
+			for (int i = 0; i < nbRows(); i++)
+			{
 				double sum = 0;
 				for (int k = 0; k < nbCols(); k++)
 					sum += get<_T> (i, k) * m.get<_T> (k, j);

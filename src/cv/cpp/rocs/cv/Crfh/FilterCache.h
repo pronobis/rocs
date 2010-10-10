@@ -73,8 +73,6 @@ private:
 
 };
 
-#endif
-
 } // end namespace cv
 } // end namespace rocs
 
