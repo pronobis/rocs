@@ -85,6 +85,7 @@ install(FILES
 # Thirdparty
 add_subdirectory_with_includes(${ROCS_SRC_THIRDPARTY}/boost)
 add_subdirectory_with_includes(${ROCS_SRC_THIRDPARTY}/cimg)
+add_subdirectory_with_includes(${ROCS_SRC_THIRDPARTY}/libdai)
 
 # Modules
 add_subdirectory_with_includes(${ROCS_SRC_MODULES}/core)

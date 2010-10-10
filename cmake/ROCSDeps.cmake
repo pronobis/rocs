@@ -26,6 +26,8 @@
 # Use it to define direct dependencies of every component or app.
 # ------------------------------------------------------------------
 
+set(ROCS_BUILD_THIRDPARTY_LIBDAI yes)
+
 # Module CV Apps
 if(ROCS_BUILD_MODULE_CV_APPS)
 	set(ROCS_BUILD_MODULE_CV yes)
