@@ -1,22 +1,42 @@
-/*
- * CDescriptor.cc
+// ==================================================================
+// ROCS - Toolkit for Robots Comprehending Space
+// Copyright (C) 2010  Arnaud Ramey, Andrzej Pronobis
+//
+// This file is part of ROCS.
+//
+// ROCS is free software: you can redistribute it and/or modify it
+// under the terms of the GNU Lesser General Public License as
+// published by the Free Software Foundation, either version 3
+// of the License, or (at your option) any later version.
+//
+// ROCS is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU Lesser General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with ROCS. If not, see <http://www.gnu.org/licenses/>.
+// ==================================================================
+
+/*!
+ * \file Descriptor.cc
  *
- *  Created on: Sep 27, 2010
- *      Author: arnaud
+ * \date Sep 27, 2010
+ * \author Arnaud Ramey, Andrzej Pronobis
  */
 
-#include "rocs/cv/Crfh/CFilter.h"
-#include "rocs/cv/Crfh/CFilterCache.h"
-#include "rocs/cv/Crfh/CChannelCache.h"
-#include "rocs/cv/Crfh/CScaleSpaceCache.h"
-#include "rocs/cv/Crfh/CDescriptor.h"
+#include "rocs/cv/Crfh/Filter.h"
+#include "rocs/cv/Crfh/FilterCache.h"
+#include "rocs/cv/Crfh/ChannelCache.h"
+#include "rocs/cv/Crfh/ScaleSpaceCache.h"
+#include "rocs/cv/Crfh/Descriptor.h"
 
 
 namespace rocs {
 namespace cv {
 
 // -----------------------------------------
-CDescriptor *CDescriptor::createDescriptor(DescriptorType descriptorType,
+Descriptor *Descriptor::createDescriptor(DescriptorType descriptorType,
 		double scale, int bins) {
 	switch (descriptorType) {
 	case DT_L:
@@ -38,7 +58,7 @@ CDescriptor *CDescriptor::createDescriptor(DescriptorType descriptorType,
 }
 
 // -----------------------------------------
-CDescriptor *CDescriptor::createDescriptor(string descriptorName,
+Descriptor *Descriptor::createDescriptor(string descriptorName,
 		double scale, int bins) {
 	if (descriptorName == "L")
 		return new CLDescriptor(scale, bins);
@@ -57,25 +77,25 @@ CDescriptor *CDescriptor::createDescriptor(string descriptorName,
 }
 
 // -----------------------------------------
-void CLDescriptor::createRequiredFilters(CFilterCache &filterCache) {
+void CLDescriptor::createRequiredFilters(FilterCache &filterCache) {
 	CGaussianFilterInfo gfi(_scale);
 	filterCache.createFilter(gfi);
 }
 
 // -----------------------------------------
-void CLDescriptor::createRequiredChannels(CChannelCache &channelCache) {
+void CLDescriptor::createRequiredChannels(ChannelCache &channelCache) {
 	channelCache.createChannel(CT_L);
 }
 
 // -----------------------------------------
-void CLDescriptor::createRequiredScales(CScaleSpaceCache &scaleSpaceCache) {
+void CLDescriptor::createRequiredScales(ScaleSpaceCache &scaleSpaceCache) {
 	scaleSpaceCache.createScaleSpaceSample(CT_L, _scale);
 }
 
 // -----------------------------------------
-Matrix_<double> *CLDescriptor::apply(const CChannelCache &channelCache,
-		const CScaleSpaceCache &scaleSpaceCache,
-		const CFilterCache &filterCache, Matrix_<double> *result) {
+Matrix_<double> *CLDescriptor::apply(const ChannelCache &channelCache,
+		const ScaleSpaceCache &scaleSpaceCache,
+		const FilterCache &filterCache, Matrix_<double> *result) {
 	const Matrix_<double> *scaleSpaceSample = scaleSpaceCache.getScaleSpaceSample(CT_L,
 			_scale);
 	//result = scaleSpaceSample->getDeepCopy(result);
@@ -85,7 +105,7 @@ Matrix_<double> *CLDescriptor::apply(const CChannelCache &channelCache,
 }
 
 // -----------------------------------------
-void CLxxDescriptor::createRequiredFilters(CFilterCache &filterCache) {
+void CLxxDescriptor::createRequiredFilters(FilterCache &filterCache) {
 	CGaussianFilterInfo gfi(_scale);
 	CCartesianFilterInfo cfi(2, 0);
 
@@ -94,19 +114,19 @@ void CLxxDescriptor::createRequiredFilters(CFilterCache &filterCache) {
 }
 
 // -----------------------------------------
-void CLxxDescriptor::createRequiredChannels(CChannelCache &channelCache) {
+void CLxxDescriptor::createRequiredChannels(ChannelCache &channelCache) {
 	channelCache.createChannel(CT_L);
 }
 
 // -----------------------------------------
-void CLxxDescriptor::createRequiredScales(CScaleSpaceCache &scaleSpaceCache) {
+void CLxxDescriptor::createRequiredScales(ScaleSpaceCache &scaleSpaceCache) {
 	scaleSpaceCache.createScaleSpaceSample(CT_L, _scale);
 }
 
 // -----------------------------------------
-Matrix_<double> *CLxxDescriptor::apply(const CChannelCache &channelCache,
-		const CScaleSpaceCache &scaleSpaceCache,
-		const CFilterCache &filterCache, Matrix_<double> *result) {
+Matrix_<double> *CLxxDescriptor::apply(const ChannelCache &channelCache,
+		const ScaleSpaceCache &scaleSpaceCache,
+		const FilterCache &filterCache, Matrix_<double> *result) {
 	// Get scale space sample
 	const Matrix_<double> *scaleSpaceSample = scaleSpaceCache.getScaleSpaceSample(CT_L,
 			_scale);
@@ -125,7 +145,7 @@ Matrix_<double> *CLxxDescriptor::apply(const CChannelCache &channelCache,
 }
 
 // -----------------------------------------
-void CLxDescriptor::createRequiredFilters(CFilterCache &filterCache) {
+void CLxDescriptor::createRequiredFilters(FilterCache &filterCache) {
 	CGaussianFilterInfo gfi(_scale);
 	CCartesianFilterInfo cfi(1, 0);
 
@@ -134,19 +154,19 @@ void CLxDescriptor::createRequiredFilters(CFilterCache &filterCache) {
 }
 
 // -----------------------------------------
-void CLxDescriptor::createRequiredChannels(CChannelCache &channelCache) {
+void CLxDescriptor::createRequiredChannels(ChannelCache &channelCache) {
 	channelCache.createChannel(CT_L);
 }
 
 // -----------------------------------------
-void CLxDescriptor::createRequiredScales(CScaleSpaceCache &scaleSpaceCache) {
+void CLxDescriptor::createRequiredScales(ScaleSpaceCache &scaleSpaceCache) {
 	scaleSpaceCache.createScaleSpaceSample(CT_L, _scale);
 }
 
 // -----------------------------------------
-Matrix_<double> *CLxDescriptor::apply(const CChannelCache &channelCache,
-		const CScaleSpaceCache &scaleSpaceCache,
-		const CFilterCache &filterCache, Matrix_<double> *result) {
+Matrix_<double> *CLxDescriptor::apply(const ChannelCache &channelCache,
+		const ScaleSpaceCache &scaleSpaceCache,
+		const FilterCache &filterCache, Matrix_<double> *result) {
 	// Get scale space sample
 	const Matrix_<double> *scaleSpaceSample = scaleSpaceCache.getScaleSpaceSample(CT_L,
 			_scale);
@@ -164,7 +184,7 @@ Matrix_<double> *CLxDescriptor::apply(const CChannelCache &channelCache,
 }
 
 // -----------------------------------------
-void CLyDescriptor::createRequiredFilters(CFilterCache &filterCache) {
+void CLyDescriptor::createRequiredFilters(FilterCache &filterCache) {
 	CGaussianFilterInfo gfi(_scale);
 	CCartesianFilterInfo cfi(0, 1);
 
@@ -173,19 +193,19 @@ void CLyDescriptor::createRequiredFilters(CFilterCache &filterCache) {
 }
 
 // -----------------------------------------
-void CLyDescriptor::createRequiredChannels(CChannelCache &channelCache) {
+void CLyDescriptor::createRequiredChannels(ChannelCache &channelCache) {
 	channelCache.createChannel(CT_L);
 }
 
 // -----------------------------------------
-void CLyDescriptor::createRequiredScales(CScaleSpaceCache &scaleSpaceCache) {
+void CLyDescriptor::createRequiredScales(ScaleSpaceCache &scaleSpaceCache) {
 	scaleSpaceCache.createScaleSpaceSample(CT_L, _scale);
 }
 
 // -----------------------------------------
-Matrix_<double> *CLyDescriptor::apply(const CChannelCache &channelCache,
-		const CScaleSpaceCache &scaleSpaceCache,
-		const CFilterCache &filterCache, Matrix_<double> *result) {
+Matrix_<double> *CLyDescriptor::apply(const ChannelCache &channelCache,
+		const ScaleSpaceCache &scaleSpaceCache,
+		const FilterCache &filterCache, Matrix_<double> *result) {
 	// Get scale space sample
 	const Matrix_<double> *scaleSpaceSample = scaleSpaceCache.getScaleSpaceSample(CT_L,
 			_scale);
@@ -203,7 +223,7 @@ Matrix_<double> *CLyDescriptor::apply(const CChannelCache &channelCache,
 }
 
 // -----------------------------------------
-void CLyyDescriptor::createRequiredFilters(CFilterCache &filterCache) {
+void CLyyDescriptor::createRequiredFilters(FilterCache &filterCache) {
 	CGaussianFilterInfo gfi(_scale);
 	CCartesianFilterInfo cfi(0, 2);
 
@@ -212,19 +232,19 @@ void CLyyDescriptor::createRequiredFilters(CFilterCache &filterCache) {
 }
 
 // -----------------------------------------
-void CLyyDescriptor::createRequiredChannels(CChannelCache &channelCache) {
+void CLyyDescriptor::createRequiredChannels(ChannelCache &channelCache) {
 	channelCache.createChannel(CT_L);
 }
 
 // -----------------------------------------
-void CLyyDescriptor::createRequiredScales(CScaleSpaceCache &scaleSpaceCache) {
+void CLyyDescriptor::createRequiredScales(ScaleSpaceCache &scaleSpaceCache) {
 	scaleSpaceCache.createScaleSpaceSample(CT_L, _scale);
 }
 
 // -----------------------------------------
-Matrix_<double> *CLyyDescriptor::apply(const CChannelCache &channelCache,
-		const CScaleSpaceCache &scaleSpaceCache,
-		const CFilterCache &filterCache, Matrix_<double> *result) {
+Matrix_<double> *CLyyDescriptor::apply(const ChannelCache &channelCache,
+		const ScaleSpaceCache &scaleSpaceCache,
+		const FilterCache &filterCache, Matrix_<double> *result) {
 	// Get scale space sample
 	const Matrix_<double> *scaleSpaceSample = scaleSpaceCache.getScaleSpaceSample(CT_L,
 			_scale);
@@ -242,7 +262,7 @@ Matrix_<double> *CLyyDescriptor::apply(const CChannelCache &channelCache,
 }
 
 // -----------------------------------------
-void CLxyDescriptor::createRequiredFilters(CFilterCache &filterCache) {
+void CLxyDescriptor::createRequiredFilters(FilterCache &filterCache) {
 	CGaussianFilterInfo gfi(_scale);
 	CCartesianFilterInfo cfi(1, 1);
 
@@ -251,19 +271,19 @@ void CLxyDescriptor::createRequiredFilters(CFilterCache &filterCache) {
 }
 
 // -----------------------------------------
-void CLxyDescriptor::createRequiredChannels(CChannelCache &channelCache) {
+void CLxyDescriptor::createRequiredChannels(ChannelCache &channelCache) {
 	channelCache.createChannel(CT_L);
 }
 
 // -----------------------------------------
-void CLxyDescriptor::createRequiredScales(CScaleSpaceCache &scaleSpaceCache) {
+void CLxyDescriptor::createRequiredScales(ScaleSpaceCache &scaleSpaceCache) {
 	scaleSpaceCache.createScaleSpaceSample(CT_L, _scale);
 }
 
 // -----------------------------------------
-Matrix_<double> *CLxyDescriptor::apply(const CChannelCache &channelCache,
-		const CScaleSpaceCache &scaleSpaceCache,
-		const CFilterCache &filterCache, Matrix_<double> *result) {
+Matrix_<double> *CLxyDescriptor::apply(const ChannelCache &channelCache,
+		const ScaleSpaceCache &scaleSpaceCache,
+		const FilterCache &filterCache, Matrix_<double> *result) {
 	// Get scale space sample
 	const Matrix_<double> *scaleSpaceSample = scaleSpaceCache.getScaleSpaceSample(CT_L,
 			_scale);

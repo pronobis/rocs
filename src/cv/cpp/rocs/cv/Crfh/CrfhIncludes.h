@@ -18,54 +18,26 @@
 // along with ROCS. If not, see <http://www.gnu.org/licenses/>.
 // ==================================================================
 
+
 /*!
- * \file Img.h
+ * \file Crfh.h
  *
- * \date Jul 3, 2010
+ * \date Sep 30, 2010
  * \author Arnaud Ramey, Andrzej Pronobis
  */
 
-#ifndef IMG_H_
-#define IMG_H_
+#ifndef CRFH_H_
+#define CRFH_H_
 
-#include "rocs/math/Matrix_.h"
+#define VERSION 1.0
 
-namespace rocs {
-namespace cv {
+#include "rocs/cv/Crfh/System.h"
+//#include "CPerformance.h"
+#include "rocs/cv/Crfh/Crfh.h"
+//#include "global.h"
+//#include "CImage.h"
+#include "rocs/cv/Img.h"
 
-/*!
- * the representation of an image
- */
-class Img: public math::Matrix {
-public:
-	Img(int rows, int cols, int type);
-	virtual ~Img();
 
-	//	template<typename _T>
-	//	inline _T get(const int row, const int col) const {
-	//		return ((Matrix*) this)->get<_T> (row, col);
-	//	}
-	//
-	//	template<typename _T>
-	//	inline void set(int row, int col, _T value) {
-	//		((Matrix*) this)->set<_T> (row, col, value);
-	//	}
 
-	//	opencv::Mat* asOpenCvMat() {
-	//		math::Matrix* thisMatrix = this;
-	//		return thisMatrix->asOpenCvMat();
-	//	}
-	//
-	//	const opencv::Mat asConstOpenCvMat() {
-	//		return ((math::Matrix*) this)->asConstOpenCvMat();
-	//	}
-
-	/*! Returns the intensity channel L as a matrix of doubles. */
-	math::Matrix_<double> *getL(math::Matrix_<double> *L = 0) const;
-
-};
-
-} // end namespace cv
-} // end namespace rocs
-
-#endif /* IMG_H_ */
+#endif /* CRFH_H_ */

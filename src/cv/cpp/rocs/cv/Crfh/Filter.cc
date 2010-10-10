@@ -1,15 +1,36 @@
-/*
- * CFilter.cc
+// ==================================================================
+// ROCS - Toolkit for Robots Comprehending Space
+// Copyright (C) 2010  Arnaud Ramey, Andrzej Pronobis
+//
+// This file is part of ROCS.
+//
+// ROCS is free software: you can redistribute it and/or modify it
+// under the terms of the GNU Lesser General Public License as
+// published by the Free Software Foundation, either version 3
+// of the License, or (at your option) any later version.
+//
+// ROCS is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU Lesser General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with ROCS. If not, see <http://www.gnu.org/licenses/>.
+// ==================================================================
+
+/*!
+ * \file Filter.cc
  *
- * Contains implementation of the CFilter class.
+ * Contains implementation of the Filter class.
  *
- *
+ * \date Sep 27, 2010
+ * \author Arnaud Ramey, Andrzej Pronobis
  */
 
 #define PI 3.141592653589793
 #include <math.h>
 
-#include "rocs/cv/Crfh/CFilter.h"
+#include "rocs/cv/Crfh/Filter.h"
 //#include "global.h"
 #include "rocs/math/ElemMath.h"
 //#include "Matrix_.h"
@@ -17,7 +38,7 @@
 namespace rocs {
 namespace cv {
 
-CFilter *CFilter::createFilter(const CFilterInfo &fi) {
+Filter *Filter::createFilter(const FilterInfo &fi) {
 	switch (fi.getFilterType()) {
 	case FT_GAUSSIAN:
 		return new CGaussianFilter(

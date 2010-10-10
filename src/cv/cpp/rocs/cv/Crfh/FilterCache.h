@@ -19,53 +19,63 @@
 // ==================================================================
 
 /*!
- * \file Img.h
+ * \file FilterCache.h
  *
- * \date Jul 3, 2010
- * \author Arnaud Ramey, Andrzej Pronobis
+ * \date Sep 27, 2010
+ * \author Andrzej Pronobis
+ *
+ * Contains declaration of the FilterCache class.
  */
 
-#ifndef IMG_H_
-#define IMG_H_
+#ifndef CFILTERCACHE_H_
+#define CFILTERCACHE_H_
 
-#include "rocs/math/Matrix_.h"
+#include <vector>
 
 namespace rocs {
 namespace cv {
 
+//#include <QtCore/QList>
+
+class Filter;
+class FilterInfo;
+template<typename _T> class Matrix_;
+
 /*!
- * the representation of an image
+ * Class storing a cache of filters.
  */
-class Img: public math::Matrix {
+class FilterCache {
+
 public:
-	Img(int rows, int cols, int type);
-	virtual ~Img();
 
-	//	template<typename _T>
-	//	inline _T get(const int row, const int col) const {
-	//		return ((Matrix*) this)->get<_T> (row, col);
-	//	}
-	//
-	//	template<typename _T>
-	//	inline void set(int row, int col, _T value) {
-	//		((Matrix*) this)->set<_T> (row, col, value);
-	//	}
+	/*! Default constructor. */
+	inline FilterCache() {
+	}
+	;
 
-	//	opencv::Mat* asOpenCvMat() {
-	//		math::Matrix* thisMatrix = this;
-	//		return thisMatrix->asOpenCvMat();
-	//	}
-	//
-	//	const opencv::Mat asConstOpenCvMat() {
-	//		return ((math::Matrix*) this)->asConstOpenCvMat();
-	//	}
+	/*! Destructor. Deletes all the filters. */
+	~FilterCache();
 
-	/*! Returns the intensity channel L as a matrix of doubles. */
-	math::Matrix_<double> *getL(math::Matrix_<double> *L = 0) const;
+public:
+
+	/*! Creates a new filter. If an identical filter already exists
+	 a new one will not be created. */
+	bool createFilter(const FilterInfo &filterInfo);
+
+	/*! Applies a filter identified by the filterInfo to the given matrix. */
+	Matrix_<double> *applyFilter(const FilterInfo &filterInfo, const Matrix_<
+			double> &input, Matrix_<double> *result = 0) const;
+
+private:
+
+	/*! List storing pointers to filters. */
+	std::vector<Filter *> _filterList;
 
 };
+
+#endif
 
 } // end namespace cv
 } // end namespace rocs
 
-#endif /* IMG_H_ */
+#endif /* CFILTERCACHE_H_ */

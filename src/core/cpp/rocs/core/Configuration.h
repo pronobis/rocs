@@ -19,7 +19,7 @@
 // ==================================================================
 
 /*!
- * \author Arnaud Ramey
+ * \author Arnaud Ramey, Andrzej Pronobis
  * \file Configuration.h
  */
 

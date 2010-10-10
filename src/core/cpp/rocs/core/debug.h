@@ -21,6 +21,7 @@
 /*!
  * Here we define the macros that print out debug messages when
  * ROCS_DEBUG_LEVEL is > 0.
+ *
  * \author Arnaud Ramey, Andrzej Pronobis
  * \file utils.h
  */

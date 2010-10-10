@@ -19,53 +19,52 @@
 // ==================================================================
 
 /*!
- * \file Img.h
+ * \file ChannelCache.cc
  *
- * \date Jul 3, 2010
+ * \date Sep 27, 2010
  * \author Arnaud Ramey, Andrzej Pronobis
  */
 
-#ifndef IMG_H_
-#define IMG_H_
-
 #include "rocs/math/Matrix_.h"
+#include "rocs/cv/Img.h"
+
+#include "rocs/cv/Crfh/ChannelCache.h"
 
 namespace rocs {
 namespace cv {
 
-/*!
- * the representation of an image
- */
-class Img: public math::Matrix {
-public:
-	Img(int rows, int cols, int type);
-	virtual ~Img();
+// -----------------------------------------
+ChannelCache::~ChannelCache() {
+	for (unsigned int i = 0; i < _channelList.size(); ++i)
+		delete _channelList[i];
+}
 
-	//	template<typename _T>
-	//	inline _T get(const int row, const int col) const {
-	//		return ((Matrix*) this)->get<_T> (row, col);
-	//	}
-	//
-	//	template<typename _T>
-	//	inline void set(int row, int col, _T value) {
-	//		((Matrix*) this)->set<_T> (row, col, value);
-	//	}
+// -----------------------------------------
+void ChannelCache::createChannel(ChannelType channelType) {
+	// Check if we don't have the channel in the cache
+	for (unsigned int i = 0; i < _channelTypeList.size(); ++i)
+		if (_channelTypeList[i] == channelType)
+			return;
 
-	//	opencv::Mat* asOpenCvMat() {
-	//		math::Matrix* thisMatrix = this;
-	//		return thisMatrix->asOpenCvMat();
-	//	}
-	//
-	//	const opencv::Mat asConstOpenCvMat() {
-	//		return ((math::Matrix*) this)->asConstOpenCvMat();
-	//	}
+	// Create a new channel
+	math::Matrix_<double> *channel = _image->getL();
 
-	/*! Returns the intensity channel L as a matrix of doubles. */
-	math::Matrix_<double> *getL(math::Matrix_<double> *L = 0) const;
+	if (channel) {
+		_channelList.push_back(channel);
+		_channelTypeList.push_back(channelType);
+	}
+}
 
-};
+// -----------------------------------------
+const math::Matrix_<double> *ChannelCache::getChannel(ChannelType channelType) const {
+	// Find the channel
+	for (unsigned int i = 0; i < _channelTypeList.size(); ++i)
+		if (_channelTypeList[i] == channelType)
+			return _channelList[i];
+
+	rocsDebug1("ERROR: No such channel!");
+	return 0;
+}
 
 } // end namespace cv
 } // end namespace rocs
-
-#endif /* IMG_H_ */

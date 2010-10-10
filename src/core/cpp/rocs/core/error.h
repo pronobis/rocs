@@ -20,8 +20,8 @@
 
 /*!
  * Exceptions and macros for reporting errors.
- * \author Arnaud Ramey
  * \file error.h
+ * \author Arnaud Ramey, Andrzej Pronobis
  */
 
 

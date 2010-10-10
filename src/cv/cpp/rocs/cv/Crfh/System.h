@@ -19,53 +19,63 @@
 // ==================================================================
 
 /*!
- * \file Img.h
+ * \file System.h
  *
- * \date Jul 3, 2010
+ * \date Sep 28, 2010
  * \author Arnaud Ramey, Andrzej Pronobis
  */
 
-#ifndef IMG_H_
-#define IMG_H_
+#ifndef CSYSTEM_H_
+#define CSYSTEM_H_
 
-#include "rocs/math/Matrix_.h"
+#include "rocs/cv/Crfh/FilterCache.h"
+#include "rocs/cv/Crfh/DescriptorList.h"
+
+#include <string>
+#include <vector>
+using std::string;
 
 namespace rocs {
+
+namespace math {
+template<typename _T> class Matrix_;
+}
+
 namespace cv {
 
+class Img;
+class Crfh;
+
 /*!
- * the representation of an image
+ * Main class defining a system and managing the
+ * histogram extraction process.
  */
-class Img: public math::Matrix {
+class System {
+
 public:
-	Img(int rows, int cols, int type);
-	virtual ~Img();
 
-	//	template<typename _T>
-	//	inline _T get(const int row, const int col) const {
-	//		return ((Matrix*) this)->get<_T> (row, col);
-	//	}
-	//
-	//	template<typename _T>
-	//	inline void set(int row, int col, _T value) {
-	//		((Matrix*) this)->set<_T> (row, col, value);
-	//	}
+	/*! Constructor. Initializes the system (creates descriptors
+	 and filters). */
+	System(string sysDef);
 
-	//	opencv::Mat* asOpenCvMat() {
-	//		math::Matrix* thisMatrix = this;
-	//		return thisMatrix->asOpenCvMat();
-	//	}
-	//
-	//	const opencv::Mat asConstOpenCvMat() {
-	//		return ((math::Matrix*) this)->asConstOpenCvMat();
-	//	}
+public:
 
-	/*! Returns the intensity channel L as a matrix of doubles. */
-	math::Matrix_<double> *getL(math::Matrix_<double> *L = 0) const;
+	/*! Computes outputs of all the descriptors. */
+	vector<math::Matrix_<double>*> computeDescriptorOutputs(const Img &image) const;
 
+	/*! Computes the histogram for a given image. */
+	Crfh *computeHistogram(const Img &image, int skipBorderPixels) const;
+
+private:
+
+	/*! List of descriptors to be computed. */
+	DescriptorList _descriptorList;
+
+	/*! Filter cache. */
+	FilterCache _filterCache;
 };
 
 } // end namespace cv
 } // end namespace rocs
 
-#endif /* IMG_H_ */
+#endif /* CSYSTEM_H_ */
