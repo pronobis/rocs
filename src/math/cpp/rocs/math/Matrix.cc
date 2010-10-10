@@ -23,21 +23,25 @@
  * \author Arnaud Ramey, Andrzej Pronobis
  */
 
-
 #include "rocs/math/Matrix.h"
 
-namespace rocs {
-namespace math {
+namespace rocs
+{
+namespace math
+{
 
 Matrix::Matrix(int rows, int cols, int type) :
-	cv::Mat(rows, cols, type) {
+	cv::Mat(rows, cols, type)
+{
 	this->data_type = type;
 }
 
-Matrix::~Matrix() {
+Matrix::~Matrix()
+{
 }
 
-void Matrix::copyTo(Matrix dst) const{
+void Matrix::copyTo(Matrix dst) const
+{
 	rocsDebug3("copyTo(%s, %s)", infoString().c_str(), dst.infoString().c_str());
 
 	// TODO what if data types are not similar ?
@@ -47,10 +51,13 @@ void Matrix::copyTo(Matrix dst) const{
 	if (dst.nbCols() != nbCols() || dst.nbRows() != nbRows())
 		dst.resize(nbRows(), nbCols());
 
-	for (int i = 0; i < nbRows(); ++i) {
-		for (int j = 0; j < nbCols(); ++j) {
+	for (int i = 0; i < nbRows(); ++i)
+	{
+		for (int j = 0; j < nbCols(); ++j)
+		{
 			std::string value = "";
-			switch (data_type) {
+			switch (data_type)
+			{
 			case MAT_1U:
 				dst.set<bool> (i, j, get<bool> (i, j));
 				break;
@@ -86,9 +93,11 @@ void Matrix::copyTo(Matrix dst) const{
 	} // end loop rows
 }
 
-bool Matrix::operator ==(const Matrix &m) const {
+bool Matrix::operator ==(const Matrix &m) const
+{
 	// TODO more clever implementation
-	switch (data_type) {
+	switch (data_type)
+	{
 	case MAT_1U:
 		return this->equals<bool> (m);
 	case MAT_8U:
@@ -112,13 +121,16 @@ bool Matrix::operator ==(const Matrix &m) const {
 	}
 }
 
-bool Matrix::operator !=(const Matrix &m) const {
+bool Matrix::operator !=(const Matrix &m) const
+{
 	return !(*this == m);
 }
 
-Matrix* Matrix::operator +(const Matrix &m) const {
+Matrix* Matrix::operator +(const Matrix &m) const
+{
 	// TODO more clever implementation
-	switch (data_type) {
+	switch (data_type)
+	{
 	case MAT_1U:
 		return this->plus<bool> (m);
 	case MAT_8U:
@@ -141,9 +153,11 @@ Matrix* Matrix::operator +(const Matrix &m) const {
 		return false;
 	}
 }
-Matrix* Matrix::operator -(const Matrix &m) const {
+Matrix* Matrix::operator -(const Matrix &m) const
+{
 	// TODO more clever implementation
-	switch (data_type) {
+	switch (data_type)
+	{
 	case MAT_1U:
 		return this->minus<bool> (m);
 	case MAT_8U:
@@ -166,9 +180,11 @@ Matrix* Matrix::operator -(const Matrix &m) const {
 		return false;
 	}
 }
-Matrix* Matrix::operator *(const Matrix &m) const {
+Matrix* Matrix::operator *(const Matrix &m) const
+{
 	// TODO more clever implementation
-	switch (data_type) {
+	switch (data_type)
+	{
 	case MAT_1U:
 		return this->times<bool> (m);
 	case MAT_8U:
@@ -192,40 +208,81 @@ Matrix* Matrix::operator *(const Matrix &m) const {
 	}
 }
 
-double Matrix::det() {
+double Matrix::det()
+{
 	return cv::determinant(*this);
 }
 
-Matrix* Matrix::transpose() const {
+Matrix* Matrix::transpose() const
+{
 	Matrix* ans = new Matrix(nbCols(), nbRows(), data_type);
 	// transpose the cv matrix
 	cv::transpose(*this, *ans);
 	return ans;
 }
 
-Matrix* Matrix::inverse(int method /*=DECOMP_LU*/) const {
+Matrix* Matrix::inverse(int method /*=DECOMP_LU*/) const
+{
 	Matrix* ans = new Matrix(nbCols(), nbRows(), data_type);
 	cv::invert(*this, *ans);
 	return ans;
 }
 
-int Matrix::nbCols() const {
+int Matrix::nbCols() const
+{
 	return size().width;
 }
 
-int Matrix::nbRows() const {
+int Matrix::nbRows() const
+{
 	return size().height;
 }
 
-std::string Matrix::toString() {
+void Matrix::splitToOneChannel(Matrix* channel0, Matrix* channel1,
+		Matrix* channel2, Matrix* channel3)
+{
+	/* get the wanted channel as uchar */
+	IplImage thisAsIpl = *this->asOpenCvMat();
+	//math::Matrix_<uchar> channel(nbRows(), nbCols());
+	//IplImage channelAsIpl = channel. asConstOpenCvMat();
+
+	IplImage* c0ptr = NULL, *c1ptr = NULL, *c2ptr = NULL, *c3ptr = NULL;
+	if (channel0)
+	{
+		IplImage c0 = (IplImage) channel0 ->asConstOpenCvMat();
+		c0ptr = &c0;
+	}
+	if (channel1)
+	{
+		IplImage c1 = (IplImage) channel1 ->asConstOpenCvMat();
+		c1ptr = &c1;
+	}
+	if (channel2)
+	{
+		IplImage c2 = (IplImage) channel2 ->asConstOpenCvMat();
+		c2ptr = &c2;
+	}
+	if (channel3)
+	{
+		IplImage c3 = (IplImage) channel3 ->asConstOpenCvMat();
+		c3ptr = &c3;
+	}
+	cvSplit(&thisAsIpl, c0ptr, c1ptr, c2ptr, c3ptr);
+}
+
+std::string Matrix::toString()
+{
 	std::ostringstream buffer;
 	// adding size
 	buffer << nbCols() << "x" << nbRows() << " : " << std::endl;
 	// adding line after line
-	for (int i = 0; i < nbRows(); ++i) {
-		for (int j = 0; j < nbCols(); ++j) {
+	for (int i = 0; i < nbRows(); ++i)
+	{
+		for (int j = 0; j < nbCols(); ++j)
+		{
 			//string value = "";
-			switch (data_type) {
+			switch (data_type)
+			{
 			case MAT_1U:
 				buffer << get<bool> (i, j);
 				break;

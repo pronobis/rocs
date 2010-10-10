@@ -93,6 +93,12 @@ public:
 	/*! the destructor */
 	~Matrix();
 
+	Matrix* createEmptySameSizeAndType()
+	{
+		Matrix* ans = new Matrix(nbRows(), nbCols(), getDataType());
+		return ans;
+	}
+
 	/* data access */
 	/*! \return the type of data stored inside the matrix */
 	inline int getDataType() const
@@ -110,6 +116,12 @@ public:
 	inline opencv::Mat* asOpenCvMat()
 	{
 		return (opencv::Mat*) this;
+	}
+
+	/*! a cast to the opencv underlying matrix */
+	inline IplImage asOpenCvIplImage()
+	{
+		return (IplImage) (*this);
 	}
 
 	/*! the number of channels in the matrix */
@@ -483,6 +495,18 @@ public:
 	}
 
 	/*!
+	 * The function divides a multi-channel array into separate single-channel arrays.
+	 * Two modes are available for the operation.
+	 * If the source array has N channels then if the first N destination channels are not NULL,
+	 * they all are extracted from the source array;
+	 * if only a single destination channel of the first N is not NULL, this particular channel is extracted; otherwise an error is raised.
+	 * The rest of the destination channels (beyond the first N) must always be NULL.
+	 * For IplImage Copy with COI set can be also used to extract a single channel from the image.
+	 */
+	void splitToOneChannel(Matrix* channel0, Matrix* channel1,
+			Matrix* channel2, Matrix* channel3);
+
+	/*!
 	 * Divides multi-channel array into several single-channel arrays
 	 *
 	 * \param channels
@@ -502,10 +526,10 @@ public:
 	 *          The number of arrays must match channels() .
 	 *          The arrays themselves will be reallocated if needed
 	 */
-	void split(std::vector< Matrix >& channels)
+	void split(std::vector<Matrix>& channels)
 	{
 		// conversion to a Matrix array ( Matrix* )
-		split(&(*channels.begin()) );
+		split(&(*channels.begin()));
 	}
 
 	/*!

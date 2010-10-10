@@ -28,14 +28,28 @@
 
 // Boost
 #include <boost/test/unit_test.hpp>
-#include "rocs/cv/ImageIO.h"
 // ROCS
-/* Nothing for now. This is just an example*/
+#include "rocs/cv/ImageIO.h"
+
+#define ROCSDIR "../../"
+#define IMGDIR ROCSDIR "data/images/"
 
 /*! Define first test case. */
 BOOST_AUTO_TEST_CASE( case1 )
 {
-	BOOST_CHECK( 0 == 0 );
-	BOOST_REQUIRE( 0 == 0 );
+	char filename[100];
+	sprintf(filename, "%s%s", IMGDIR, "small.png");
+	rocs::cv::Img* img = rocs::cv::ImageIO::load(filename);
+
+	rocs::cv::Img channel1 ( img->nbRows(), img->nbCols(), img->getDataType() );
+	img->splitToOneChannel(0, &channel1, 0, 0);
+
+	std::cout << img->toString() << std::endl;
+	int pixelComp = img->get<uchar>(2,2);
+	// (1, 0) = (255, 128, 0)
+	rocsDebug3("pixelComp:%i", pixelComp);
+	BOOST_CHECK( pixelComp == 0 );
+
+	//BOOST_REQUIRE( 0 == 0 );
 }
 
