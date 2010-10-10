@@ -118,9 +118,9 @@ public:
  * Accepts message in the printf like fashion.
  */
 #ifdef __GNUC__
-	#define __HERE__ 	std::string(__PRETTY_FUNCTION__)+"@"+__FILE__+":"+ROCS_ERROR_TO_STRING(__LINE__)
+	#define __ROCS_HERE__ 	std::string(__PRETTY_FUNCTION__)+"@"+__FILE__+":"+ROCS_ERROR_TO_STRING(__LINE__)
 #else
-	#define __HERE__	std::string(__FILE__)+":"+ROCS_ERROR_TO_STRING(__LINE__)
+	#define __ROCS_HERE__	std::string(__FILE__)+":"+ROCS_ERROR_TO_STRING(__LINE__)
 #endif
 
 
@@ -154,25 +154,25 @@ static inline void exitWithError(const Exception& exc)
  * Macro reporting a fatal error.
  */
 #define rocsError( ... ) \
-		rocs::core::exitWithError(rocs::core::Exception(__HERE__, rocs::core::errMsg(__VA_ARGS__)) )
+		rocs::core::exitWithError(rocs::core::Exception(__ROCS_HERE__, rocs::core::errMsg(__VA_ARGS__)) )
 
 /*!
  * Macro defining an assertion.
  */
 #define rocsAssert( expr ) { if(!(expr)) \
-		rocs::core::exitWithError( rocs::core::AssertionException(__HERE__, #expr) ); }
+		rocs::core::exitWithError( rocs::core::AssertionException(__ROCS_HERE__, #expr) ); }
 
 /*!
  * Convenience macro throwing a general exception.
  */
 #define rocsException( ... ) \
-		throw rocs::core::Exception(__HERE__, rocs::core::errMsg(__VA_ARGS__))
+		throw rocs::core::Exception(__ROCS_HERE__, rocs::core::errMsg(__VA_ARGS__))
 
 /*!
  * Macro defining an assertion used only when debugging.
  */
 #define rocsDebugAssert( expr ) { if ((ROCS_DEBUG_LEVEL > 0 ) && (!(expr))) \
-		rocs::core::exitWithError( rocs::core::AssertionException(__HERE__, #expr) ); }
+		rocs::core::exitWithError( rocs::core::AssertionException(__ROCS_HERE__, #expr) ); }
 
 
 } // namespace core
