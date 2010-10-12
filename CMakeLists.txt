@@ -30,6 +30,11 @@ if ("${ROCS_DIR_INIT}" STREQUAL "")
 endif("${ROCS_DIR_INIT}" STREQUAL "")
 set(ROCS_DIR ${ROCS_DIR_INIT} CACHE PATH "Path to the directory where ROCS should be installed.")
 
+# Set build type
+if (NOT "${ROCS_BUILD_TYPE}" STREQUAL "")
+    set(CMAKE_BUILD_TYPE ${ROCS_BUILD_TYPE})
+endif (NOT "${ROCS_BUILD_TYPE}" STREQUAL "")
+
 # Make ROCS_DIR available as preprocessor definition
 ADD_DEFINITIONS(-DROCS_DIR="${ROCS_DIR}")
 
