@@ -80,10 +80,15 @@ public:
 	 * Adds a single config file.
 	 * \param fileName	Full path to the file.
 	 */
-	void addConfigFile(std::string fileName);
+	void addConfigFile(std::string fileName) throw (core::IOException);
 
+	/*!
+	 * add a bunch of config file
+	 * \param first the first file to add
+	 * \param last the last file to add
+	 */
 	inline void addConfigFile(std::vector<std::string>::iterator first,
-			std::vector<std::string>::iterator last)
+			std::vector<std::string>::iterator last) throw (core::IOException)
 	{
 		for (std::vector<std::string>::iterator it = first; it != last; ++it)
 			addConfigFile(*it);
@@ -160,7 +165,7 @@ private:
 	 *          will parse the corresponding files and replace them
 	 */
 	static void readFileAndCheckIncludes(const std::string filename,
-			ptree* tree, const bool include_allowed);
+			ptree* tree, const bool include_allowed) throw (core::IOException);
 
 	/*!
 	 * Parses a file into the tree
@@ -169,7 +174,8 @@ private:
 	 * \param tree
 	 *          the tree to populate with the parsed file
 	 */
-	static void readFfile(const std::string filename, ptree* tree);
+	static void readFfile(const std::string filename, ptree* tree)
+			throw (core::IOException);
 
 	/*!
 	 * Determine if a string corresponds to a variable name,

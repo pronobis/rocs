@@ -50,12 +50,7 @@ Img* ImageIO::load(const std::string filename_in) throw (core::IOException)
 	 * check that the file exists
 	 */
 	if (!rocs::core::fileExists(filename_in))
-	{
-		char errorMsg[filename_in.size()  + 200];
-		sprintf(errorMsg, "The given file '%s' does not exist.", filename_in.c_str());
-		rocsDebug3("Creating an rocs::core::IOException:'%s'", errorMsg);
-		rocsIOException(errorMsg);
-	}
+		rocsIOException("The given file '%s' does not exist.", filename_in.c_str());
 
 #if IO_METHOD == USE_OPEN_CV
 	try

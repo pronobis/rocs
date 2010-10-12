@@ -27,12 +27,14 @@
 #ifndef _ROCS_CORE_ERROR_H_
 #define _ROCS_CORE_ERROR_H_
 
+// rocs
+#include "rocs/core/debug.h"
+
 // Stl & Std
 #include <iostream>
 #include <stdio.h>   // for sprintf()
 #include <stdlib.h>  // for exit()
 #include <stdarg.h>  // for vargs
-
 namespace rocs
 {
 namespace core
@@ -181,14 +183,18 @@ static inline void exitWithError(const Exception& exc)
 #define rocsAssert( expr ) { if(!(expr)) \
 		rocs::core::exitWithError( rocs::core::AssertionException(__ROCS_HERE__, #expr) ); }
 
-/*!
- * Convenience macro throwing a general exception.
- */
-#define rocsException( ... ) \
-		throw rocs::core::Exception(__ROCS_HERE__, rocs::core::errMsg(__VA_ARGS__))
-#define rocsIOException( ... ) \
-		throw rocs::core::IOException(__ROCS_HERE__, rocs::core::errMsg(__VA_ARGS__))
-
+/*! Convenience macro throwing a general exception. */
+#define rocsException( ... ) {\
+		rocs::core::Exception e (__ROCS_HERE__, rocs::core::errMsg(__VA_ARGS__)); \
+		rocsDebug3("Exception '%s'", e.what()); \
+		throw e; \
+		}
+/*! Convenience macro throwing an IO exception. */
+#define rocsIOException( ... ) {\
+		rocs::core::IOException e (__ROCS_HERE__, rocs::core::errMsg(__VA_ARGS__)); \
+		rocsDebug3("IOException '%s'", e.what()); \
+		throw e; \
+		}
 /*!
  * Macro defining an assertion used only when debugging.
  */

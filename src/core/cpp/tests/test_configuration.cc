@@ -45,7 +45,8 @@ BOOST_AUTO_TEST_CASE( command_line_args_single )
 {
 	// Define some arguments
 	int argc = 2;
-	char const *argv[] = { "test", "--one.two.three", "1" };
+	char const *argv[] =
+	{ "test", "--one.two.three", "1" };
 
 	// Let configuration parse the arguments
 	Configuration config(argc, argv);
@@ -72,8 +73,8 @@ BOOST_AUTO_TEST_CASE( command_line_args_list1 )
 {
 	// Define some arguments
 	int argc = 4;
-	char const *argv[] = { "test", "--list.item1.key", "1", "--list.item2.key",
-			"2" };
+	char const *argv[] =
+	{ "test", "--list.item1.key", "1", "--list.item2.key", "2" };
 
 	// Let configuration parse the arguments
 	Configuration config(argc, argv);
@@ -99,8 +100,9 @@ BOOST_AUTO_TEST_CASE( command_line_args_list2 )
 {
 	// Define some arguments
 	int argc = 8;
-	char const *argv[] = { "test", "--list.item.key", "1", "--list.item.key",
-			"2", "--list.item.key3", "3" , "--list.item4.key", "4"};
+	char const *argv[] =
+	{ "test", "--list.item.key", "1", "--list.item.key", "2",
+			"--list.item.key3", "3", "--list.item4.key", "4" };
 
 	// Let configuration parse the arguments
 	Configuration config(argc, argv);
@@ -148,7 +150,6 @@ BOOST_AUTO_TEST_CASE( ini_simple )
 	BOOST_REQUIRE_LT( value3, 2.31 );
 }
 
-
 /*!
  * Case 5
  * Testing JSON file parsing.
@@ -172,7 +173,7 @@ BOOST_AUTO_TEST_CASE( json_simple )
 	bool wasFound4;
 	int value4 = config.getValue("one4.two4_1", 100, wasFound4);
 	bool wasFound5;
-	string value5 = config.getValue<string>("one4.two4_2", "", wasFound5);
+	string value5 = config.getValue<string> ("one4.two4_2", "", wasFound5);
 	bool wasFound6;
 	float value6 = config.getValue("one5.two5", 100.0, wasFound6);
 	bool wasFound7;
@@ -214,7 +215,6 @@ BOOST_AUTO_TEST_CASE( json_simple )
 	BOOST_REQUIRE( !wasFound8 );
 	BOOST_REQUIRE_EQUAL( value8, 100 );
 }
-
 
 /*!
  * Case 6
@@ -239,7 +239,7 @@ BOOST_AUTO_TEST_CASE( xml_simple )
 	bool wasFound4;
 	int value4 = config.getValue("one4.two4_1", 100, wasFound4);
 	bool wasFound5;
-	string value5 = config.getValue<string>("one4.two4_2", "", wasFound5);
+	string value5 = config.getValue<string> ("one4.two4_2", "", wasFound5);
 	bool wasFound6;
 	float value6 = config.getValue("one5.two5", 100.0, wasFound6);
 	bool wasFound7;
@@ -252,7 +252,6 @@ BOOST_AUTO_TEST_CASE( xml_simple )
 	// Default
 	bool wasFound8;
 	int value8 = config.getValue("one10.two10", 100, wasFound8);
-
 
 	// Check the output
 	BOOST_REQUIRE( wasFound1 );
@@ -283,4 +282,25 @@ BOOST_AUTO_TEST_CASE( xml_simple )
 	BOOST_REQUIRE_EQUAL( value8, 100 );
 }
 
+/*!
+ * Case 7
+ * Testing missing file or incorrect filename parsing.
+ */
+BOOST_AUTO_TEST_CASE( missingFile )
+{
+	Configuration config;
+	BOOST_REQUIRE_THROW(config.addConfigFile(ROCS_DIR "/config/test/missing.xml"), rocs::core::IOException);
+	BOOST_REQUIRE_THROW(config.addConfigFile(ROCS_DIR "/config/test/missing.fooext"), rocs::core::IOException);
+}
 
+/*!
+ * Case 8
+ * Testing broken file parsing.
+ */
+BOOST_AUTO_TEST_CASE( brokenXmlFile )
+{
+	Configuration config;
+	BOOST_REQUIRE_THROW(config.addConfigFile(ROCS_DIR "/config/test/test_broken.xml"), rocs::core::IOException);
+	BOOST_REQUIRE_THROW(config.addConfigFile(ROCS_DIR "/config/test/test_broken2.xml"), rocs::core::IOException);
+
+}

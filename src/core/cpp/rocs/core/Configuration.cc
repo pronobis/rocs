@@ -26,6 +26,9 @@
 
 #include "Configuration.h"
 
+#include "rocs/core/utils.h" // for fileExists()
+#include "rocs/core/error.h"
+
 using namespace rocs::core;
 using namespace std;
 
@@ -131,8 +134,14 @@ void Configuration::addCommandLineArgs(int argc, char const **argv)
 
 // ---------------------------------------------
 void rocs::core::Configuration::addConfigFile(string filename)
+		throw (core::IOException)
 {
 	rocsDebug3("add_allowed_config_file('%s')", filename.c_str());
+	/*
+	 * check the file exists
+	 */
+	if (!rocs::core::fileExists(filename))
+		rocsIOException("The given file '%s' does not exist.", filename.c_str());
 	// read the new file in a new tree
 	ptree new_tree;
 	readFileAndCheckIncludes(filename, &new_tree, true);
@@ -226,6 +235,7 @@ void rocs::core::Configuration::checkIncludes(string relative_path, ptree* tree)
 }
 
 void rocs::core::Configuration::readFfile(string filename, ptree* tree)
+		throw (core::IOException)
 {
 	rocsDebug3("read_file('%s')", filename.c_str());
 
@@ -236,26 +246,34 @@ void rocs::core::Configuration::readFfile(string filename, ptree* tree)
 	int guessed_filetype = guessType(filename);
 
 	// read the file
-	switch (guessed_filetype)
+	try
 	{
-	case TYPE_XML:
-		read_xml(filename, *tree);
-		break;
-	case TYPE_JSON:
-		read_json(filename, *tree);
-		break;
-	case TYPE_INI:
-		read_ini(filename, *tree);
-		break;
-	case TYPE_INFO:
-		read_info(filename, *tree);
-		break;
-	case TYPE_UNKNOWN:
-	default:
-		rocsDebug1("Impossible to guess the config file type")
-		;
-		break;
-	}
+		switch (guessed_filetype)
+		{
+		case TYPE_XML:
+			read_xml(filename, *tree);
+			break;
+		case TYPE_JSON:
+			read_json(filename, *tree);
+			break;
+		case TYPE_INI:
+			read_ini(filename, *tree);
+			break;
+		case TYPE_INFO:
+			read_info(filename, *tree);
+			break;
+		case TYPE_UNKNOWN:
+		default:
+			rocsIOException("Impossible to guess the config file type of '%s'", filename.c_str())
+			;
+			break;
+		} // end switch
+	} // end try
+	catch (boost::property_tree::file_parser_error e)
+	{
+		string msg = e.what();
+		rocsIOException("'%s'", msg.c_str());
+	} // end catch
 }
 
 void rocs::core::Configuration::removeXmlattr(ptree* tree)
@@ -292,7 +310,7 @@ void rocs::core::Configuration::removeXmlattr(ptree* tree)
 }
 
 void rocs::core::Configuration::readFileAndCheckIncludes(string filename,
-		ptree* tree, bool include_allowed)
+		ptree* tree, bool include_allowed) throw (core::IOException)
 {
 	rocsDebug3("read_file_and_check_includes('%s') - tree version",
 			filename.c_str());
