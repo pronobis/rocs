@@ -505,6 +505,17 @@ public:
 	 */
 	void splitToOneChannel(Matrix* channel0, Matrix* channel1,
 			Matrix* channel2, Matrix* channel3);
+	/*!
+	 * \param channels
+	 *           the array of channels to fill
+	 *           put some NULL for the channels you don't want
+	 *           Ex : if you want to extract the channel 2,
+	 *           channels = {NULL, NULL, dst}
+	 *           and channelsSize = 3
+	 * \param channelsSize
+	 *           the number of channels
+	 */
+	void splitToOneChannel(Matrix* channels[], int channelsSize);
 
 	/*!
 	 * Divides multi-channel array into several single-channel arrays

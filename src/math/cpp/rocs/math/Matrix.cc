@@ -24,6 +24,7 @@
  */
 
 #include "rocs/math/Matrix.h"
+//#include <opencv/highgui.h>
 
 namespace rocs
 {
@@ -241,40 +242,115 @@ int Matrix::nbRows() const
 void Matrix::splitToOneChannel(Matrix* channel0, Matrix* channel1,
 		Matrix* channel2, Matrix* channel3)
 {
+	rocsDebug3("splitToOneChannel(c0:%i, c1:%i, c2:%i, c3:%i)", channel0 != NULL, channel1 != NULL, channel2 != NULL, channel3 != NULL);
+	Matrix* channels[] =
+	{ channel0, channel1, channel2, channel3 };
+	splitToOneChannel(channels, 4);
+}
+
+void Matrix::splitToOneChannel(Matrix* channels[], int channelsSize)
+{
+	rocsDebug3("src:%s", infoString().c_str());
 	/* get the wanted channel as uchar */
 	IplImage thisAsIpl = *this->asOpenCvMat();
-	//math::Matrix_<uchar> channel(nbRows(), nbCols());
-	//IplImage channelAsIpl = channel. asConstOpenCvMat();
 
-	IplImage* c0ptr = NULL, *c1ptr = NULL, *c2ptr = NULL, *c3ptr = NULL;
-	if (channel0)
+	/*
+	 * create the from_to for the wanted channels
+	 */
+	std::vector<opencv::Mat> dstVector;
+	std::vector<int> fromToVector;
+	for (int channelCounter = 0; channelCounter < channelsSize; ++channelCounter)
 	{
-		IplImage c0 = (IplImage) channel0 ->asConstOpenCvMat();
-		c0ptr = &c0;
+		if (channels[channelCounter] == NULL)
+			continue;
+		/*
+		 * from  now we are sure the current channel is not empty
+		 */
+		dstVector.push_back(channels[channelCounter]->asConstOpenCvMat());
+		fromToVector.push_back(channelCounter); // source
+		fromToVector.push_back(dstVector.size() - 1); // destination
 	}
-	if (channel1)
-	{
-		IplImage c1 = (IplImage) channel1 ->asConstOpenCvMat();
-		c1ptr = &c1;
-	}
-	if (channel2)
-	{
-		IplImage c2 = (IplImage) channel2 ->asConstOpenCvMat();
-		c2ptr = &c2;
-	}
-	if (channel3)
-	{
-		IplImage c3 = (IplImage) channel3 ->asConstOpenCvMat();
-		c3ptr = &c3;
-	}
-	cvSplit(&thisAsIpl, c0ptr, c1ptr, c2ptr, c3ptr);
+
+	/*
+	 * convert to arrays
+	 */
+	unsigned int npairs = fromToVector.size() / 2;
+	//	Matrix dst[dstVector.size()];
+	//	for (unsigned int dstIndex = 0; dstIndex < ndsts; ++dstIndex)
+	//		dst[dstIndex] = *dstVector[dstIndex];
+	int fromTo[fromToVector.size()];
+	for (unsigned int i = 0; i < fromToVector.size(); ++i)
+		fromTo[i] = fromToVector[i];
+	for (unsigned int pairIndex = 0; pairIndex < npairs; ++pairIndex)
+		rocsDebug3("Pair: (%i,%i)", fromTo[2*pairIndex], fromTo[2*pairIndex+1]);
+
+	/*
+	 * do the real conversion
+	 */
+	std::vector<opencv::Mat> srcv;
+	srcv.push_back(asConstOpenCvMat());
+	rocsDebug3("ndsts:%i, nPairs:%i", (int) dstVector.size(), npairs);
+	mixChannels(srcv, dstVector, fromTo, npairs);
+
+	//	using namespace opencv;
+	//	Mat rgba(100, 100, CV_8UC4, Scalar(1, 2, 3, 4));
+	//	Mat bgr(rgba.rows, rgba.cols, CV_8UC3 );
+	//	Mat alpha(rgba.rows, rgba.cols, CV_8UC1 );
+	//	// this code splits a 4-channel RGBA image into a 3-channel BGR (i.e. with R and B channels swapped) and separate alpha channel image:
+	//	// forming array of matrices is quite efficient operations,
+	//	// because the matrix data is not copied, only the headers
+	//	Mat out2[] =
+	//	{ bgr, alpha };
+	//	// rgba[0] -> bgr[2], rgba[1] -> bgr[1],
+	//	// rgba[2] -> bgr[0], rgba[3] -> alpha[0]
+	//	int from_to[] =
+	//	{ 0, 2, 1, 1, 2, 0, 3, 3 };
+	//	mixChannels(&rgba, 1, out2, 2, from_to, 4);
+
+	//IplImage* c0ptr = NULL, *c1ptr = NULL, *c2ptr = NULL, *c3ptr = NULL;
+	//	if (channel0)
+	//	{
+	//		rocsDebug3("c0:%s", channel0->infoString().c_str());
+	//		IplImage c0 = (IplImage) channel0 ->asConstOpenCvMat();
+	//		c0ptr = &c0;
+	//	}
+	//	if (channel1)
+	//	{
+	//		rocsDebug3("c1:%s", channel1->infoString().c_str());
+	//		IplImage c1 = (IplImage) channel1 ->asConstOpenCvMat();
+	//		c1ptr = &c1;
+	//	}
+	//	if (channel2)
+	//	{
+	//		rocsDebug3("c2:%s", channel2->infoString().c_str());
+	//		IplImage c2 = (IplImage) channel2 ->asConstOpenCvMat();
+	//		c2ptr = &c2;
+	//	}
+	//	if (channel3)
+	//	{
+	//		rocsDebug3("c3:%s", channel3->infoString().c_str());
+	//		IplImage c3 = (IplImage) channel3 ->asConstOpenCvMat();
+	//		c3ptr = &c3;
+	//	}
+	//	cvSplit(&thisAsIpl, c0ptr, c1ptr, c2ptr, c3ptr);
+	//	cvShowImage("test", &thisAsIpl);
+	//	cvWaitKey(0);
+	//	cvShowImage("test", c0ptr);
+	//	cvWaitKey(0);
+	//	cvShowImage("test", c1ptr);
+	//	cvWaitKey(0);
+	//	cvShowImage("test", c2ptr);
+	//	cvWaitKey(0);
+	//	cvShowImage("test", c3ptr);
+	//	cvWaitKey(0);
+	//	rocsDebug3("channel1:%s", channel1->toString().c_str());
 }
 
 std::string Matrix::toString()
 {
 	std::ostringstream buffer;
 	// adding size
-	buffer << nbCols() << "x" << nbRows() << " : " << std::endl;
+	buffer << infoString() << " : " << std::endl;
 	// adding line after line
 	for (int i = 0; i < nbRows(); ++i)
 	{

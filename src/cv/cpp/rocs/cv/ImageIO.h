@@ -40,8 +40,13 @@ namespace cv {
  */
 class ImageIO {
 public:
-	static Img* load(std::string filename_in);
-	static int write(Img* img, std::string filename_out);
+	/*!
+	 *
+	 * \param filename_in
+	 * \return the loaded image. For color images, the OpenCV convention is BGR
+	 */
+	static Img* load(const std::string filename_in) throw (core::IOException);
+	static int write(const Img& img, const std::string filename_out) throw (core::IOException);
 };
 
 } // end namespace cv

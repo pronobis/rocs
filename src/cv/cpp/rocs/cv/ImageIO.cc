@@ -27,6 +27,7 @@
 
 #include "rocs/cv/ImageIO.h"
 
+#include "rocs/core/utils.h" // for fileExists()
 // rename the opencv namespace not to collide with rocs::cv
 namespace opencv = cv;
 using namespace rocs::cv;
@@ -41,38 +42,80 @@ using namespace rocs::cv;
 #include "CImg.h"
 #endif
 
-Img* ImageIO::load(std::string filename_in) {
+Img* ImageIO::load(const std::string filename_in) throw (core::IOException)
+{
 	rocsDebug3("load(%s)", filename_in.c_str());
 
-#if IO_METHOD == USE_OPEN_CV
-	/* load the image with OpenCV imread */
-	opencv::Mat opencv_img = opencv::imread(filename_in.c_str());
-	//	debugPrintf_lvl3("channels;%i, depth:%i", opencv_img.channels(), opencv_img.depth());
+	/*
+	 * check that the file exists
+	 */
+	if (!rocs::core::fileExists(filename_in))
+	{
+		char errorMsg[filename_in.size()  + 200];
+		sprintf(errorMsg, "The given file '%s' does not exist.", filename_in.c_str());
+		rocsDebug3("Creating an rocs::core::IOException:'%s'", errorMsg);
+		rocsIOException(errorMsg);
+	}
 
-	/* create our Img object */
-	Img* ans = new Img(opencv_img.rows, opencv_img.cols, MAT_8SC1);
-	//	debugPrintf_lvl3("ans:channels;%i, depth:%i", ans->channels(), ans->depth());
-	opencv_img.copyTo( *ans->asOpenCvMat());
-	rocsDebug3("ans after copy:channels;%i, depth:%i", ans->channels(), ans->depth());
-	return ans;
+#if IO_METHOD == USE_OPEN_CV
+	try
+	{
+		/* load the image with OpenCV imread */
+		opencv::Mat opencv_img = opencv::imread(filename_in.c_str());
+		//	debugPrintf_lvl3("channels;%i, depth:%i", opencv_img.channels(), opencv_img.depth());
+
+		/* create our Img object - its reallocation is done if needed during the copy */
+		Img* ans = new Img(0, 0, MAT_8SC1);
+		opencv_img.copyTo(*ans->asOpenCvMat());
+		rocsDebug3("ans after copy:%s", ans->infoString().c_str());
+		return ans;
+	} // end of try
+	catch (opencv::Exception error)
+	{
+		rocsError(error.what());
+		return NULL;
+	}
 
 #else //if IO_METHOD == USE_CIMG
-	/* load the image with CImg */
-	cimg_library::CImg<unsigned char>* cimg = new cimg_library::CImg<
-	unsigned char>(filename_in.c_str());
-	// create our Img object
-	Img* ans = new Img(cimg->width(), cimg->height(), MAT_8U);
-	/* fill it with the data of the CImg */
 	//Error(-1, "Function not finished...");
-	for (int col = 0; col < cimg->width(); ++col)
-	for (int row = 0; row < cimg->height(); ++row)
-	ans->set(row, col, 0);//(*cimg)(row, col));
-	delete cimg;
+	/* load the image with CImg */
+	cimg_library::CImg<unsigned char> cimg(filename_in.c_str());
+	int nChannels = cimg.spectrum();
+	rocsDebug3("nChannels:%i", nChannels);
+
+	/* create our Img object */
+	Img* ans = new Img(cimg.width(), cimg.height(), MAT_8UC(nChannels));
+	rocsDebug3("ans before copy:%s", ans->infoString().c_str());
+
+	/* fill it with the data of the CImg */
+	for (int col = 0; col < cimg.width(); ++col)
+	for (int row = 0; row < cimg.height(); ++row)
+	{
+		if (nChannels == 1)
+		ans->set<unsigned char> (row, col, cimg(row, col));
+		else
+		{
+			for (int var = 0; var < 3; ++var)
+			{
+				// TODO how to solve this ?
+				ans->set<unsigned char> (row, col, cimg(col, row,
+								2 - var));
+			}
+		}
+	}
 	return ans;
 #endif
 }
 
-int ImageIO::write(Img* img, std::string filename_out) {
-	// TODO using OpenCV ? CImg ?
+int ImageIO::write(const Img& img, const std::string filename_out)  throw (core::IOException)
+{
+#if IO_METHOD == USE_OPEN_CV
+	/* load the image with OpenCV imread */
+	bool success = opencv::imwrite(filename_out, img.asConstOpenCvMat());
+	return success;
+#else //if IO_METHOD == USE_CIMG
+	// TODO write for CImg
+	rocsError("ImageIO::write() not implemented with CImg");
 	return -1;
+#endif
 }
