@@ -1,27 +1,47 @@
-/*
- * CSystem.cc
+// ==================================================================
+// ROCS - Toolkit for Robots Comprehending Space
+// Copyright (C) 2010  Arnaud Ramey, Andrzej Pronobis
+//
+// This file is part of ROCS.
+//
+// ROCS is free software: you can redistribute it and/or modify it
+// under the terms of the GNU Lesser General Public License as
+// published by the Free Software Foundation, either version 3
+// of the License, or (at your option) any later version.
+//
+// ROCS is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU Lesser General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with ROCS. If not, see <http://www.gnu.org/licenses/>.
+// ==================================================================
+
+/*!
+ * \file System.cc
  *
- *  Created on: Sep 28, 2010
- *      Author: arnaud
+ * \date Sep 28, 2010
+ * \author Arnaud Ramey, Andrzej Pronobis
  */
 
-#include "rocs/cv/Crfh/CChannelCache.h"
-#include "rocs/cv/Crfh/CFilterCache.h"
-#include "rocs/cv/Crfh/CScaleSpaceCache.h"
-#include "rocs/cv/Crfh/CCrfh.h"
+#include "rocs/cv/Crfh/ChannelCache.h"
+#include "rocs/cv/Crfh/FilterCache.h"
+#include "rocs/cv/Crfh/ScaleSpaceCache.h"
+#include "rocs/cv/Crfh/Crfh.h"
 #include "rocs/math/Matrix_.h"
 #include "rocs/cv/Img.h"
 
-#include "rocs/cv/Crfh/CSystem.h"
+#include "rocs/cv/Crfh/System.h"
 #include "rocs/core/utils.h"
 
 namespace rocs {
 namespace cv {
 
-using rocs::math::Matrix_;
+//using rocs::math::Matrix_;
 
 // -----------------------------------------
-CSystem::CSystem(string sysDef) {
+System::System(string sysDef) {
 	rocsDebug3("CSystem::CSystem('%s')", sysDef.c_str());
 
 	// Exemplar string:
@@ -61,13 +81,13 @@ CSystem::CSystem(string sysDef) {
 }
 
 // -----------------------------------------
-vector<Matrix_<double> *> CSystem::computeDescriptorOutputs(const Img &image) const {
+vector<math::Matrix_<double> *> System::computeDescriptorOutputs(const Img &image) const {
 	// Create channel cache
-	CChannelCache channelCache(image);
+	ChannelCache channelCache(image);
 	_descriptorList.createAllRequiredChannels(channelCache);
 
 	// Create scale-space cache
-	CScaleSpaceCache scaleSpaceCache(channelCache, _filterCache);
+	ScaleSpaceCache scaleSpaceCache(channelCache, _filterCache);
 	_descriptorList.createAllRequiredScales(scaleSpaceCache);
 
 	// Apply the descriptors
@@ -75,10 +95,10 @@ vector<Matrix_<double> *> CSystem::computeDescriptorOutputs(const Img &image) co
 }
 
 // -----------------------------------------
-CCrfh *CSystem::computeHistogram(const Img &image, int skipBorderPixels) const {
+Crfh *System::computeHistogram(const Img &image, int skipBorderPixels) const {
 	rocsDebug3("computeHistogram('%s', %i)", image.infoString().c_str(), skipBorderPixels);
-	vector<Matrix_<double> *> outputs = computeDescriptorOutputs(image);
-	CCrfh *crfh = new CCrfh(outputs, _descriptorList, skipBorderPixels);
+	vector<math::Matrix_<double> *> outputs = computeDescriptorOutputs(image);
+	Crfh *crfh = new Crfh(outputs, _descriptorList, skipBorderPixels);
 	for (unsigned int i = 0; i < outputs.size(); ++i)
 		delete outputs[i];
 	return crfh;

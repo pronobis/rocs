@@ -19,26 +19,63 @@
 // ==================================================================
 
 /*!
- * \file CrfhInterface.cc
+ * \file System.h
  *
- * \date Oct 7, 2010
+ * \date Sep 28, 2010
  * \author Arnaud Ramey, Andrzej Pronobis
  */
 
-#include "CrfhInterface.h"
+#ifndef CSYSTEM_H_
+#define CSYSTEM_H_
+
+#include "rocs/cv/Crfh/FilterCache.h"
+#include "rocs/cv/Crfh/DescriptorList.h"
+
+#include <string>
+#include <vector>
+using std::string;
 
 namespace rocs {
+
+namespace math {
+template<typename _T> class Matrix_;
+}
+
 namespace cv {
 
+class Img;
+class Crfh;
 
-CrfhInterface::CrfhInterface() {
-	// TODO Auto-generated constructor stub
+/*!
+ * Main class defining a system and managing the
+ * histogram extraction process.
+ */
+class System {
 
-}
+public:
 
-CrfhInterface::~CrfhInterface() {
-	// TODO Auto-generated destructor stub
-}
+	/*! Constructor. Initializes the system (creates descriptors
+	 and filters). */
+	System(string sysDef);
+
+public:
+
+	/*! Computes outputs of all the descriptors. */
+	vector<math::Matrix_<double>*> computeDescriptorOutputs(const Img &image) const;
+
+	/*! Computes the histogram for a given image. */
+	Crfh *computeHistogram(const Img &image, int skipBorderPixels) const;
+
+private:
+
+	/*! List of descriptors to be computed. */
+	DescriptorList _descriptorList;
+
+	/*! Filter cache. */
+	FilterCache _filterCache;
+};
 
 } // end namespace cv
 } // end namespace rocs
+
+#endif /* CSYSTEM_H_ */

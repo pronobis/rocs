@@ -1,6 +1,26 @@
-/*
- * CFilter.h
- *
+// ==================================================================
+// ROCS - Toolkit for Robots Comprehending Space
+// Copyright (C) 2010  Arnaud Ramey, Andrzej Pronobis
+//
+// This file is part of ROCS.
+//
+// ROCS is free software: you can redistribute it and/or modify it
+// under the terms of the GNU Lesser General Public License as
+// published by the Free Software Foundation, either version 3
+// of the License, or (at your option) any later version.
+//
+// ROCS is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU Lesser General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with ROCS. If not, see <http://www.gnu.org/licenses/>.
+// ==================================================================
+
+/*!
+ * \file Filter.h
+ * \author Arnaud Ramey, Andrzej Pronobis
  */
 
 #ifndef CFILTER_H_
@@ -32,12 +52,12 @@ enum FilterType {
 /*!
  * Interface of a class storing information about a filter.
  */
-class CFilterInfo {
+class FilterInfo {
 
 public:
 
 	/*! Constructor. */
-	CFilterInfo(FilterType filterType) :
+	FilterInfo(FilterType filterType) :
 		_filterType(filterType) {
 	}
 
@@ -47,7 +67,7 @@ public:
 	}
 
 	/*! Comparison operator. */
-	inline virtual bool operator==(const CFilterInfo& fi) const {
+	inline virtual bool operator==(const FilterInfo& fi) const {
 		return fi._filterType == _filterType;
 	}
 
@@ -61,12 +81,12 @@ private:
 /*!
  * Interface of a class implementing a 2D filter.
  */
-class CFilter {
+class Filter {
 
 public:
 
 	/*! Destructor. */
-	inline virtual ~CFilter() {
+	inline virtual ~Filter() {
 		if (_filterInfo)
 			delete _filterInfo;
 	}
@@ -76,44 +96,44 @@ public:
 			Matrix_<double> *result) const = 0;
 
 	/*! Returns the filter info. */
-	inline const CFilterInfo &getFilterInfo() const {
+	inline const FilterInfo &getFilterInfo() const {
 		return *_filterInfo;
 	}
 
 public:
 
 	/*! Creates a filter of a given type. */
-	static CFilter *createFilter(const CFilterInfo &fi);
+	static Filter *createFilter(const FilterInfo &fi);
 
 protected:
 
 	/*! Constructor. */
-	CFilter(CFilterInfo *filterInfo) :
+	Filter(FilterInfo *filterInfo) :
 		_filterInfo(filterInfo) {
 	}
 
 protected:
 
 	/*! Filter type. */
-	CFilterInfo *_filterInfo;
+	FilterInfo *_filterInfo;
 
 };
 
 /*!
  * Gaussian filter info
  */
-class CGaussianFilterInfo: public CFilterInfo {
+class CGaussianFilterInfo: public FilterInfo {
 
 public:
 
 	/*! Constructor. */
 	CGaussianFilterInfo(double sigma2) :
-		CFilterInfo(FT_GAUSSIAN), _sigma2(sigma2) {
+		FilterInfo(FT_GAUSSIAN), _sigma2(sigma2) {
 	}
 
 	/*! Comparison operator. */
-	inline virtual bool operator==(const CFilterInfo& fi) const {
-		if (CFilterInfo::operator==(fi)) {
+	inline virtual bool operator==(const FilterInfo& fi) const {
+		if (FilterInfo::operator==(fi)) {
 			if (reinterpret_cast<const CGaussianFilterInfo&> (fi)._sigma2
 					== _sigma2)
 				return true;
@@ -136,13 +156,13 @@ private:
 /*!
  * Gaussian filter
  */
-class CGaussianFilter: public CFilter {
+class CGaussianFilter: public Filter {
 
 public:
 
 	/*! Constructor. */
 	inline CGaussianFilter(double sigma2) :
-		CFilter(new CGaussianFilterInfo(sigma2)) {
+		Filter(new CGaussianFilterInfo(sigma2)) {
 		createGaussHorizontalKernel(sigma2);
 		createGaussVerticalKernel(sigma2);
 	}
@@ -177,18 +197,18 @@ private:
 /*!
  * Cartesian filter info
  */
-class CCartesianFilterInfo: public CFilterInfo {
+class CCartesianFilterInfo: public FilterInfo {
 
 public:
 
 	/*! Constructor. */
 	CCartesianFilterInfo(int dx, int dy) :
-		CFilterInfo(FT_CARTESIAN), _dx(dx), _dy(dy) {
+		FilterInfo(FT_CARTESIAN), _dx(dx), _dy(dy) {
 	}
 
 	/*! Comparison operator. */
-	inline virtual bool operator==(const CFilterInfo& fi) const {
-		if (CFilterInfo::operator==(fi)) {
+	inline virtual bool operator==(const FilterInfo& fi) const {
+		if (FilterInfo::operator==(fi)) {
 			if ((reinterpret_cast<const CCartesianFilterInfo&> (fi)._dx == _dx)
 					&& (reinterpret_cast<const CCartesianFilterInfo&> (fi)._dy
 							== _dy))
@@ -217,13 +237,13 @@ private:
 /*!
  * Cartesian filter
  */
-class CCartesianFilter: public CFilter {
+class CCartesianFilter: public Filter {
 
 public:
 
 	/*! Constructor. */
 	inline CCartesianFilter(int dx, int dy) :
-		CFilter(new CCartesianFilterInfo(dx, dy)) {
+		Filter(new CCartesianFilterInfo(dx, dy)) {
 		createXKernel(dx);
 		createYKernel(dy);
 	}

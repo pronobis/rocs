@@ -27,19 +27,64 @@
 #ifndef _ROCS_CORE_UTILS_H_
 #define _ROCS_CORE_UTILS_H_
 
-// STL & Boost includes
-#include <vector>
+// Boost includes
 #include <boost/algorithm/string.hpp>
+// STL includes
+#include <vector>
+#include <sys/stat.h>
 
+namespace rocs
+{
+namespace core
+{
 
-namespace rocs {
-namespace core {
-
-/*! Splits string into substrings. */
+/*!
+ * Splits string into substrings.
+ * \param sentence
+ *          the sentence to split
+ * \param separators
+ *          the different separators, for instance " \t\n"
+ * \param sentenceWords
+ *          the answer to fill
+ */
 static inline void splitString(std::string sentence, std::string separators,
 		std::vector<std::string>& sentenceWords)
 {
 	boost::split(sentenceWords, sentence, boost::is_any_of(separators));
+}
+
+/*!
+ * Determine if a file exists
+ * \param strFilename
+ *          the file to search
+ * \return true if the file exists
+ */
+static inline bool fileExists(std::string strFilename)
+{
+	struct stat stFileInfo;
+	bool blnReturn;
+	int intStat;
+
+	// Attempt to get the file attributes
+	intStat = stat(strFilename.c_str(), &stFileInfo);
+	if (intStat == 0)
+	{
+		// We were able to get the file attributes
+		// so the file obviously exists.
+		blnReturn = true;
+	}
+	else
+	{
+		// We were not able to get the file attributes.
+		// This may mean that we don't have permission to
+		// access the folder which contains this file. If you
+		// need to do that level of checking, lookup the
+		// return values of stat which will give you
+		// more details on why stat failed.
+		blnReturn = false;
+	}
+
+	return (blnReturn);
 }
 
 } // namespace core

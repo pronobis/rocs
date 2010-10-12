@@ -1,6 +1,6 @@
 // ==================================================================
 // ROCS - Toolkit for Robots Comprehending Space
-// Copyright (C) 2010  Andrzej Pronobis
+// Copyright (C) 2010  Arnaud Ramey, Andrzej Pronobis
 //
 // This file is part of ROCS.
 //
@@ -18,30 +18,26 @@
 // along with ROCS. If not, see <http://www.gnu.org/licenses/>.
 // ==================================================================
 
+
 /*!
- * Example test suite.
- * For more information see:
- * http://www.boost.org/doc/libs/1_44_0/libs/test/doc/html/utf/user-guide.html
- * \author Andrzej Pronobis
- * \file test1.cc
+ * \file Crfh.h
+ *
+ * \date Sep 30, 2010
+ * \author Arnaud Ramey, Andrzej Pronobis
  */
 
-// Boost
-#include <boost/test/unit_test.hpp>
-// ROCS
-/* Nothing for now. This is just an example*/
+#ifndef CRFH_H_
+#define CRFH_H_
 
-/*! Define first test case. */
-BOOST_AUTO_TEST_CASE( case1 )
-{
-	BOOST_CHECK( 0 == 0 );
-	BOOST_REQUIRE( 0 == 0 );
-}
+#define VERSION 1.0
 
-/*! Define second test case. */
-BOOST_AUTO_TEST_CASE( case2 )
-{
-	BOOST_CHECK( 1 == 1 );
-	BOOST_REQUIRE( 1 == 1 );
-}
+#include "rocs/cv/Crfh/System.h"
+//#include "CPerformance.h"
+#include "rocs/cv/Crfh/Crfh.h"
+//#include "global.h"
+//#include "CImage.h"
+#include "rocs/cv/Img.h"
 
+
+
+#endif /* CRFH_H_ */

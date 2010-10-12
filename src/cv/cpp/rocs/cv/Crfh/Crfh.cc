@@ -1,23 +1,46 @@
-/*
- * CCrfh.cc
+// ==================================================================
+// ROCS - Toolkit for Robots Comprehending Space
+// Copyright (C) 2010  Arnaud Ramey, Andrzej Pronobis
+//
+// This file is part of ROCS.
+//
+// ROCS is free software: you can redistribute it and/or modify it
+// under the terms of the GNU Lesser General Public License as
+// published by the Free Software Foundation, either version 3
+// of the License, or (at your option) any later version.
+//
+// ROCS is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU Lesser General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with ROCS. If not, see <http://www.gnu.org/licenses/>.
+// ==================================================================
+
+/*!
+ * \file Crfh.cc
  *
- * Contains implementation of the CCrfh class.
+ * Contains implementation of the Crfh class.
+ *
+ * \date Sep 27, 2010
+ * \author Arnaud Ramey, Andrzej Pronobis
  */
 
 #include <limits>
 
-#include "rocs/cv/Crfh/CDescriptorList.h"
+#include "rocs/cv/Crfh/DescriptorList.h"
 #include "rocs/math/Matrix_.h"
 
-#include "rocs/cv/Crfh/CCrfh.h"
+#include "rocs/cv/Crfh/Crfh.h"
 
 namespace rocs {
 namespace cv {
 
 using rocs::math::Matrix_;
 
-CCrfh::CCrfh(vector<Matrix_<double> *> outputs,
-		const CDescriptorList &descrList, int skipBorderPixels) {
+Crfh::Crfh(vector<Matrix_<double> *> outputs,
+		const DescriptorList &descrList, int skipBorderPixels) {
 	// Check whether the descriptor list matches the output list
 	if (outputs.size() != descrList.size()) {
 		rocsError("The size of the descriptor list does not match the size of the outputs list. ");
@@ -99,7 +122,7 @@ CCrfh::CCrfh(vector<Matrix_<double> *> outputs,
 }
 
 // -----------------------------------------
-void CCrfh::serialize(ostream &stream) {
+void Crfh::serialize(ostream &stream) {
 	rocsDebug3("serialize()");
 
 	for (map<int, double>::const_iterator i = begin(); i != end(); ++i) {
@@ -109,7 +132,7 @@ void CCrfh::serialize(ostream &stream) {
 }
 
 // -----------------------------------------
-void CCrfh::filter(double min_val) {
+void Crfh::filter(double min_val) {
 	rocsDebug3("filter(%f)", min_val);
 
 	double tmp = min_val * _sum;
@@ -128,7 +151,7 @@ void CCrfh::filter(double min_val) {
 }
 
 // -----------------------------------------
-void CCrfh::normalize() {
+void Crfh::normalize() {
 	rocsDebug3("normalize() - sum:%f", _sum);
 
 	for (map<int, double>::iterator i = begin(); i != end(); ++i) {
@@ -139,7 +162,7 @@ void CCrfh::normalize() {
 }
 
 // -----------------------------------------
-CSvmNode *CCrfh::getLibSvmVector() {
+CSvmNode *Crfh::getLibSvmVector() {
 	rocsDebug3("getLibSvmVector()");
 
 	//CSvmNode *vector = aMalloc<CSvmNode> (size() + 1);

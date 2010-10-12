@@ -19,26 +19,61 @@
 // ==================================================================
 
 /*!
- * \file CrfhInterface.cc
+ * \file FilterCache.h
  *
- * \date Oct 7, 2010
- * \author Arnaud Ramey, Andrzej Pronobis
+ * \date Sep 27, 2010
+ * \author Andrzej Pronobis
+ *
+ * Contains declaration of the FilterCache class.
  */
 
-#include "CrfhInterface.h"
+#ifndef CFILTERCACHE_H_
+#define CFILTERCACHE_H_
+
+#include <vector>
 
 namespace rocs {
 namespace cv {
 
+//#include <QtCore/QList>
 
-CrfhInterface::CrfhInterface() {
-	// TODO Auto-generated constructor stub
+class Filter;
+class FilterInfo;
+template<typename _T> class Matrix_;
 
-}
+/*!
+ * Class storing a cache of filters.
+ */
+class FilterCache {
 
-CrfhInterface::~CrfhInterface() {
-	// TODO Auto-generated destructor stub
-}
+public:
+
+	/*! Default constructor. */
+	inline FilterCache() {
+	}
+	;
+
+	/*! Destructor. Deletes all the filters. */
+	~FilterCache();
+
+public:
+
+	/*! Creates a new filter. If an identical filter already exists
+	 a new one will not be created. */
+	bool createFilter(const FilterInfo &filterInfo);
+
+	/*! Applies a filter identified by the filterInfo to the given matrix. */
+	Matrix_<double> *applyFilter(const FilterInfo &filterInfo, const Matrix_<
+			double> &input, Matrix_<double> *result = 0) const;
+
+private:
+
+	/*! List storing pointers to filters. */
+	std::vector<Filter *> _filterList;
+
+};
 
 } // end namespace cv
 } // end namespace rocs
+
+#endif /* CFILTERCACHE_H_ */
