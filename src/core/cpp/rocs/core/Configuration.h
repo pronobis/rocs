@@ -319,8 +319,8 @@ private:
 		std::vector<ptree> sons;
 		getChildren(tree, path, nb_sons, &sons);
 		rocsDebug3("children obtained, nb:%i", nb_sons);
-		for (std::vector<ptree>::iterator it = sons.begin(); it < sons.end(); ++it)
-			printTree(&(*it));
+		//for (std::vector<ptree>::iterator it = sons.begin(); it < sons.end(); ++it)
+			//printTree(&(*it));
 		if (nb_sons == 0)
 			return;
 
