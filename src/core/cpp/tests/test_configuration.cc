@@ -302,5 +302,37 @@ BOOST_AUTO_TEST_CASE( brokenXmlFile )
 	Configuration config;
 	BOOST_REQUIRE_THROW(config.addConfigFile(ROCS_DIR "/config/test/test_broken.xml"), rocs::core::IOException);
 	BOOST_REQUIRE_THROW(config.addConfigFile(ROCS_DIR "/config/test/test_broken2.xml"), rocs::core::IOException);
+}
 
+/*!
+ * Case 9
+ * Testing file with includes parsing.
+ */
+BOOST_AUTO_TEST_CASE( includeFile )
+{
+	Configuration config;
+	config.addConfigFile(ROCS_DIR "/config/test/test_include1.xml");
+
+	// Print the configuration
+	config.printConfiguration();
+
+	// Get values
+	// Single
+	bool wasFound1;
+	int value1 = config.getValue("foo", -1, wasFound1);
+	bool wasFound2;
+	int value2 = config.getValue("bar", -1, wasFound2);
+	// Lists
+	vector<string> values1;
+	config.getValueList("list", "value", values1);
+
+	// Check the output
+	BOOST_REQUIRE( wasFound1 );
+	BOOST_REQUIRE_EQUAL( value1, 1 );
+	BOOST_REQUIRE( wasFound2 );
+	BOOST_REQUIRE_EQUAL( value2, 2 );
+	BOOST_REQUIRE_EQUAL( values1.size(), 3 );
+	BOOST_REQUIRE( values1[0] == (string) "item1" );
+	BOOST_REQUIRE( values1[1] == (string) "item2" );
+	BOOST_REQUIRE( values1[2] == (string) "item3" );
 }

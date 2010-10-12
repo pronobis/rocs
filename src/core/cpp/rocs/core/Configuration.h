@@ -52,6 +52,13 @@ using boost::property_tree::ptree;
 
 /*!
  * Class providing access to configuration options for the ROCS components.
+ *
+ * It supports XML, INI, INFO, JSON formats.
+ * For XML, the include tag is allowed :
+ * if, in the file "input.xml",
+ * there is the instruction <code><xi:include href="toInsert.xml"/></code>,
+ * during parsing this instruction will be replaced
+ * with the content of the file "toInsert.xml" at the same point.
  */
 class Configuration
 {
