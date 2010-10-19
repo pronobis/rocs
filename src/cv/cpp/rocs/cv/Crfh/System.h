@@ -35,13 +35,16 @@
 #include <vector>
 using std::string;
 
-namespace rocs {
+namespace rocs
+{
 
-namespace math {
+namespace math
+{
 template<typename _T> class Matrix_;
 }
 
-namespace cv {
+namespace cv
+{
 
 class Img;
 class Crfh;
@@ -50,18 +53,32 @@ class Crfh;
  * Main class defining a system and managing the
  * histogram extraction process.
  */
-class System {
+class System
+{
 
 public:
 
-	/*! Constructor. Initializes the system (creates descriptors
-	 and filters). */
+	/*! Constructor.
+	 * Initializes the system (creates descriptors and filters).
+	 */
 	System(string sysDef);
+	/*! empty constructor */
+	System()
+	{
+	}
+	/*!
+	 * Initializes the system (creates descriptors and filters).
+	 * \param sysDef Exemple string:
+	 * Lxx(8,28)+Lxy(8,28)+Lyy(8,28)+Lxx(2,28)+Lxy(2,28)+Lyy(2,28)
+	 *
+	 */
+	void build(string sysDef);
 
 public:
 
 	/*! Computes outputs of all the descriptors. */
-	vector<math::Matrix_<double>*> computeDescriptorOutputs(const Img &image) const;
+	vector<math::Matrix_<double>*>
+	computeDescriptorOutputs(const Img &image) const;
 
 	/*! Computes the histogram for a given image. */
 	Crfh *computeHistogram(const Img &image, int skipBorderPixels) const;

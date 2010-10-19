@@ -367,6 +367,9 @@ int Configuration::getValue(const ptree* tree, const std::string path,
 template<> // double
 double Configuration::getValue(const ptree* tree, const std::string path,
 		const double default_value, bool& was_found);
+template<> // const char*
+const char* Configuration::getValue(const ptree* tree, const std::string path,
+		const char* default_value, bool& was_found);
 
 } // namespace core
 } // namespace rocs

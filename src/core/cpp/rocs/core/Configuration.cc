@@ -529,3 +529,12 @@ double rocs::core::Configuration::getValue<double>(const ptree* tree,
 	string return_value = getValueAsString(tree, path, was_found);
 	return (was_found ? atof(return_value.c_str()) : default_value);
 }
+// const char*
+template<>
+const char* rocs::core::Configuration::getValue<const char*>(const ptree* tree,
+		const string path, const char* default_value, bool& was_found)
+{
+	rocsDebug3("getValue<const char*>('%s')", path.c_str());
+	string return_value = getValueAsString(tree, path, was_found);
+	return (was_found ? return_value.c_str() : default_value);
+}

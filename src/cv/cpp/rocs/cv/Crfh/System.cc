@@ -42,10 +42,12 @@ namespace cv {
 
 // -----------------------------------------
 System::System(string sysDef) {
-	rocsDebug3("CSystem::CSystem('%s')", sysDef.c_str());
+	rocsDebug3("System::System('%s')", sysDef.c_str());
+	build(sysDef);
+}
 
-	// Exemplar string:
-	// Lxx(8,28)+Lxy(8,28)+Lyy(8,28)+Lxx(2,28)+Lxy(2,28)+Lyy(2,28)
+void System::build(string sysDef) {
+	rocsDebug3("System::build('%s')", sysDef.c_str());
 
 	// Extract tokens
 	//stringList tokens = sysDef.split('+');
@@ -77,7 +79,7 @@ System::System(string sysDef) {
 	// Create filters
 	_descriptorList.createAllRequiredFilters(_filterCache);
 
-	rocsDebug3("CSystem now initialized.");
+	rocsDebug3("System now initialized.");
 }
 
 // -----------------------------------------

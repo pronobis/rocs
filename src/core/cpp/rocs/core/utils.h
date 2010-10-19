@@ -31,6 +31,11 @@
 #include <boost/algorithm/string.hpp>
 // STL includes
 #include <vector>
+#include <string>
+#include <iostream>
+#include <fstream>
+#include <sstream>
+#include <iterator>
 #include <sys/stat.h>
 
 namespace rocs
@@ -85,6 +90,62 @@ static inline bool fileExists(std::string strFilename)
 	}
 
 	return (blnReturn);
+}
+
+static void loadFilenameList(std::string inputFileName,
+		std::vector<std::string>& ans)
+{
+	using namespace std;
+	bool inputIsAList = (inputFileName[0] == '@');
+
+	/* Read list of images */
+	//vector<string> imageFileList;
+	//		vector<string> classLabelList;
+	if (inputIsAList)
+	{
+		inputFileName = inputFileName.substr(inputFileName.size() - 1);
+		rocsDebug1("\n\n* Reading list file: %s", inputFileName.c_str());
+
+		/* Open file */
+		//		QFile listFile(inputFileName);
+		//		if (!listFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
+		//			cout << "ERROR: Unable to open the list file!" << endl;
+		//			exit(-1);
+		//		}
+		//		QTextStream listFileStream(&listFile);
+		ifstream listFileStream(inputFileName.c_str(), ios::in);
+		if (!listFileStream.is_open())
+		{ /* ok, proceed with output */
+			rocsError("ERROR: Unable to open the list file!");
+		}
+
+		/* Read the lines */
+		while (!listFileStream.eof())
+		{
+			string line;
+			getline(listFileStream, line);
+
+			//vector<string> line_split = line.split(' ');
+			vector<string> line_words;
+			istringstream iss(line);
+			copy(istream_iterator<string> (iss), istream_iterator<string> (),
+					back_inserter<vector<string> > (line_words));
+
+			ans.push_back(line_words[0]);
+			//				if (line_words.size() > 1)
+			//					classLabelList.push_back(line_words[1]);
+			//				else
+			//					classLabelList.push_back("");
+		}
+
+		/* Close file */
+		listFileStream.close();
+	}
+	else
+	{ // input is not a list
+		ans .push_back(inputFileName);
+		//			classLabelList.push_back("");
+	}
 }
 
 } // namespace core

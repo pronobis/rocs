@@ -22,7 +22,7 @@
  * Example test suite.
  * For more information see:
  * http://www.boost.org/doc/libs/1_44_0/libs/test/doc/html/utf/user-guide.html
- * \author Andrzej Pronobis
+ * \author Arnaud Ramey, Andrzej Pronobis
  * \file test_imageIo.cc
  */
 
@@ -50,11 +50,8 @@ BOOST_AUTO_TEST_CASE( caseFictiveImage)
  */
 BOOST_AUTO_TEST_CASE( caseNonFictiveImage)
 {
-	char filename[100];
-	sprintf(filename, "%s%s", IMGDIR, "small.png");
-
 	BOOST_REQUIRE_NO_THROW(//
-			rocs::cv::ImageIO::load(filename)//
+			rocs::cv::ImageIO::load(IMGDIR "small.png")//
 	);
 }
 
@@ -71,9 +68,7 @@ BOOST_AUTO_TEST_CASE( caseNonFictiveImage)
  */
 BOOST_AUTO_TEST_CASE( caseSplitChannels )
 {
-	char filename[100];
-	sprintf(filename, "%s%s", IMGDIR, "small.png");
-	rocs::cv::Img* img = rocs::cv::ImageIO::load(filename);
+	rocs::cv::Img* img = rocs::cv::ImageIO::load(IMGDIR "small.png");
 	// with this image, (0, 1) = (255, 128, 0)
 
 	rocs::cv::Img channel_red(img->nbRows(), img->nbCols(), MAT_8U );
