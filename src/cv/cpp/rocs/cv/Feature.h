@@ -32,20 +32,43 @@
 #define FEATURE_H_
 
 #include <map>
+#include <iterator>
 
-template<typename keyType, typename valueType>
-class Feature : std::map<keyType, valueType>::iterator
-{
-public:
-	/*! constructor */
-	Feature()
-	{
-	}
-	/*! destructor */
-	virtual ~Feature()
-	{
+/*
+ * this is what we would like to do
+ */
+//template<typename keyType, typename valueType>
+//typedef std::map<keyType, valueType>::iterator Feature;
 
-	}
-};
+/*
+ * if you specify explicitely the types, can use a typedef
+ */
+//typedef std::map<int, double>::iterator Feature;
+
+/*
+ * trick
+ */
+//template<typename keyType, typename valueType>
+//struct Feature
+//{
+//	typedef std::map<keyType, valueType> Type;
+//};
+
+/*
+ * full specification
+ */
+//template<typename keyType, typename valueType>
+//class Feature : public std::map<keyType, valueType>::iterator
+//{
+//public:
+//	/*! constructor */
+//	Feature()
+//	{
+//	}
+//	/*! destructor */
+//	virtual ~Feature()
+//	{
+//	}
+//};
 
 #endif /* FEATURE_H_ */

@@ -66,6 +66,7 @@
 #include <boost/test/unit_test.hpp>
 // ROCS
 #include "rocs/cv/ImageIO.h"
+#include "rocs/cv/FeatureList.h"
 
 #define ROCSDIR "../../"
 #define IMGDIR ROCSDIR "data/images/"
@@ -73,14 +74,32 @@
 /*!
  * a test case for a simple image
  */
-BOOST_AUTO_TEST_CASE( caseSimpleImage )
+BOOST_AUTO_TEST_CASE( caseFeatureList )
 {
-	rocs::cv::Img* img = rocs::cv::ImageIO::load(IMGDIR "small.png");
-	rocs::cv::CrfhInterface interface;
-	interface.defineSystem(
-			"Lxx(8,28)+Lxy(8,28)+Lyy(8,28)+Lxx(2,28)+Lxy(2,28)+Lyy(2,28)");
-	rocs::cv::Crfh* feature = interface.processImage(img);
+	FeatureList<int, double> test;
+	test.insert( pair<int, double>(1, 0.1f) );
+	test.insert( pair<int, double>(2, 0.2f) );
+	test.insert( pair<int, double>(3, 0.3f) );
+	BOOST_CHECK( test.size() == 3);
 
-	delete img;
+	test.filter(2);
+	cout << "size:" << test.size() << endl;
+	BOOST_CHECK( test.size() == 2);
 }
+
+
+
+///*!
+// * a test case for a simple image
+// */
+//BOOST_AUTO_TEST_CASE( caseSimpleImage )
+//{
+//	rocs::cv::Img* img = rocs::cv::ImageIO::load(IMGDIR "small.png");
+//	rocs::cv::CrfhInterface interface;
+//	interface.defineSystem(
+//			"Lxx(8,28)+Lxy(8,28)+Lyy(8,28)+Lxx(2,28)+Lxy(2,28)+Lyy(2,28)");
+//	rocs::cv::Crfh* feature = interface.processImage(img);
+//
+//	delete img;
+//}
 

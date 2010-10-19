@@ -140,7 +140,7 @@ void Crfh::filter(double min_val) {
 	map<int, double>::iterator i = begin();
 	while (i != end()) {
 		//if (i.value() < tmp) {
-		if (i->first < tmp) {
+		if (i->second < tmp) {
 			//_sum -= i.value(); // Decreses the classification performance. We should not do it.
 			//i = erase(i);
 			erase(i);
