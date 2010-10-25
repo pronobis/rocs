@@ -28,6 +28,9 @@
 #ifndef CCRFH_H_
 #define CCRFH_H_
 
+// rocs includes
+#include "rocs/cv/FeatureList.h"
+
 // STD includes
 #include <vector>
 using std::vector;
