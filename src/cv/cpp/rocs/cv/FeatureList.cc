@@ -29,9 +29,10 @@
 
 #include "FeatureList.h"
 
-namespace rocs {
-namespace cv {
-
+namespace rocs
+{
+namespace cv
+{
 
 } // end namespace cv
 } // end namespace rocs

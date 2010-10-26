@@ -83,7 +83,7 @@ Crfh::Crfh(vector<Matrix_<double> *> outputs,
 	double *factors = factorsVect.data();
 
 	// Create the histogram
-	_max = -1;
+	//_max = -1;
 	for (int i = rows - 1 - skipBorderPixels; i >= skipBorderPixels; --i) // Iterate through all pixels
 		for (int j = cols - 1 - skipBorderPixels; j >= skipBorderPixels; --j) // without borders
 		{
@@ -96,88 +96,13 @@ Crfh::Crfh(vector<Matrix_<double> *> outputs,
 				index = index * bins[k] + (int) ((data[k]->get(i, j) - min[k])
 						* factors[k]);
 
-			/* insert the new element (index, tmp)
-			 * from http://stackoverflow.com/questions/97050/stdmap-insert-or-stdmap-find
-			 * */
-			//			double new_value=value(index)+1;
-			//			      if (new_value>_max) _max=new_value;
-			//			      insert(index, new_value);
-			//debugPrintf_lvl3("incrementing (%li)", index);
-			MapType::iterator lb = lower_bound(index);
-			if (lb != end() && !(key_comp()(index, lb->first))) {
-				// key already exists -> update lb->second
-				++(lb->second);
-				if (_max < lb->second)
-					_max = lb->second;
-			} else {
-				// the key does not exist in the map ->  add it to the map
-				// Use lb as a hint to insert, so it can avoid another lookup
-				insert(lb, MapType::value_type(index, 1));
-			}
-
+			increase_if_found(index);
 		}
 
 	// Store sum of all bins
+	rocsDebug3("max:%f", _max);
+	//serialize(std::cout, true);
 	_sum = (rows - 2 * skipBorderPixels) * (cols - 2 * skipBorderPixels);
-}
-
-// -----------------------------------------
-void Crfh::serialize(ostream &stream) {
-	rocsDebug3("serialize()");
-
-	for (map<int, double>::const_iterator i = begin(); i != end(); ++i) {
-		//stream << i.key() << ":" << i.value() << " ";
-		stream << i->first << ":" << i->second << " ";// << endl;
-	}
-}
-
-// -----------------------------------------
-void Crfh::filter(double min_val) {
-	rocsDebug3("filter(%f)", min_val);
-
-	double tmp = min_val * _sum;
-
-	map<int, double>::iterator i = begin();
-	while (i != end()) {
-		//if (i.value() < tmp) {
-		if (i->second < tmp) {
-			//_sum -= i.value(); // Decreses the classification performance. We should not do it.
-			//i = erase(i);
-			erase(i);
-			--i; // TODO check pointer arithmetic
-		} else
-			++i;
-	}
-}
-
-// -----------------------------------------
-void Crfh::normalize() {
-	rocsDebug3("normalize() - sum:%f", _sum);
-
-	for (map<int, double>::iterator i = begin(); i != end(); ++i) {
-		//i.value() /= _sum; TODO check this
-		//debugPrintf_lvl3("Elem:%f", i->second);
-		i->second /= _sum;
-	}
-}
-
-// -----------------------------------------
-CSvmNode *Crfh::getLibSvmVector() {
-	rocsDebug3("getLibSvmVector()");
-
-	//CSvmNode *vector = aMalloc<CSvmNode> (size() + 1);
-	CSvmNode *vector = new CSvmNode[size() + 1];
-
-	int nr = 0;
-	for (map<int, double>::const_iterator i = begin(); i != end(); ++i, ++nr) {
-		vector[nr].first = i->first;//key();
-		vector[nr].second = i->second;//.value();
-	}
-
-	vector[size()].first = -1;
-	vector[size()].second = 0.0;
-
-	return vector;
 }
 
 } // end namespace cv

@@ -36,7 +36,7 @@
 #define TYPES_H_
 
 #include <cmath>
-
+#include <string>
 
 /* **** short defs from openCV */
 #define  CV_1F            0x3f800000

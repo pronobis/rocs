@@ -52,8 +52,8 @@ namespace core
  * \param sentenceWords
  *          the answer to fill
  */
-static inline void splitString(std::string sentence, std::string separators,
-		std::vector<std::string>& sentenceWords)
+static inline void splitString(const std::string sentence,
+		const std::string separators, std::vector<std::string>& sentenceWords)
 {
 	boost::split(sentenceWords, sentence, boost::is_any_of(separators));
 }
@@ -64,7 +64,7 @@ static inline void splitString(std::string sentence, std::string separators,
  *          the file to search
  * \return true if the file exists
  */
-static inline bool fileExists(std::string strFilename)
+static inline bool fileExists(const std::string strFilename)
 {
 	struct stat stFileInfo;
 	bool blnReturn;
@@ -92,31 +92,24 @@ static inline bool fileExists(std::string strFilename)
 	return (blnReturn);
 }
 
-static void loadFilenameList(std::string inputFileName,
-		std::vector<std::string>& ans)
+static void loadFilenameList(const std::string inputFileName, std::vector<
+		std::string>& ans)
 {
 	using namespace std;
 	bool inputIsAList = (inputFileName[0] == '@');
 
 	/* Read list of images */
-	//vector<string> imageFileList;
-	//		vector<string> classLabelList;
 	if (inputIsAList)
 	{
-		inputFileName = inputFileName.substr(inputFileName.size() - 1);
+		string inputFileNameWithoutArobase = inputFileName.substr(inputFileName.size() - 1);
 		rocsDebug1("\n\n* Reading list file: %s", inputFileName.c_str());
 
 		/* Open file */
-		//		QFile listFile(inputFileName);
-		//		if (!listFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
-		//			cout << "ERROR: Unable to open the list file!" << endl;
-		//			exit(-1);
-		//		}
-		//		QTextStream listFileStream(&listFile);
-		ifstream listFileStream(inputFileName.c_str(), ios::in);
+		ifstream listFileStream(inputFileNameWithoutArobase.c_str(), ios::in);
 		if (!listFileStream.is_open())
 		{ /* ok, proceed with output */
-			rocsError("ERROR: Unable to open the list file!");
+			rocsError("ERROR: Unable to open the list file '%s'!",
+					inputFileNameWithoutArobase.c_str());
 		}
 
 		/* Read the lines */
@@ -146,6 +139,32 @@ static void loadFilenameList(std::string inputFileName,
 		ans .push_back(inputFileName);
 		//			classLabelList.push_back("");
 	}
+}
+
+/*!
+ * read a file and return the result as a string
+ * @param filename
+ * @return the content of the file
+ */
+static std::string readFile(const char* filename)
+{
+	std::ostringstream ans;
+	std::string line;
+	std::ifstream myfile(filename);
+	if (myfile.is_open())
+	{
+		while (myfile.good())
+		{
+			getline(myfile, line);
+			ans << line << std::endl;
+		}
+		myfile.close();
+	}
+
+	else
+		rocsError("ERROR: Unable to open the file '%s'!", filename);
+
+	return ans.str();
 }
 
 } // namespace core

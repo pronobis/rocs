@@ -31,10 +31,12 @@
 #define FEATURELIST_H_
 
 // rocs includes
-#include <rocs/cv/Feature.h>
+//#include <rocs/cv/Feature.h>
+#include <rocs/core/types.h>
 #include <rocs/core/debug.h>
 // std includes
 #include <sstream>
+#include <map>
 
 template<typename keyType, typename valueType>
 class FeatureList: public std::map<keyType, valueType>
@@ -47,9 +49,79 @@ public:
 	FeatureList() :
 		Type()
 	{
+		_sum = 0;
+		_max = -1;
 	}
 	virtual ~FeatureList()
 	{
+	}
+
+	/*!
+	 * insert the new element (index, value)
+	 * from http://stackoverflow.com/questions/97050/stdmap-insert-or-stdmap-find
+	 * @param index the index where to insert
+	 * @param value the new value
+	 */
+	void insert_(keyType index, valueType value)
+	{
+		typename Type::iterator lb = lower_bound(index);
+		//if (lb != this->end() && !(typename Type::key_comp()(index, lb->first)))
+		if (lb != this->end() && index == lb->first)
+		{
+			// key already exists -> update lb->second
+			_sum -= lb->second; // update _sum
+			lb->second = value;
+		}
+		else
+		{
+			// the key does not exist in the map ->  add it to the map
+			// Use lb as a hint to insert, so it can avoid another lookup
+			insert(lb, typename Type::value_type(index, value));
+		}
+		_sum += value; // update _sum
+		if (_max < value)
+			_max = value;
+	}
+
+	/*!
+	 * increase the value of index
+	 * @param index
+	 */
+	void increase_if_found(keyType index)
+	{
+		//		rocsDebug3("increase_if_found(%i)", index);
+		double value;
+
+		typename Type::iterator lb = lower_bound(index);
+		//if (lb != this->end() && !(typename Type::key_comp()(index, lb->first)))
+		if (lb != this->end() && index == lb->first)
+		{
+			// key already exists -> update lb->second
+			++(lb->second);
+			value = lb->second;
+		}
+		else
+		{
+			// the key does not exist in the map ->  add it to the map
+			// Use lb as a hint to insert, so it can avoid another lookup
+			insert(lb, typename Type::value_type(index, 1));
+			value = 1;
+		}
+		_sum += 1; // update _sum
+		if (_max < value)
+			_max = value;
+	}
+
+	const char* iterToString(typename Type::iterator& i)
+	{
+		char formatString[20];
+		char* ans = new char[100];
+		sprintf(formatString, //
+				"%s->%s", //
+				rocs::core::Type<keyType>::format(), //
+				rocs::core::Type<valueType>::format());
+		sprintf(ans, formatString, i->first, i->second);
+		return ans;
 	}
 
 	/*!
@@ -59,25 +131,33 @@ public:
 	 */
 	void filter(double min_val)
 	{
-		rocsDebug3("filter(%f)", min_val);
-		double tmp = min_val * _sum;
+		//double thres = min_val * _sum;
+		double thres = min_val * _max;
+		rocsDebug3("filter(%f) - removing values < %f", min_val, thres);
+		//		rocsDebug3("max:%f", _max);
 
 		typename Type::iterator i = this->begin();
 		while (i != this->end())
 		{
-			rocsDebug3("i->second:%f", i->second);
-			//if (i.value() < tmp) {
-			if (i->second < tmp)
+			//rocsDebug3("i->second:%f", i->second);
+			//if (i.value() < thres) {
+			if (i->second < thres)
 			{
+				rocsDebug3("erasing the iterator: %s", iterToString(i));
 				//_sum -= i.value(); // Decreses the classification performance. We should not do it.
+				_sum -= i->second;
 				//i = erase(i);
 				erase(i);
-				--i; // TODO check pointer arithmetic
+				--i;
+				++i;// TODO check pointer arithmetic
 			}
 			else
+			{
+				//				rocsDebug3("keeping the iterator");
 				++i;
-		}
-	}
+			}
+		} // end loop i
+	} // end filter
 
 	/*!
 	 * Normalizes the histogram - divides each bin by the sum of all.
@@ -91,13 +171,14 @@ public:
 			//debugPrintf_lvl3("Elem:%f", i->second);
 			i->second /= _sum;
 		}
+		_sum = 1;
 	}
 
 	/*!
 	 * Serializes the histogram to a file in the libSVM format.
 	 * \param stream
 	 */
-	void serialize(std::ostream &stream)
+	void serialize(std::ostream &stream, bool addEndl = false)
 	{
 		rocsDebug3("serialize()");
 
@@ -105,6 +186,9 @@ public:
 		{
 			stream << i->first << ":" << i->second << " ";// << endl;
 		}
+
+		if (addEndl)
+			stream << std::endl;
 	}
 
 	/*!
@@ -130,7 +214,7 @@ public:
 		return vector;
 	}
 
-private:
+	//private:
 
 	/*! Sum of all values before normalization. */
 	valueType _sum;

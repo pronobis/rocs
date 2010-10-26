@@ -40,7 +40,7 @@ using std::ostream;
 using std::map;
 
 // type declaration
-typedef std::map<int, double> MapType;
+//typedef std::map<int, double> MapType;
 
 namespace rocs {
 
@@ -59,12 +59,12 @@ class DescriptorList;
 //	int index;
 //	double value;
 //};
-typedef std::pair<int, double> CSvmNode;
+//typedef std::pair<int, double> CSvmNode;
 
 /*!
  * the representation of a Crfh feature
  */
-class Crfh: public MapType {
+class Crfh: public FeatureList<int, double> {
 
 public:
 
@@ -73,26 +73,26 @@ public:
 	Crfh(vector<math::Matrix_<double> *> outputs, const DescriptorList &descrList,
 			int skipBorderPixels);
 
-	/*! Zeroes small values in the histogram. The function removes those
-	 values that divided by maximum value are smaller than min_val. */
-	void filter(double min_val);
-
-	/*! Normalizes the histogram - divides each bin by the sum of all. */
-	void normalize();
-
-	/*! Serializes the histogram to a file in the libSVM format. */
-	void serialize(ostream &stream);
-
-	/*! Returns a libSVM compatible sparse vector containing the histogram. */
-	CSvmNode *getLibSvmVector();
+//	/*! Zeroes small values in the histogram. The function removes those
+//	 values that divided by maximum value are smaller than min_val. */
+//	void filter(double min_val);
+//
+//	/*! Normalizes the histogram - divides each bin by the sum of all. */
+//	void normalize();
+//
+//	/*! Serializes the histogram to a file in the libSVM format. */
+//	void serialize(ostream &stream);
+//
+//	/*! Returns a libSVM compatible sparse vector containing the histogram. */
+//	CSvmNode *getLibSvmVector();
 
 private:
 
-	/*! Sum of all values before normalization. */
-	double _sum;
-
-	/*! Maximal value before normalization. */
-	double _max;
+//	/*! Sum of all values before normalization. */
+//	double _sum;
+//
+//	/*! Maximal value before normalization. */
+//	double _max;
 
 };
 

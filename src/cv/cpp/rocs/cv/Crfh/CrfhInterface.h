@@ -29,8 +29,9 @@
 #define CRFHINTERFACE_H_
 
 // rocs includes
-#include "rocs/cv/Crfh/System.h"
+#include "rocs/cv/FeatureList.h"
 #include "rocs/cv/ImageIO.h"
+#include "rocs/cv/Crfh/System.h"
 #include "rocs/cv/Crfh/Crfh.h"
 #include "rocs/core/debug.h"
 #include "rocs/core/error.h"
@@ -107,7 +108,7 @@ public:
 			Img* image = ImageIO::load(imageFileList[i]);
 
 			/* Perform histogram extraction */
-			Crfh *crfh = processImage(image, minHistValue);
+			Crfh* crfh = processImage(image, minHistValue);
 			rocsDebug3("\n\nComputing finished for this image !");
 
 			/* Save the histogram to the output file */
