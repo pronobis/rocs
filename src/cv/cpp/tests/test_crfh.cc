@@ -45,7 +45,7 @@ using namespace std;
  */
 BOOST_AUTO_TEST_CASE( caseFeatureList )
 {
-	FeatureList<int, double> testFeatureList;
+	rocs::cv::FeatureList<int, double> testFeatureList;
 	testFeatureList.increase_if_found(1);
 	testFeatureList.increase_if_found(1);
 	testFeatureList.increase_if_found(2);
@@ -64,30 +64,65 @@ BOOST_AUTO_TEST_CASE( caseFeatureList )
 }
 
 /*!
- * a test case for a simple image
+ * a test case for a given image
+ * @param filenamePpm the input image
+ * @param filenameCrfh the correct result file
  */
 void testCrfh(const char* filenamePpm, const char* filenameCrfh)
 {
 	using namespace rocs::cv;
 	CrfhInterface crfhInterface;
 	crfhInterface.defineSystem("Lxx(8,28)");
+	crfhInterface.start();
 
-	Img* img = ImageIO::load(filenamePpm);
-	Crfh* featureList = crfhInterface.processImage(img);
+	/*
+	 * method 1 : load the Img separately and pass it
+	 * method 2 : directly give the filename to the feature extractor
+	 */
+	for (int imgLoadMethod = 1; imgLoadMethod <= 2; ++imgLoadMethod)
+	{
+		Crfh* featureList;
+		string result;
+		if (imgLoadMethod == 1) // load separately
+		{
+			Img* img = ImageIO::load(filenamePpm);
+			featureList = crfhInterface.processImage(img);
 
-	// compute sum manually
-	double sum = 0;
-	for (Crfh::iterator it = featureList->begin(); it != featureList->end(); ++it)
-		sum += it->second;
-	//BOOST_CHECK(sum == featureList->_sum);
+			/*
+			 * compute sum manually in the feature list to check it is conform
+			 */
+			double sum = 0;
+			for (Crfh::iterator it = featureList->begin(); it
+					!= featureList->end(); ++it)
+				sum += it->second;
+			//BOOST_CHECK(sum == featureList->_sum);
 
-	// check the string
-	ostringstream resultStream;
-	featureList->serialize(resultStream, true);
-	string result = resultStream.str(), correctResult = rocs::core::readFile(
-			filenameCrfh);
-	rocsDebug3("result:\n'%s'\n, correctResult:\n'%s'", result.c_str(), correctResult.c_str());
-	BOOST_CHECK(result == correctResult);
+			ostringstream resultStream;
+			featureList->serialize(resultStream, true);
+			result = resultStream.str();
+
+			delete img;
+		}
+		else // load the image indirectly
+		{
+			string fileIn = filenamePpm;
+			string fileOut = "out.txt";
+			crfhInterface.process(fileIn, fileOut);
+			result = rocs::core::readFile(fileOut.c_str());
+		}
+
+		/*
+		 * check that the result string is the same as expected
+		 */
+		string correctResult = rocs::core::readFile(filenameCrfh);
+		rocsDebug3("result:\n'%s'\n, correctResult:\n'%s'", result.c_str(), correctResult.c_str());
+		BOOST_CHECK(result == correctResult);
+	} // end loop method
+
+	/*
+	 * clean
+	 */
+	crfhInterface.end();
 }
 
 BOOST_AUTO_TEST_CASE( caseCrfh )

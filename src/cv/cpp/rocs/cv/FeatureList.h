@@ -38,6 +38,10 @@
 #include <sstream>
 #include <map>
 
+namespace rocs {
+namespace cv {
+
+
 template<typename keyType, typename valueType>
 class FeatureList: public std::map<keyType, valueType>
 {
@@ -223,5 +227,9 @@ public:
 	valueType _max;
 };
 /////
+
+} // end namespace cv
+} // end namespace rocs
+
 
 #endif /* FEATURELIST_H_ */

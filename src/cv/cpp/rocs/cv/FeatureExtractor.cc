@@ -25,3 +25,9 @@
 
 #include "rocs/cv/FeatureExtractor.h"
 
+namespace rocs {
+namespace cv {
+
+
+} // end namespace cv
+} // end namespace rocs

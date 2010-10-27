@@ -29,18 +29,11 @@
 #define CRFHINTERFACE_H_
 
 // rocs includes
-#include "rocs/cv/FeatureList.h"
-#include "rocs/cv/ImageIO.h"
+#include "rocs/cv/FeatureExtractor.h"
 #include "rocs/cv/Crfh/System.h"
 #include "rocs/cv/Crfh/Crfh.h"
-#include "rocs/core/debug.h"
-#include "rocs/core/error.h"
-#include "rocs/core/Timer.h"
-#include "rocs/core/utils.h"
 
 // STD includes
-#include <string>
-#include <vector>
 #include <iostream>
 #include <fstream>
 #include <sstream>
@@ -53,11 +46,19 @@ namespace rocs
 namespace cv
 {
 
-class CrfhInterface
+class CrfhInterface: public rocs::cv::FeatureExtractor<Crfh>
 {
 public:
-	CrfhInterface();
-	virtual ~CrfhInterface();
+	/*! ctor */
+	CrfhInterface()
+	{
+		rocsDebug3("CrfhInterface()");
+		setDefaultParams();
+	}
+	/*! dtor */
+	virtual ~CrfhInterface()
+	{
+	}
 
 	/*!
 	 * Initializes the system (creates descriptors and filters).
@@ -70,93 +71,71 @@ public:
 		rocsDebug1("defineSystem(sysDescr:'%s'", sysDescr.c_str());
 
 		/* Define a system */
-		//System syst(sysDescr);
-		syst.build(sysDescr);
-
-		/* reset timer */
-		totalTime = 0;
-		nbImagesTreated = 0;
+		//System _syst(sysDescr);
+		_syst.build(sysDescr);
 	}
 
-	void process(string inputFileName, string outputFileName,
-			double minHistValue = 0)
+	/*!
+	 * set the minimal value for the histogram
+	 * \param minHistValue
+	 */
+	void setMinHistValue(double minHistValue)
 	{
-		rocsDebug1("inputFileName:%s, outputFileName:%s",
-				inputFileName.c_str(), outputFileName.c_str());
-
-		/* load input files */
-		vector<string> imageFileList;
-		core::loadFilenameList(inputFileName, imageFileList);
-
-		/* Open the output file */
-		ofstream outputFileStream(outputFileName.c_str(), ios::out);
-		if (!outputFileStream.is_open())
-		{ /* ok, proceed with output */
-			rocsError("ERROR: Unable to open the output file!");
-		}
-
-		/* Extract features from each file */
-		rocsDebug3("\n\n* Processing files:");
-
-		for (unsigned int i = 0; i < imageFileList.size(); ++i)
-		{
-			rocsDebug1("\n\n(%f percent) : %s", (((double) i + 1)
-							/ ((double) imageFileList.size())) * 100.0,
-					imageFileList[i].c_str());
-
-			/* Load an image */
-			Img* image = ImageIO::load(imageFileList[i]);
-
-			/* Perform histogram extraction */
-			Crfh* crfh = processImage(image, minHistValue);
-			rocsDebug3("\n\nComputing finished for this image !");
-
-			/* Save the histogram to the output file */
-			//			if (classLabelList[i] != "")
-			//				outputFileStream << classLabelList[i] << " ";
-			crfh->serialize(outputFileStream);
-			//crfh->serialize(cout);
-			outputFileStream << endl;
-
-			/* Delete the histogram */
-			delete crfh;
-		} // end loop image
-
-		/* Display average time */
-		rocsDebug1(
-				"\n\n* Finished! Average processing time per image: %f ms",
-				averageTime());
-
-		/* Close the output file */
-		outputFileStream.close();
-
-		//return EXIT_SUCCESS;
+		rocsDebug3("setMinHistValue(%f)", minHistValue);
+		_minHistValue = minHistValue;
 	}
 
-	Crfh* processImage(Img* image, double minHistValue = 0)
+	/*!
+	 * set the width of the border that is not analyzed in the image
+	 * \param skipBorderPixels
+	 */
+	void setSkipBorderPixels(int skipBorderPixels)
+	{
+		_skipBorderPixels = skipBorderPixels;
+	}
+
+	void setDefaultParams()
+	{
+		rocsDebug3("setDefaultParams()");
+		/* default params */
+		_minHistValue = 0;
+		_skipBorderPixels = 15;
+	}
+
+	void start()
+	{
+		rocsDebug3("start()");
+		/* reset timer */
+		_totalTime = 0;
+		_nbImagesTreated = 0;
+	}
+
+	void end()
+	{
+		rocsDebug3("end()");
+		// nothing to do
+	}
+
+	Crfh* processImage(const Img* image)
 	{
 		rocsDebug1("processImage(%s)", image->infoString().c_str());
-		t.reset();
+		_t.reset();
+
 		// make the actual computation
-		Crfh *crfh = syst.computeHistogram(*image, 15);
-		if (minHistValue > 0)
-			crfh->filter(minHistValue);
+		Crfh *crfh = _syst.computeHistogram(*image, _skipBorderPixels);
+		if (_minHistValue > 0)
+			crfh->filter(_minHistValue);
 		crfh->normalize();
 		// update timer
-		totalTime += t.getTimeMilliseconds();
-		nbImagesTreated++;
+		_totalTime += _t.getTimeMilliseconds();
+		_nbImagesTreated++;
 		return crfh;
 	}
 
 private:
-	System syst;
-	Timer t;
-	long totalTime;
-	int nbImagesTreated;
-	double averageTime()
-	{
-		return totalTime / nbImagesTreated;
-	}
+	System _syst;
+	double _minHistValue;
+	int _skipBorderPixels;
 };
 
 } // end namespace cv

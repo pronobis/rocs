@@ -42,7 +42,7 @@
 namespace rocs {
 namespace cv {
 
-class SurfExtractor : public FeatureExtractor{
+class SurfExtractor : public FeatureExtractor<int>{
 public:
 	SurfExtractor();
 	virtual ~SurfExtractor();

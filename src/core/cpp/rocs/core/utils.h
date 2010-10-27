@@ -92,7 +92,7 @@ static inline bool fileExists(const std::string strFilename)
 	return (blnReturn);
 }
 
-static void loadFilenameList(const std::string inputFileName, std::vector<
+static inline void loadFilenameList(const std::string inputFileName, std::vector<
 		std::string>& ans)
 {
 	using namespace std;
@@ -146,7 +146,7 @@ static void loadFilenameList(const std::string inputFileName, std::vector<
  * @param filename
  * @return the content of the file
  */
-static std::string readFile(const char* filename)
+static inline std::string readFile(const char* filename)
 {
 	std::ostringstream ans;
 	std::string line;
