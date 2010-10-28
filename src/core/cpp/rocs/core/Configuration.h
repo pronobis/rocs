@@ -62,11 +62,23 @@ using boost::property_tree::ptree;
  *
  * It supports XML, INI, INFO, JSON formats.
  *
- * For XML, the include tag is allowed :
+ * The include tags are allowed :
  * if, in the file "input.xml",
- * there is the instruction <code><xi:include href="toInsert.xml"/></code>,
- * during parsing this instruction will be replaced
+ * there is the instruction<br>
+ * <code><xi:include href="toInsert.xml"/></code><br>
+ * then during parsing this instruction will be replaced
  * with the content of the file "toInsert.xml" at the same point.
+ *
+ * For JSON, the include tag is :<br>
+ * <code>"include": {"href" : "toInsert.json"}</code>
+ *
+ * For INI, the include tag is :<br>
+ * <code>[include]
+ * href = toInsert.ini</code>
+ *
+ * For INFO, the include tag is :<br>
+ * <code>include { href "toInsert.info" }</code>
+ *
  */
 class Configuration
 {
@@ -99,18 +111,28 @@ public:
 
 	/*!
 	 * add a bunch of config file
-	 * \param first the first file to add
-	 * \param last the last file to add
+	 * \param files the list of files to add
 	 */
-	inline void addConfigFile(std::vector<std::string>::iterator first,
-			std::vector<std::string>::iterator last) throw (core::IOException)
+	inline void addConfigFile(std::vector<std::string>& files)
+			throw (core::IOException)
 	{
-		for (std::vector<std::string>::iterator it = first; it != last; ++it)
+		for (std::vector<std::string>::iterator it = files.begin(); it
+				!= files.end(); ++it)
 			addConfigFile(*it);
 	}
 
 	/*!
-	 *
+	 * get the value of a given parameter
+	 * \param path
+	 *          the path of the parameter in the configuration tree
+	 * \param default_value
+	 *          the value to return if the path was impossible to follow
+	 *          (non existing variable)
+	 * \param was_found
+	 *          is changed to <code>true</code>
+	 *          if the parameter was found in the configuration tree
+	 * \return the value of the parameter in the config tree if found,
+	 *         the default value otherwise
 	 */
 	template<class _T>
 	_T getValue(const std::string path, const _T default_value, bool& was_found) const
@@ -119,7 +141,14 @@ public:
 	}
 
 	/*!
-	 *
+	 * get the value of a given parameter
+	 * \param path
+	 *          the path of the parameter in the configuration tree
+	 * \param default_value
+	 *          the value to return if the path was impossible to follow
+	 *          (non existing variable)
+	 * \return the value of the parameter in the config tree if found,
+	 *         the default value otherwise
 	 */
 	template<class _T>
 	_T getValue(const std::string path, const _T default_value) const
@@ -129,7 +158,13 @@ public:
 	}
 
 	/*!
-	 *
+	 * return a list of sons at a given path
+	 * \param path
+	 *          the path to follow in the config tree
+	 * \param nb_found
+	 *          the number of sons found at the given path
+	 * \param answer
+	 *          the vector of trees to populate
 	 */
 	void getChildren(const std::string path, int& nb_found,
 			std::vector<ptree>* answer) const
@@ -138,7 +173,32 @@ public:
 	}
 
 	/*!
+	 * Returns a list of values in the config tree.
+	 * For instance, getValueList(A, "", "key")
+	 * will return [3, 1]
 	 *
+	 * A
+	 * |
+	 * |--B
+	 * | |
+	 * | |--key=3
+	 * |
+	 * |--foo
+	 * | |
+	 * | |--key2=3
+	 * |
+	 * |--
+	 * | |
+	 * | |--key=1
+	 * | |
+	 * | |--key2=5
+	 *
+	 * \param path
+	 *          the path to follow from the root of the tree
+	 * \param key
+	 *          the tag to find
+	 * \param ans
+	 *          the vector where to store the answers
 	 */
 	template<class _T>
 	void getValueList(const std::string path, const std::string key,
@@ -148,7 +208,7 @@ public:
 	}
 
 	/*!
-	 * Prints the the whole configuration loaded.
+	 * Prints the the whole configuration loaded to std::cout
 	 */
 	void printConfiguration() const
 	{

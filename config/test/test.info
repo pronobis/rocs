@@ -1,0 +1,31 @@
+one1 1
+one2 2.3
+one3 "This is text"
+one4
+{
+    two4_1 1
+    two4_2 "This is text"
+}
+one5
+{
+    two5 2.3
+}
+one6
+{
+    two6
+    {
+	three6 6
+    }
+}
+list1 {
+    item  { key1  1 }
+    item  { key1  2 }
+    item  { key1X 3 }
+    itemX { key1  4 }
+}
+list2 {
+    item  { key2  1 }
+    item  { key2  2 }
+    item  { key2X 3 }
+    itemX { key2  4 }
+}
