@@ -43,6 +43,13 @@
 #include <vector>
 #include <iostream>
 
+// definitions
+#define TYPE_UNKNOWN   -1
+#define TYPE_XML        1
+#define TYPE_JSON       2
+#define TYPE_INI        3
+#define TYPE_INFO       4
+
 namespace rocs
 {
 namespace core
@@ -54,6 +61,7 @@ using boost::property_tree::ptree;
  * Class providing access to configuration options for the ROCS components.
  *
  * It supports XML, INI, INFO, JSON formats.
+ *
  * For XML, the include tag is allowed :
  * if, in the file "input.xml",
  * there is the instruction <code><xi:include href="toInsert.xml"/></code>,
@@ -180,8 +188,10 @@ private:
 	 *          the file to parse
 	 * \param tree
 	 *          the tree to populate with the parsed file
+	 * \return the type of file guessed
+	 * (TYPE_UNKNOWN, TYPE_XML, TYPE_JSON, TYPE_INI or TYPE_INFO)
 	 */
-	static void readFfile(const std::string filename, ptree* tree)
+	static int readFfile(const std::string filename, ptree* tree)
 			throw (core::IOException);
 
 	/*!
@@ -196,12 +206,17 @@ private:
 	/*!
 	 * check if a tree contains some include tags
 	 *
-	 * \param     relative_path
-	 *              the path of the file that generated the tree
-	 * \param     tree
-	 *              the tree that might contain some include tags
+	 * \param relative_path
+	 *          the path of the file that generated the tree
+	 * \param tree
+	 *          the tree that might contain some include tags
+	 * \param tagToFind1
+	 *          the first part of the tag
+	 * \param tagToFind2
+	 *          the second part of the tag
 	 */
-	static void checkIncludes(const std::string relative_path, ptree* tree);
+	static void checkIncludes(const std::string relative_path, ptree* tree,
+			const std::string tagToFind1, const std::string tagToFind2);
 
 	/*!
 	 * delete the \<xmlattr\> nodes made by RapidXML
@@ -320,7 +335,7 @@ private:
 		getChildren(tree, path, nb_sons, &sons);
 		rocsDebug3("children obtained, nb:%i", nb_sons);
 		//for (std::vector<ptree>::iterator it = sons.begin(); it < sons.end(); ++it)
-			//printTree(&(*it));
+		//printTree(&(*it));
 		if (nb_sons == 0)
 			return;
 

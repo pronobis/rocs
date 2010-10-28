@@ -1,0 +1,10 @@
+{
+    "foo": 1,
+    "include": {"href" : "test_include2.json"},
+    "list":
+    {
+	"item":  { "value" : "item1" },
+	"include": {"href" : "test_include3.json"},
+	"item":  { "value" : "item3" }
+    }
+}

@@ -33,15 +33,6 @@ using namespace rocs::core;
 using namespace std;
 
 // cf http://www.boost.org/doc/libs/1_41_0/doc/html/boost_propertytree/parsers.html
-#define TYPE_UNKNOWN  -1
-#define TYPE_XML      1
-#define TYPE_JSON     2
-#define TYPE_INI      3
-#define TYPE_INFO     4
-
-// reference to the boost ptree
-//using boost::property_tree::ptree;
-
 
 // ---------------------------------------------
 Configuration::Configuration()
@@ -177,11 +168,12 @@ inline int guessType(std::string filename)
 	return TYPE_UNKNOWN;
 }
 
-void rocs::core::Configuration::checkIncludes(string relative_path, ptree* tree)
+void rocs::core::Configuration::checkIncludes(const string relative_path,
+		ptree* tree, const string tagToFind1, const string tagToFind2)
 {
 	//rocsDebug3("checkIncludes()");
-	const char* tag_to_find1 = "xi:include";
-	const char* tag_to_find2 = "<xmlattr>.href";
+	//const char* tag_to_find1 = "xi:include";
+	//const char* tag_to_find2 = "<xmlattr>.href";
 
 	// if we allow the include tags, check if there are some
 	for (ptree::iterator son_iter = tree->begin(); son_iter != tree->end(); ++son_iter)
@@ -190,15 +182,15 @@ void rocs::core::Configuration::checkIncludes(string relative_path, ptree* tree)
 		//rocsDebug3("Son-node_name:'%s'", son_node_name.c_str());
 
 		boost::optional<ptree &> found_son =
-				son_iter->second.get_child_optional(tag_to_find2);
-		bool found_tag1 = (son_node_name == tag_to_find1);
+				son_iter->second.get_child_optional(tagToFind2);
+		bool found_tag1 = (son_node_name == tagToFind1);
 		bool found_tag2 = (found_son != NULL);
 		bool is_include = found_tag1 && found_tag2;
 		//debugPrintf_lvl2("found_tag1:%d, found_tag2:%d, is_include:%d", found_tag1, found_tag2, is_include);
 
 		if (is_include)
 		{
-			rocsDebug3("'%s' found !", tag_to_find2);
+			rocsDebug3("'%s' found !", tagToFind2.c_str());
 			/*
 			 * get the filename
 			 */
@@ -230,11 +222,12 @@ void rocs::core::Configuration::checkIncludes(string relative_path, ptree* tree)
 		}
 		else
 			// node is not an include - check if it contains some includes
-			checkIncludes(relative_path, &(son_iter->second));
+			checkIncludes(relative_path, &(son_iter->second), tagToFind1,
+					tagToFind2);
 	} // end loop on sons
 }
 
-void rocs::core::Configuration::readFfile(string filename, ptree* tree)
+int rocs::core::Configuration::readFfile(string filename, ptree* tree)
 		throw (core::IOException)
 {
 	rocsDebug3("read_file('%s')", filename.c_str());
@@ -274,6 +267,8 @@ void rocs::core::Configuration::readFfile(string filename, ptree* tree)
 		string msg = e.what();
 		rocsIOException("'%s'", msg.c_str());
 	} // end catch
+
+	return guessed_filetype;
 }
 
 void rocs::core::Configuration::removeXmlattr(ptree* tree)
@@ -309,6 +304,29 @@ void rocs::core::Configuration::removeXmlattr(ptree* tree)
 	}
 }
 
+inline void determineTagsToFind(int fileType, string& tag1, string& tag2)
+{
+	switch (fileType)
+	{
+	case TYPE_XML:
+		tag1 = "xi:include";
+		tag2 = "<xmlattr>.href";
+		break;
+	case TYPE_JSON:
+	case TYPE_INI:
+	case TYPE_INFO:
+		tag1 = "include";
+		tag2 = "href";
+		break;
+
+	case TYPE_UNKNOWN:
+	default:
+		tag1 = "Error";
+		tag2 = "Error";
+		break;
+	}
+}
+
 void rocs::core::Configuration::readFileAndCheckIncludes(string filename,
 		ptree* tree, bool include_allowed) throw (core::IOException)
 {
@@ -317,7 +335,7 @@ void rocs::core::Configuration::readFileAndCheckIncludes(string filename,
 	/*
 	 * parsing
 	 */
-	readFfile(filename, tree);
+	int guessedFileType = readFfile(filename, tree);
 	/*
 	 * taking care of the includes
 	 */
@@ -329,14 +347,20 @@ void rocs::core::Configuration::readFileAndCheckIncludes(string filename,
 		if (last_slash_pos != string::npos)
 			relative_path = filename.substr(0, last_slash_pos + 1);
 		rocsDebug3("relative_path:'%s'", relative_path.c_str());
-		rocsDebug3("check_includes()");
-		checkIncludes(relative_path, tree);
+		// obtain the tags to search in the tree
+		string tagToFind1, tagToFind2;
+		determineTagsToFind(guessedFileType, tagToFind1, tagToFind2);
+		rocsDebug3("check_includes(), tags:'%s', '%s'", tagToFind1.c_str(), tagToFind2.c_str());
+		checkIncludes(relative_path, tree, tagToFind1, tagToFind2);
 	}
 	/*
 	 * remove the <xmlattr>
 	 */
-	rocsDebug3("remove_xmlattr()");
-	removeXmlattr(tree);
+	if (guessedFileType == TYPE_XML)
+	{
+		rocsDebug3("remove_xmlattr()");
+		removeXmlattr(tree);
+	}
 }
 
 //void rocs::core::Configuration::readFileAndCheckIncludes(

@@ -1,0 +1,9 @@
+foo 1
+include {
+    href "test_include2.info"
+}
+list {
+    item  { value  item1 }
+    include { href "test_include3.info" }
+    item  { value  item3 }
+}

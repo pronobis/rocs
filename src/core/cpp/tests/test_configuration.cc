@@ -37,10 +37,7 @@
 using namespace rocs::core;
 using namespace std;
 
-/*!
- * Case 1
- * Testing command line argument parsing for single keys.
- */
+/*!Case 1 - Testing command line argument parsing for single keys. */
 BOOST_AUTO_TEST_CASE( command_line_args_single )
 {
 	// Define some arguments
@@ -65,10 +62,7 @@ BOOST_AUTO_TEST_CASE( command_line_args_single )
 	BOOST_REQUIRE_EQUAL( value2, 1 );
 }
 
-/*!
- * Case 2
- * Testing command line argument parsing for lists.
- */
+/*! Case 2 - Testing command line argument parsing for lists.*/
 BOOST_AUTO_TEST_CASE( command_line_args_list1 )
 {
 	// Define some arguments
@@ -92,10 +86,7 @@ BOOST_AUTO_TEST_CASE( command_line_args_list1 )
 	BOOST_REQUIRE_EQUAL( values[1], 2 );
 }
 
-/*!
- * Case 3
- * Testing command line argument parsing for lists.
- */
+/*! Case 3 - Testing command line argument parsing for lists. */
 BOOST_AUTO_TEST_CASE( command_line_args_list2 )
 {
 	// Define some arguments
@@ -122,46 +113,17 @@ BOOST_AUTO_TEST_CASE( command_line_args_list2 )
 }
 
 /*!
- * Case 4
- * Testing INI file parsing.
+ * a function to test some simple getters in the config files
+ * @param filenameIn
+ *          the config file
+ * @param canHaveDepthHigherThanOne
+ *          <code>true</code> if you can have lists in the file (false for INI)
  */
-BOOST_AUTO_TEST_CASE( ini_simple )
+void simpleFileTest(const string filenameIn, bool canHaveDepthHigherThanOne =
+		true)
 {
 	Configuration config;
-	config.addConfigFile(ROCS_DIR "/config/test/test.ini");
-
-	// Print the configuration
-	config.printConfiguration();
-
-	bool wasFound1;
-	int value1 = config.getValue("one4.two4_1", 100, wasFound1);
-	bool wasFound2;
-	string value2 = config.getValue("one4.two4_2", string(""), wasFound2);
-	bool wasFound2_char;
-	const char* value2_char = config.getValue("one4.two4_2", "", wasFound2_char);
-	bool wasFound3;
-	float value3 = config.getValue("one5.two5", 100.0, wasFound3);
-
-	// Check the output
-	BOOST_REQUIRE( wasFound1 );
-	BOOST_REQUIRE_EQUAL( value1, 1 );
-	BOOST_REQUIRE( wasFound2 );
-	BOOST_REQUIRE_EQUAL( value2, string("This is text") );
-	BOOST_REQUIRE( wasFound2_char );
-	BOOST_REQUIRE_EQUAL( value2_char, "This is text" );
-	BOOST_REQUIRE( wasFound3 );
-	BOOST_REQUIRE_GT( value3, 2.29 );
-	BOOST_REQUIRE_LT( value3, 2.31 );
-}
-
-/*!
- * Case 5
- * Testing JSON file parsing.
- */
-BOOST_AUTO_TEST_CASE( json_simple )
-{
-	Configuration config;
-	config.addConfigFile(ROCS_DIR "/config/test/test.json");
+	config.addConfigFile(filenameIn);
 
 	// Print the configuration
 	config.printConfiguration();
@@ -180,13 +142,7 @@ BOOST_AUTO_TEST_CASE( json_simple )
 	const char* value5 = config.getValue("one4.two4_2", "", wasFound5);
 	bool wasFound6;
 	float value6 = config.getValue("one5.two5", 100.0, wasFound6);
-	bool wasFound7;
-	int value7 = config.getValue("one6.two6.three6", 100, wasFound7);
-	// Lists
-	vector<int> values1;
-	config.getValueList("list1", "key1", values1);
-	vector<int> values2;
-	config.getValueList("list2", "key2", values2);
+
 	// Default
 	bool wasFound8;
 	int value8 = config.getValue("one10.two10", 100, wasFound8);
@@ -206,6 +162,22 @@ BOOST_AUTO_TEST_CASE( json_simple )
 	BOOST_REQUIRE( wasFound6 );
 	BOOST_REQUIRE_GT( value6, 2.29 );
 	BOOST_REQUIRE_LT( value6, 2.31 );
+	BOOST_REQUIRE( !wasFound8 );
+	BOOST_REQUIRE_EQUAL( value8, 100 );
+
+	/*
+	 * part with depth higher than 1 (impossible for ini files)
+	 */
+	if (!canHaveDepthHigherThanOne)
+		return;
+
+	bool wasFound7;
+	int value7 = config.getValue("one6.two6.three6", 100, wasFound7);
+	// Lists
+	vector<int> values1;
+	config.getValueList("list1", "key1", values1);
+	vector<int> values2;
+	config.getValueList("list2", "key2", values2);
 	BOOST_REQUIRE( wasFound7 );
 	BOOST_REQUIRE_EQUAL( value7, 6 );
 	BOOST_REQUIRE_EQUAL( values1.size(), 3 );
@@ -216,80 +188,30 @@ BOOST_AUTO_TEST_CASE( json_simple )
 	BOOST_REQUIRE_EQUAL( values2[0], 1 );
 	BOOST_REQUIRE_EQUAL( values2[1], 2 );
 	BOOST_REQUIRE_EQUAL( values2[2], 4 );
-	BOOST_REQUIRE( !wasFound8 );
-	BOOST_REQUIRE_EQUAL( value8, 100 );
 }
 
-/*!
- * Case 6
- * Testing XML file parsing.
- */
+/*! Case 4 - Testing xml file parsing. */
 BOOST_AUTO_TEST_CASE( xml_simple )
 {
-	Configuration config;
-	config.addConfigFile(ROCS_DIR "/config/test/test.xml");
-
-	// Print the configuration
-	config.printConfiguration();
-
-	// Get values
-	// Single
-	bool wasFound1;
-	int value1 = config.getValue("one1", 100, wasFound1);
-	bool wasFound2;
-	float value2 = config.getValue("one2", 100.0, wasFound2);
-	bool wasFound3;
-	string value3 = config.getValue("one3", string(""), wasFound3);
-	bool wasFound4;
-	int value4 = config.getValue("one4.two4_1", 100, wasFound4);
-	bool wasFound5;
-	const char* value5 = config.getValue("one4.two4_2", "", wasFound5);
-	bool wasFound6;
-	float value6 = config.getValue("one5.two5", 100.0, wasFound6);
-	bool wasFound7;
-	int value7 = config.getValue("one6.two6.three6", 100, wasFound7);
-	// Lists
-	vector<int> values1;
-	config.getValueList("list1", "key1", values1);
-	vector<int> values2;
-	config.getValueList("list2", "key2", values2);
-	// Default
-	bool wasFound8;
-	int value8 = config.getValue("one10.two10", 100, wasFound8);
-
-	// Check the output
-	BOOST_REQUIRE( wasFound1 );
-	BOOST_REQUIRE_EQUAL( value1, 1 );
-	BOOST_REQUIRE( wasFound2 );
-	BOOST_REQUIRE_GT( value2, 2.29 );
-	BOOST_REQUIRE_LT( value2, 2.31 );
-	BOOST_REQUIRE( wasFound3 );
-	BOOST_REQUIRE_EQUAL( value3, string("This is text") );
-	BOOST_REQUIRE( wasFound4 );
-	BOOST_REQUIRE_EQUAL( value4, 1 );
-	BOOST_REQUIRE( wasFound5 );
-	BOOST_REQUIRE_EQUAL( value5, "This is text" );
-	BOOST_REQUIRE( wasFound6 );
-	BOOST_REQUIRE_GT( value6, 2.29 );
-	BOOST_REQUIRE_LT( value6, 2.31 );
-	BOOST_REQUIRE( wasFound7 );
-	BOOST_REQUIRE_EQUAL( value7, 6 );
-	BOOST_REQUIRE_EQUAL( values1.size(), 3 );
-	BOOST_REQUIRE_EQUAL( values1[0], 1 );
-	BOOST_REQUIRE_EQUAL( values1[1], 2 );
-	BOOST_REQUIRE_EQUAL( values1[2], 4 );
-	BOOST_REQUIRE_EQUAL( values2.size(), 3 );
-	BOOST_REQUIRE_EQUAL( values2[0], 1 );
-	BOOST_REQUIRE_EQUAL( values2[1], 2 );
-	BOOST_REQUIRE_EQUAL( values2[2], 4 );
-	BOOST_REQUIRE( !wasFound8 );
-	BOOST_REQUIRE_EQUAL( value8, 100 );
+	simpleFileTest(ROCS_DIR "/config/test/test.xml");
+}
+/*! Case 5 - Testing json file parsing. */
+BOOST_AUTO_TEST_CASE( json_simple )
+{
+	simpleFileTest(ROCS_DIR "/config/test/test.json");
+}
+/*! Case 6 - Testing info file parsing. */
+BOOST_AUTO_TEST_CASE( info_simple )
+{
+	simpleFileTest(ROCS_DIR "/config/test/test.info");
+}
+/*! Case 7 - Testing ini file parsing. */
+BOOST_AUTO_TEST_CASE( ini_simple )
+{
+	simpleFileTest(ROCS_DIR "/config/test/test.ini", false);
 }
 
-/*!
- * Case 7
- * Testing missing file or incorrect filename parsing.
- */
+/*! Case 8 - Testing missing file or incorrect filename parsing. */
 BOOST_AUTO_TEST_CASE( missingFile )
 {
 	Configuration config;
@@ -297,10 +219,7 @@ BOOST_AUTO_TEST_CASE( missingFile )
 	BOOST_REQUIRE_THROW(config.addConfigFile(ROCS_DIR "/config/test/missing.fooext"), rocs::core::IOException);
 }
 
-/*!
- * Case 8
- * Testing broken file parsing.
- */
+/*! Case 9 - Testing broken file parsing. */
 BOOST_AUTO_TEST_CASE( brokenXmlFile )
 {
 	Configuration config;
@@ -309,13 +228,16 @@ BOOST_AUTO_TEST_CASE( brokenXmlFile )
 }
 
 /*!
- * Case 9
- * Testing file with includes parsing.
+ * a function to test the include tags
+ * @param filenameIn
+ *          the file containing the include tags
+ * @param checkList
+ *          <code>true</code> if you can have lists in the file (false for INI)
  */
-BOOST_AUTO_TEST_CASE( includeFile )
+void testIncludeFile(const string filenameIn, bool checkList = true)
 {
 	Configuration config;
-	config.addConfigFile(ROCS_DIR "/config/test/test_include1.xml");
+	config.addConfigFile(filenameIn);
 
 	// Print the configuration
 	config.printConfiguration();
@@ -326,17 +248,42 @@ BOOST_AUTO_TEST_CASE( includeFile )
 	int value1 = config.getValue("foo", -1, wasFound1);
 	bool wasFound2;
 	int value2 = config.getValue("bar", -1, wasFound2);
-	// Lists
-	vector<string> values1;
-	config.getValueList("list", "value", values1);
 
 	// Check the output
 	BOOST_REQUIRE( wasFound1 );
 	BOOST_REQUIRE_EQUAL( value1, 1 );
 	BOOST_REQUIRE( wasFound2 );
 	BOOST_REQUIRE_EQUAL( value2, 2 );
-	BOOST_REQUIRE_EQUAL( values1.size(), 3 );
-	BOOST_REQUIRE( values1[0] == (string) "item1" );
-	BOOST_REQUIRE( values1[1] == (string) "item2" );
-	BOOST_REQUIRE( values1[2] == (string) "item3" );
+
+	if (checkList)
+	{
+		// Lists
+		vector<string> values1;
+		config.getValueList("list", "value", values1);
+		BOOST_REQUIRE_EQUAL( values1.size(), 3 );
+		BOOST_REQUIRE( values1[0] == (string) "item1" );
+		BOOST_REQUIRE( values1[1] == (string) "item2" );
+		BOOST_REQUIRE( values1[2] == (string) "item3" );
+	}
+}
+
+/*! Case 10 - Testing xml file with includes parsing. */
+BOOST_AUTO_TEST_CASE( includeXmlFile )
+{
+	testIncludeFile(ROCS_DIR "/config/test/test_include1.xml");
+}
+/*! Case 11 - Testing json file with includes parsing. */
+BOOST_AUTO_TEST_CASE( includejsonFile )
+{
+	testIncludeFile(ROCS_DIR "/config/test/test_include1.json");
+}
+/*! Case 12 - Testing info file with includes parsing. */
+BOOST_AUTO_TEST_CASE( includeinfoFile )
+{
+	testIncludeFile(ROCS_DIR "/config/test/test_include1.info");
+}
+/*! Case 13 - Testing ini file with includes parsing. */
+BOOST_AUTO_TEST_CASE( includeiniFile )
+{
+	testIncludeFile(ROCS_DIR "/config/test/test_include1.ini", false);
 }
