@@ -25,7 +25,6 @@
  * \author Arnaud Ramey, Andrzej Pronobis
  */
 
-#include "rocs/math/Matrix_.h"
 #include "rocs/cv/Crfh/Filter.h"
 #include "rocs/cv/Crfh/ChannelCache.h"
 #include "rocs/cv/Crfh/FilterCache.h"

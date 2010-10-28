@@ -30,9 +30,7 @@
 #include "rocs/cv/FeatureList.h"
 #include "rocs/cv/ImageIO.h"
 #include "rocs/core/Timer.h"
-#include "rocs/core/debug.h"
 #include "rocs/core/utils.h"
-#include "rocs/core/error.h"
 
 // STD includes
 #include <vector>

@@ -32,7 +32,6 @@
 #include <boost/test/unit_test.hpp>
 // ROCS
 #include <rocs/core/Configuration.h>
-#include <rocs/core/debug.h>
 
 using namespace rocs::core;
 using namespace std;

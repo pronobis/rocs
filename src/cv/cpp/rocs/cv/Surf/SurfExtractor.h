@@ -34,7 +34,6 @@
 
 /* ROCS includes */
 #include "rocs/cv/FeatureExtractor.h"
-#include "rocs/cv/Img.h"
 
 /* opencv includes */
 #include "opencv/highgui.h"

@@ -28,7 +28,6 @@
 
 
 #include "rocs/math/Matrix.h"
-#include "rocs/core/types.h"
 
 namespace rocs {
 namespace math {

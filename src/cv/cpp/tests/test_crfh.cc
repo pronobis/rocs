@@ -29,9 +29,6 @@
 // Boost
 #include <boost/test/unit_test.hpp>
 // ROCS
-#include "rocs/cv/FeatureList.h"
-#include "rocs/cv/ImageIO.h"
-//#include "rocs/cv/Crfh/Crfh.h"
 #include "rocs/cv/Crfh/CrfhInterface.h"
 // stl
 #include <iostream>

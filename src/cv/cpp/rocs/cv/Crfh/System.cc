@@ -29,7 +29,6 @@
 #include "rocs/cv/Crfh/FilterCache.h"
 #include "rocs/cv/Crfh/ScaleSpaceCache.h"
 #include "rocs/cv/Crfh/Crfh.h"
-#include "rocs/math/Matrix_.h"
 #include "rocs/cv/Img.h"
 
 #include "rocs/cv/Crfh/System.h"

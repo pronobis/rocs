@@ -39,7 +39,6 @@ namespace opencv = cv;
 #include "rocs/math/ElemMath.h"
 #include "rocs/core/types.h"
 #include "rocs/core/error.h"
-#include "rocs/core/debug.h"
 
 namespace rocs
 {

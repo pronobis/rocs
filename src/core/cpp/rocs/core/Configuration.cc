@@ -27,7 +27,6 @@
 #include "Configuration.h"
 
 #include "rocs/core/utils.h" // for fileExists()
-#include "rocs/core/error.h"
 
 using namespace rocs::core;
 using namespace std;
