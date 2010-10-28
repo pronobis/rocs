@@ -62,7 +62,7 @@ public:
 
 	/*!
 	 * Initializes the system (creates descriptors and filters).
-	 * \param sysDef Exemple string:
+	 * \param sysDescr Exemple string:
 	 * Lxx(8,28)+Lxy(8,28)+Lyy(8,28)+Lxx(2,28)+Lxy(2,28)+Lyy(2,28)
 	 *
 	 */

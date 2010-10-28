@@ -137,6 +137,8 @@ BOOST_AUTO_TEST_CASE( ini_simple )
 	int value1 = config.getValue("one4.two4_1", 100, wasFound1);
 	bool wasFound2;
 	string value2 = config.getValue("one4.two4_2", string(""), wasFound2);
+	bool wasFound2_char;
+	const char* value2_char = config.getValue("one4.two4_2", "", wasFound2_char);
 	bool wasFound3;
 	float value3 = config.getValue("one5.two5", 100.0, wasFound3);
 
@@ -145,6 +147,8 @@ BOOST_AUTO_TEST_CASE( ini_simple )
 	BOOST_REQUIRE_EQUAL( value1, 1 );
 	BOOST_REQUIRE( wasFound2 );
 	BOOST_REQUIRE_EQUAL( value2, string("This is text") );
+	BOOST_REQUIRE( wasFound2_char );
+	BOOST_REQUIRE_EQUAL( value2_char, "This is text" );
 	BOOST_REQUIRE( wasFound3 );
 	BOOST_REQUIRE_GT( value3, 2.29 );
 	BOOST_REQUIRE_LT( value3, 2.31 );
@@ -173,7 +177,7 @@ BOOST_AUTO_TEST_CASE( json_simple )
 	bool wasFound4;
 	int value4 = config.getValue("one4.two4_1", 100, wasFound4);
 	bool wasFound5;
-	string value5 = config.getValue<string> ("one4.two4_2", "", wasFound5);
+	const char* value5 = config.getValue("one4.two4_2", "", wasFound5);
 	bool wasFound6;
 	float value6 = config.getValue("one5.two5", 100.0, wasFound6);
 	bool wasFound7;
@@ -198,7 +202,7 @@ BOOST_AUTO_TEST_CASE( json_simple )
 	BOOST_REQUIRE( wasFound4 );
 	BOOST_REQUIRE_EQUAL( value4, 1 );
 	BOOST_REQUIRE( wasFound5 );
-	BOOST_REQUIRE_EQUAL( value5, string("This is text") );
+	BOOST_REQUIRE_EQUAL( value5, "This is text" );
 	BOOST_REQUIRE( wasFound6 );
 	BOOST_REQUIRE_GT( value6, 2.29 );
 	BOOST_REQUIRE_LT( value6, 2.31 );
@@ -239,7 +243,7 @@ BOOST_AUTO_TEST_CASE( xml_simple )
 	bool wasFound4;
 	int value4 = config.getValue("one4.two4_1", 100, wasFound4);
 	bool wasFound5;
-	string value5 = config.getValue<string> ("one4.two4_2", "", wasFound5);
+	const char* value5 = config.getValue("one4.two4_2", "", wasFound5);
 	bool wasFound6;
 	float value6 = config.getValue("one5.two5", 100.0, wasFound6);
 	bool wasFound7;
@@ -264,7 +268,7 @@ BOOST_AUTO_TEST_CASE( xml_simple )
 	BOOST_REQUIRE( wasFound4 );
 	BOOST_REQUIRE_EQUAL( value4, 1 );
 	BOOST_REQUIRE( wasFound5 );
-	BOOST_REQUIRE_EQUAL( value5, string("This is text") );
+	BOOST_REQUIRE_EQUAL( value5, "This is text" );
 	BOOST_REQUIRE( wasFound6 );
 	BOOST_REQUIRE_GT( value6, 2.29 );
 	BOOST_REQUIRE_LT( value6, 2.31 );

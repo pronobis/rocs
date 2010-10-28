@@ -42,7 +42,7 @@ namespace rocs {
 namespace cv {
 
 
-template<typename keyType, typename valueType>
+template<typename keyType, class valueType>
 class FeatureList: public std::map<keyType, valueType>
 {
 public:
@@ -181,6 +181,9 @@ public:
 	/*!
 	 * Serializes the histogram to a file in the libSVM format.
 	 * \param stream
+	 *          where to output the results
+	 * \param addEndl
+	 *          add std::endl at the end of
 	 */
 	void serialize(std::ostream &stream, bool addEndl = false)
 	{
