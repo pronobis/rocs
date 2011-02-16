@@ -25,8 +25,8 @@
  * \author Arnaud Ramey, Andrzej Pronobis
  */
 
-#ifndef SPARSEMAT_H_
-#define SPARSEMAT_H_
+#ifndef _ROCS_MATH_SPARSEMAT_H_
+#define _ROCS_MATH_SPARSEMAT_H_
 
 /* openCV includes */
 #include <opencv/cv.h>
@@ -58,4 +58,4 @@ private:
 } // end namespace math
 } // end namespace rocs
 
-#endif /* SPARSEMAT_H_ */
+#endif /* _ROCS_MATH_SPARSEMAT_H_ */

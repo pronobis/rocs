@@ -25,8 +25,8 @@
  * \author Arnaud Ramey, Andrzej Pronobis
  */
 
-#ifndef TIMER_H_
-#define TIMER_H_
+#ifndef _ROCS_CORE_TIMER_H_
+#define _ROCS_CORE_TIMER_H_
 
 #include <sys/time.h>
 #include <string>
@@ -79,4 +79,4 @@ private:
 	long mtime, seconds, useconds;
 };
 
-#endif /* TIMER_H_ */
+#endif /* _ROCS_CORE_TIMER_H_ */

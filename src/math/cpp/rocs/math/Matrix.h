@@ -23,8 +23,8 @@
  * \author Arnaud Ramey, Andrzej Pronobis
  */
 
-#ifndef MATRIX_H_
-#define MATRIX_H_
+#ifndef _ROCS_MATH_MATRIX_H_
+#define _ROCS_MATH_MATRIX_H_
 
 /* openCV includes */
 #include <opencv/cv.h>
@@ -642,4 +642,4 @@ private:
 } // end namespace math
 } // end namespace rocs
 
-#endif /* MATRIX_H_ */
+#endif /* _ROCS_MATH_MATRIX_H_ */

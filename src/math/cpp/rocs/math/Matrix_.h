@@ -18,8 +18,8 @@
 // along with ROCS. If not, see <http://www.gnu.org/licenses/>.
 // ==================================================================
 
-#ifndef MATRIX__H_
-#define MATRIX__H_
+#ifndef _ROCS_MATH_MATRIX__H_
+#define _ROCS_MATH_MATRIX__H_
 
 /*!
  * \file Matrix_.h
@@ -118,4 +118,4 @@ public:
 } // end namespace math
 } // end namespace rocs
 
-#endif /* MATRIX__H_ */
+#endif /* _ROCS_MATH_MATRIX__H_ */

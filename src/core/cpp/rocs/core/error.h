@@ -205,4 +205,4 @@ static inline void exitWithError(const Exception& exc)
 } // namespace rocs
 
 
-#endif /* ROCS_CORE_ERROR_H_ */
+#endif /* _ROCS_CORE_ERROR_H_ */

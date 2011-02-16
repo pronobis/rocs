@@ -27,8 +27,8 @@
  *  More info on http://wiki.github.com/pronobis/rocs/config-files
  */
 
-#ifndef COMMANDLINEHELP_H_
-#define COMMANDLINEHELP_H_
+#ifndef _ROCS_CORE_COMMANDLINEHELP_H_
+#define _ROCS_CORE_COMMANDLINEHELP_H_
 
 // Stl
 #include <vector>
@@ -108,4 +108,4 @@ public:
 }
 }
 
-#endif /* COMMANDLINEHELP_H_ */
+#endif /* _ROCS_CORE_COMMANDLINEHELP_H_ */

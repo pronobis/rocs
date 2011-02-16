@@ -32,8 +32,8 @@
  * \author Arnaud Ramey, Andrzej Pronobis
  */
 
-#ifndef TYPES_H_
-#define TYPES_H_
+#ifndef _ROCS_CORE_TYPES_H_
+#define _ROCS_CORE_TYPES_H_
 
 #include <cmath>
 #include <string>
@@ -620,4 +620,4 @@ public:
 } // namespace core
 } // namespace rocs
 
-#endif /* TYPES_H_ */
+#endif /* _ROCS_CORE_TYPES_H_ */

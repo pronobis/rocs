@@ -23,8 +23,8 @@
  * \author Arnaud Ramey, Andrzej Pronobis
  */
 
-#ifndef ELEMMATH_H_
-#define ELEMMATH_H_
+#ifndef _ROCS_MATH_ELEMMATH_H_
+#define _ROCS_MATH_ELEMMATH_H_
 
 namespace rocs {
 namespace math {
@@ -79,4 +79,4 @@ inline int aRound(double x) {
 } // end namespace math
 } // end namespace rocs
 
-#endif /* ELEMMATH_H_ */
+#endif /* _ROCS_MATH_ELEMMATH_H_ */

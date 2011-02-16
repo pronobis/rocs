@@ -25,8 +25,8 @@
  * \author Arnaud Ramey, Andrzej Pronobis
  */
 
-#ifndef VECTOR__H_
-#define VECTOR__H_
+#ifndef _ROCS_MATH_VECTOR__H_
+#define _ROCS_MATH_VECTOR__H_
 
 #include "rocs/math/Vector.h"
 
@@ -66,4 +66,4 @@ public:
 } // end namespace math
 } // end namespace rocs
 
-#endif /* VECTOR__H_ */
+#endif /* _ROCS_MATH_VECTOR__H_ */
