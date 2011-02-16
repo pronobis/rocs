@@ -24,9 +24,6 @@
  * \file test_configuration.cc
  */
 
-// Set debug level
-#define ROCS_DEBUG_LEVEL 3
-
 // Boost & Stl
 #include <vector>
 #include <boost/test/unit_test.hpp>
