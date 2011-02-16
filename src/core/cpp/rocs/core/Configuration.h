@@ -160,16 +160,11 @@ public:
 	 * return a list of sons at a given path
 	 * \param path
 	 *          the path to follow in the config tree
-	 * \param nb_found
-	 *          the number of sons found at the given path
 	 * \param answer
-	 *          the vector of trees to populate
+	 *          list of the childs path
 	 */
-	void getChildren(const std::string path, int& nb_found,
-			std::vector<ptree>* answer) const
-	{
-		getChildren(&_tree, path, nb_found, answer);
-	}
+	void getChildren(const std::string &path,
+			std::vector<std::string>* answer) const;
 
 	/*!
 	 * Returns a list of values in the config tree.

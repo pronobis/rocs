@@ -27,11 +27,14 @@
 // Boost & Stl
 #include <vector>
 #include <boost/test/unit_test.hpp>
+#include <boost/assign.hpp>
+
 // ROCS
 #include <rocs/core/Configuration.h>
 
 using namespace rocs::core;
 using namespace std;
+using namespace boost::assign;
 
 /*!Case 1 - Testing command line argument parsing for single keys. */
 BOOST_AUTO_TEST_CASE( command_line_args_single )
@@ -282,4 +285,20 @@ BOOST_AUTO_TEST_CASE( includeinfoFile )
 BOOST_AUTO_TEST_CASE( includeiniFile )
 {
 	testIncludeFile(ROCS_DIR "/config/test/test_include1.ini", false);
+}
+/*! Case 14 - Testing ini file with includes parsing. */
+void testListChildren(const Configuration& config,
+		const string& path, const vector<string> &expected)
+{
+	vector<string> output;
+	config.getChildren(path, &output);
+	BOOST_CHECK(output == expected);
+}
+BOOST_AUTO_TEST_CASE( listChilds )
+{
+	Configuration config;
+	config.addConfigFile(ROCS_DIR "/config/test/test.xml");
+	testListChildren(config, "", list_of("list1")("list2")("one1")("one2")("one3")("one4")("one5")("one6"));
+	testListChildren(config, "one4", list_of("one4.two4_1")("one4.two4_2"));
+	testListChildren(config, "list2.item", list_of("list2.item.key2")("list2.item.key2X"));
 }

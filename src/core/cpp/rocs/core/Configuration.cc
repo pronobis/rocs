@@ -25,8 +25,9 @@
  */
 
 #include "Configuration.h"
-
 #include "rocs/core/utils.h" // for fileExists()
+#include <set>
+#include <boost/algorithm/string.hpp>
 
 using namespace rocs::core;
 using namespace std;
@@ -360,6 +361,54 @@ void rocs::core::Configuration::readFileAndCheckIncludes(string filename,
 		rocsDebug3("remove_xmlattr()");
 		removeXmlattr(tree);
 	}
+}
+
+namespace {
+
+template<class It>
+void listMatchingNodes(const ptree& tree, const It &begin_path, const It &end_path, vector<const ptree*> *output)
+{
+	if(begin_path == end_path)
+	{
+		output->push_back(&tree);
+	}
+	else
+	{
+		BOOST_FOREACH(const ptree::value_type &child, tree)
+		if (*begin_path == child.first)
+			listMatchingNodes(child.second, begin_path+1, end_path, output);
+	}
+}
+
+vector<string> splitPath(const string& path_str)
+{
+	vector<string> strs;
+	if (!path_str.empty())
+		boost::split(strs, path_str, boost::is_any_of("."));
+	return strs;
+}
+
+} // end namespace anonymous
+
+
+void rocs::core::Configuration::getChildren(const string& path_str, vector<string>* answer) const
+{
+	// Get a list of nodes matching the path
+	vector<string> path = splitPath(path_str);
+	vector<const ptree*> nodes;
+	listMatchingNodes(_tree, path.begin(), path.end(), &nodes);
+
+	// List all childs of the found parents.
+	// Use an STL set to avoid duplicates.
+	set<string> childs;
+	BOOST_FOREACH(const ptree* node, nodes)
+	BOOST_FOREACH(const ptree::value_type &v, *node)
+		childs.insert(v.first);
+	
+	// Build the final list of all paths of subchilds of the given path.
+	const string prefix_path = (path_str == ""? path_str : path_str + ".");
+	BOOST_FOREACH(const string& childname, childs)
+		answer->push_back(prefix_path + childname);
 }
 
 //void rocs::core::Configuration::readFileAndCheckIncludes(
