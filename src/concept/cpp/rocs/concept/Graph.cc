@@ -42,8 +42,8 @@ bool LoadVariableType(const Configuration &config,
 	return true;
 }
 
-bool LoadFactor(const Configuration &config,
-		const string &prefix, Factor &factor)
+bool LoadFactorData(const Configuration &config,
+		const string &prefix, FactorData &factor)
 {
 	// Load variables for the factor
 	{
@@ -116,16 +116,16 @@ void GraphInformation::LoadConfig(const core::Configuration &config)
 			const string name = child_path.substr(child_path.find_last_of(".")+1);
 			rocsDebug3("Loading factor: %s", name.c_str());
 
-			Factor factor;
-			if (LoadFactor(config, child_path, factor))
+			FactorData factor;
+			if (LoadFactorData(config, child_path, factor))
 				Add(name, factor);
 		}
 	}
 }
 
-void GraphInformation::Add(const string &name, const Factor &factor)
+void GraphInformation::Add(const string &name, const FactorData &factor)
 {
-	rocsDebug2("Add factor: %s'", name.c_str());
+	rocsDebug2("Add factor type: %s'", name.c_str());
 	if (factors.insert(make_pair(name, factor)).second == false)
 		rocsDebug1("Dropped factor: there is already a factor with that name '%s'",
 				name.c_str());

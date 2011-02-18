@@ -43,18 +43,18 @@ struct VariableType {
 	std::vector<std::string> values;
 };
 
-struct Factor {
+struct FactorData {
 	std::vector<std::pair<std::string, std::string> > variables;
-	std::map< std::vector<std::string>, double> potential;
+	std::map<std::vector<std::string>, double> potential;
 };
 
 class GraphInformation {
  public:
 	std::map<std::string, VariableType> types;
-	std::map<std::string, Factor> factors;
+	std::map<std::string, FactorData>   factors;
 
 	void Add(const std::string &name, const VariableType &type);
-	void Add(const std::string &name, const Factor &factor);
+	void Add(const std::string &name, const FactorData &factor);
 
 	void LoadConfig(const std::string &configFileName);
 	void LoadConfig(const core::Configuration &config);
