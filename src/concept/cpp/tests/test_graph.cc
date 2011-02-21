@@ -57,3 +57,35 @@ BOOST_AUTO_TEST_CASE(caseLoadGraphInformation)
 	BOOST_CHECK_CLOSE_FRACTION(0.91,
 			gi.factors["room_category_appearance"].potential[index], 1e-7);
 }
+
+/*!
+ * a test case for consistency check.
+ */
+BOOST_AUTO_TEST_CASE(caseTestGraphInformationConsistency)
+{
+	rocs::concept::GraphInformation gi;
+	gi.LoadConfig(TESTDATA_DIR "test_loadgraphinfo.xml");
+
+	BOOST_CHECK(gi.CheckConsistency());
+
+	rocs::concept::VariableType type;
+	BOOST_CHECK(false == gi.CheckVarTypeConsistency("EmptyType", type));
+	type.values.push_back("zoom");
+	type.values.push_back("bar");
+	BOOST_CHECK(false == gi.CheckVarTypeConsistency("UnorderedType", type));
+	sort(type.values.begin(), type.values.end());
+	BOOST_CHECK(true == gi.CheckVarTypeConsistency("OkType", type));
+
+	rocs::concept::FactorData factor;
+	BOOST_CHECK(false == gi.CheckFactorConsistency("EmptyFactor", factor));
+	factor.variables.push_back(make_pair(string("testVar"), string("OkType")));
+	BOOST_CHECK(false == gi.CheckFactorConsistency("UnknownVar", factor));
+	gi.Add("OkType", type);
+	BOOST_CHECK(false == gi.CheckFactorConsistency("NotAllIndexs", factor));
+	factor.potential[list_of("zoom")] = 0.1;
+	factor.potential[list_of("bar")]  = 0.2;
+	BOOST_CHECK(true == gi.CheckFactorConsistency("OkFactor", factor));
+	factor.potential[list_of("zoom")] = 0.1;
+	factor.potential[list_of("bar")]  = -0.2;
+	BOOST_CHECK(false == gi.CheckFactorConsistency("NegPotential", factor));
+}

@@ -41,6 +41,8 @@ namespace core {
 namespace concept {
 
 struct VariableType {
+	// This vector must be sorted. This allows to use it in a simple
+	// way to calculate variable indexs.
 	std::vector<std::string> values;
 };
 
@@ -59,6 +61,16 @@ class GraphInformation {
 
 	void LoadConfig(const std::string &configFileName);
 	void LoadConfig(const core::Configuration &config);
+
+	// Returns true if the defined types and factors are consistent.
+	// Debug information is produced in the negative case.
+	bool CheckConsistency() const;
+
+	bool CheckVarTypeConsistency(const std::string &name,
+	                             const VariableType &type) const;
+
+	bool CheckFactorConsistency(const std::string &name,
+	                            const FactorData &factor) const;
 };
 
 
