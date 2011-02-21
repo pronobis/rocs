@@ -1,4 +1,5 @@
 // ==================================================================
+// ==================================================================
 // ROCS - Toolkit for Robots Comprehending Space
 // Copyright (C) 2011  André Susano Pinto
 //
@@ -32,18 +33,8 @@ using boost::assign::list_of;
 #define ROCSDIR "../../../"
 #define TESTDATA_DIR ROCSDIR "data/concept/"
 
-namespace {
-
-rocs::concept::VariableType MakeVariableType(vector<string> values) {
-	rocs::concept::VariableType type;
-	type.values = values;
-	return type;
-}
-
-}  // end namespace anonymous
-
 /*!
- * a test case for a simple image
+ * a test case for loading files from Configuration,
  */
 BOOST_AUTO_TEST_CASE(caseLoadGraphInformation)
 {
@@ -66,4 +57,3 @@ BOOST_AUTO_TEST_CASE(caseLoadGraphInformation)
 	BOOST_CHECK_CLOSE_FRACTION(0.91,
 			gi.factors["room_category_appearance"].potential[index], 1e-7);
 }
-

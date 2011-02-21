@@ -7,6 +7,6 @@ if(ROCS_BUILD_MODULE_CONCEPT)
 		LINK_MODULES core)
 
 	# Tests
-	add_rocs_cpp_test_suite(graph_information_loading)
+	add_rocs_cpp_test_suite(graph)
 
 endif(ROCS_BUILD_MODULE_CONCEPT)
