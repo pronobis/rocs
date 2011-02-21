@@ -245,7 +245,7 @@ bool GraphInformation::CheckFactorConsistency(const string &name,
 			}
 		}
 	}
-	
+
 	// Check if all potentials were defined.
 	size_t total_size = 1;
 	BOOST_FOREACH(const VariableType *type, vartypes)
