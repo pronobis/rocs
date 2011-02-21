@@ -27,6 +27,7 @@
 #define _ROCS_CONCEPT_GRAPH_H_
 
 #include <algorithm>
+#include <boost/ptr_container/ptr_vector.hpp>
 #include <map>
 #include <string>
 #include <vector>
@@ -58,6 +59,34 @@ class GraphInformation {
 
 	void LoadConfig(const std::string &configFileName);
 	void LoadConfig(const core::Configuration &config);
+};
+
+
+class Variable;  // This class definition is never exposed externaly.
+class Factor;    // This class definition is never exposed externaly.
+
+class Graph {
+ public:
+	// Creates a new variable of the given type.
+	// Returns a reference to the newly created variable.
+	// VariableType must exist for the lifetime of this Graph.
+	// Graph maintains ownership on the returned variable.
+	const Variable* createVariable(const VariableType* type);
+
+	// Creates a factor between the given variables.
+	// FactorData must exist for the lifetime of this Graph.
+	// Graph maintains ownership on the returned factor.
+	const Factor* createFactor(const FactorData *factorData,
+	                           const std::vector<const Variable*> &vars);
+
+ protected:
+	boost::ptr_vector<Variable> variables_;
+	boost::ptr_vector<Factor> factors_;
+
+ private:
+	// DISALLOW COPY AND ASSIGN
+	Graph(const Graph &);
+	void operator = (const Graph &);
 };
 }  // end namespace concept
 }  // end namespace rocs

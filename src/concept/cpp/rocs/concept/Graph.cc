@@ -139,5 +139,36 @@ void GraphInformation::Add(const string &name, const VariableType &type)
 				name.c_str());
 }
 
+class Variable {
+ public:
+	explicit Variable(const VariableType *type):type_(type) {}
+
+	const VariableType *type_;
+};
+
+class Factor {
+ public:
+	Factor(const FactorData *data, const vector<const Variable*> &variables)
+			:data_(data), variables_(variables) {}
+
+	const FactorData *data_;
+	vector<const Variable*> variables_;
+};
+
+const Variable* Graph::createVariable(const VariableType *type)
+{
+	Variable *variable = new Variable(type);
+	variables_.push_back(variable);
+	return variable;
+}
+
+const Factor* Graph::createFactor(const FactorData *data,
+                           const vector<const Variable*> &variables)
+{
+	Factor* factor = new Factor(data, variables);
+	factors_.push_back(factor);
+	return factor;
+}
+
 }  // end namespace concept
 }  // end namespace rocs
