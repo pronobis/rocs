@@ -27,6 +27,7 @@
 #include <string>
 
 #include "rocs/concept/Graph-internal.h"
+#include "rocs/core/debug.h"
 
 using namespace std;
 using rocs::concept::Factor;
@@ -52,18 +53,34 @@ class QueryInternal {
 
 	void AddFactor(const Factor& factor)
 	{
-		// Get dai variables
-		vector<dai::Var> dai_vars = ConvertToDai(factor.variables_);
-
 		// Get potentials
-		vector<double> dai_potential;
+		vector<double> potential;
 		typedef pair<vector<string>, double> PotentialIt;
 		BOOST_FOREACH(const PotentialIt &it, factor.data_->potential)
-			dai_potential.push_back(it.second);
+			potential.push_back(it.second);
 
-		// Note: This Factor construction is safe as it uses the given
-		// variable order to load potentials.
-		factors_.push_back(dai::Factor(dai_vars, dai_potential));
+		// Note: Be careful with potential order.
+		// We use lexicographic order in the inputs.
+		// DAI sorts variables by label and then uses reverse lexicographic
+		// order (starting from end).
+		// For that we use the dai::Permute class.
+		vector<dai::Var> dai_vars = ConvertToDai(factor.variables_);
+		dai::VarSet dai_varset(
+			dai::SmallSet<dai::Var>(dai_vars.begin(), dai_vars.end(),
+			                        dai_vars.size()));
+
+		size_t nrStates = 1;
+		for (size_t i = 0; i < dai_vars.size(); ++i )
+			nrStates *= dai_vars[i].states();
+
+		DAI_ASSERT(potential.size() == nrStates);
+
+		dai::Factor dai_factor(dai_varset);
+		dai::Permute permindex(dai_vars, true);
+		for (size_t li = 0; li < nrStates; ++li)
+			dai_factor.set(permindex.convertLinearIndex(li), potential[li]);
+
+		factors_.push_back(dai_factor);
 	}
 
 	void RunInference(bool force = false) {
@@ -72,17 +89,21 @@ class QueryInternal {
 			if (factorGraph_.get() == NULL)
 				MakeFactorGraph();
 
-			bp_.reset(new dai::BP(*factorGraph_.get(),
+			rocsDebug3("Running Loopy Belife Propagation...");
+			bp_.reset(new dai::BP(*factorGraph_,
 					daiOptions_("updates", string("SEQRND"))
 					           ("logdomain", false)));
 			bp_->init();
 			bp_->run();
+			rocsDebug3("Finished Loopy Belife Propagation...");
 		}
 	}
 
 	void MakeFactorGraph()
 	{
-		factorGraph_.reset(new dai::FactorGraph());
+		rocsDebug3("Creating DAI FactorGraph...");
+		factorGraph_.reset(new dai::FactorGraph(factors_));
+
 		// Invalidate BP
 		bp_.reset(NULL);
 	}
@@ -91,22 +112,22 @@ class QueryInternal {
 	                  vector<double> *output)
 	{
 		RunInference();
-
 		vector<dai::Var> dai_vars = ConvertToDai(vars);
 		dai::VarSet dai_varset(
 			dai::SmallSet<dai::Var>(dai_vars.begin(), dai_vars.end(),
 			                        dai_vars.size()));
 
+		rocsDebug3("Asking belief on set of %ld variables.", dai_varset.size());
         dai::Factor marginal = bp_->belief(dai_varset);
 
 		// Convert output to original variable order.
 		size_t nrStates = 1;
-		for( size_t i = 0; i < vars.size(); i++ )
+		for (size_t i = 0; i < dai_vars.size(); ++i )
 			nrStates *= dai_vars[i].states();
 
 		DAI_ASSERT(marginal.nrStates() == nrStates);
-		dai::Permute permindex(dai_vars);
-		for( size_t li = 0; li < dai_vars.size(); ++li)
+		dai::Permute permindex(dai_vars, true);
+		for (size_t li = 0; li < nrStates; ++li)
 			output->push_back(marginal.get(permindex.convertLinearIndex(li)));
 	}
 
@@ -119,7 +140,10 @@ class QueryInternal {
 		// Though we need to be careful about variable id size and pointer size.
 		// TODO(andresp): remove double lookup.
 		if (variables_.find(var) == variables_.end())
-			variables_[var] = dai::Var(variables_.size(), var->type_->values.size());
+		{
+			size_t varIndex = variables_.size();
+			variables_[var] = dai::Var(varIndex, var->type_->values.size());
+		}
 		return variables_[var];
 	}
 
@@ -145,6 +169,8 @@ Query::Query(const Graph *graph): graph_(graph)
 {
 }
 
+Query::~Query() {}
+
 void Query::BuildInternal()
 {
 	if (internal_.get() != NULL)
@@ -155,8 +181,8 @@ void Query::BuildInternal()
 		internal_->AddFactor(f);
 }
 
-void Query::CalcProbability(const vector<const Variable*> &variables,
-                            vector<double> *output)
+void Query::Marginalize(const vector<const Variable*> &variables,
+                        vector<double> *output)
 {
 	if (!internal_.get())
 		BuildInternal();

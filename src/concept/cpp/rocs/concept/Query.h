@@ -41,6 +41,7 @@ class Query {
 	// This class does not takes ownership over Graph.
 	// Graph and all associated variables have to outlive this instance.
 	explicit Query(const Graph *graph);
+	~Query();
 
 	// Calculates probability for a given set of variables.
 	//
@@ -51,8 +52,8 @@ class Query {
 	//   output[1] = P( Var1 = v0, var2 = v0, ... VarN = v1]
 	//   ...
 	//   output[last] = P( Var1 = vN, Var2 = vN, ... VarN = vN]
-	void CalcProbability(const std::vector<const Variable*> &variables,
-						 std::vector<double> *output);
+	void Marginalize(const std::vector<const Variable*> &variables,
+	                 std::vector<double> *output);
  protected:
 	const Graph *graph_;
 	boost::scoped_ptr<QueryInternal> internal_;
