@@ -76,6 +76,7 @@ class GraphInformation {
 
 class Variable;  // This class definition is never exposed externaly.
 class Factor;    // This class definition is never exposed externaly.
+class Query;
 
 class Graph {
  public:
@@ -94,6 +95,9 @@ class Graph {
  protected:
 	boost::ptr_vector<Variable> variables_;
 	boost::ptr_vector<Factor> factors_;
+
+	// This would not be needed if there was a way to iterate over factors.
+	friend class Query;
 
  private:
 	// DISALLOW COPY AND ASSIGN
