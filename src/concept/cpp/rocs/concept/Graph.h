@@ -80,16 +80,19 @@ class Query;
 
 class Graph {
  public:
+	Graph();
+	~Graph();
+
 	// Creates a new variable of the given type.
 	// Returns a reference to the newly created variable.
 	// VariableType must exist for the lifetime of this Graph.
 	// Graph maintains ownership on the returned variable.
-	const Variable* createVariable(const VariableType* type);
+	const Variable* CreateVariable(const VariableType* type);
 
 	// Creates a factor between the given variables.
 	// FactorData must exist for the lifetime of this Graph.
 	// Graph maintains ownership on the returned factor.
-	const Factor* createFactor(const FactorData *factorData,
+	const Factor* CreateFactor(const FactorData *factorData,
 	                           const std::vector<const Variable*> &vars);
 
  protected:

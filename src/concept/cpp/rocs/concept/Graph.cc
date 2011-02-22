@@ -267,24 +267,30 @@ bool GraphInformation::CheckConsistency() const
 	// Check VariableType consistency
 	typedef pair<string, VariableType> VarTypeIt;
 	BOOST_FOREACH(const VarTypeIt &vartype, types)
-		consistent |= CheckVarTypeConsistency(vartype.first, vartype.second);
+		consistent &= CheckVarTypeConsistency(vartype.first, vartype.second);
 
 	// Check FactorData consistency
 	typedef pair<string, FactorData> FactorDataIt;
 	BOOST_FOREACH(const FactorDataIt &factor, factors)
-		consistent |= CheckFactorConsistency(factor.first, factor.second);
+		consistent &= CheckFactorConsistency(factor.first, factor.second);
 
 	return consistent;
 }
 
-const Variable* Graph::createVariable(const VariableType *type)
+Graph::Graph()
+{}
+
+Graph::~Graph()
+{}
+
+const Variable* Graph::CreateVariable(const VariableType *type)
 {
 	Variable *variable = new Variable(type);
 	variables_.push_back(variable);
 	return variable;
 }
 
-const Factor* Graph::createFactor(const FactorData *data,
+const Factor* Graph::CreateFactor(const FactorData *data,
                            const vector<const Variable*> &variables)
 {
 	Factor* factor = new Factor(data, variables);
