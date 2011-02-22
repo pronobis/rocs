@@ -8,7 +8,6 @@
 
 	<shape>
 		<item name="square"    />
-		<item name="circular"  />
 		<item name="elongated" />
     </shape>
 
@@ -21,7 +20,6 @@
 
 <factor>
 	<room_category_connectivity>
-		<item default_potential="0.1" />
 		<item var="var1" type="room_category" />
 		<item var="var2" type="room_category" />
 
@@ -32,12 +30,20 @@
 		<item var1="kitchen"        var2="corridor"       potential="0.9"/>
 		<item var1="kitchen"        var2="kitchen"        potential="0.1"/>
 		<item var1="kitchen"        var2="office"         potential="0.1"/>
+		<item var1="kitchen"        var2="living_room"    potential="0.1"/>
+		<item var1="living_room"    var2="corridor"       potential="0.9"/>
+		<item var1="living_room"    var2="kitchen"        potential="0.1"/>
+		<item var1="living_room"    var2="office"         potential="0.1"/>
+		<item var1="living_room"    var2="living_room"    potential="0.1"/>
+		<item var1="office"         var2="corridor"       potential="0.9"/>
+		<item var1="office"         var2="kitchen"        potential="0.1"/>
+		<item var1="office"         var2="office"         potential="0.1"/>
+		<item var1="office"         var2="living_room"    potential="0.1"/>
 	</room_category_connectivity>
 
 	<room_category_shape>
-		<item default_potential="0.1" />
 		<item var="var1" type="room_category" />
-		<item var="var2" type="room_shape" />
+		<item var="var2" type="shape" />
 
 		<item var1="corridor"       var2="elongated"   potential="0.9"/>
 		<item var1="corridor"       var2="square"      potential="0.1"/>
@@ -50,30 +56,25 @@
 	</room_category_shape>
 
     <room_category_appearance>
-		<item default_potential="0.1" />
 		<item var="var1" type="room_category" />
-		<item var="var2" type="apearance_property" />
+		<item var="var2" type="appearance" />
 
 		<item var1="corridor"       var2="corridor"        potential="0.91"/>
 		<item var1="corridor"       var2="kitchen"         potential="0.03"/>
 		<item var1="corridor"       var2="office"          potential="0.03"/>
-		<item var1="corridor"       var2="living_room"     potential="0.03"/>
 		<item var1="kitchen"        var2="corridor"        potential="0.03"/>
 		<item var1="kitchen"        var2="kitchen"         potential="0.91"/>
 		<item var1="kitchen"        var2="office"          potential="0.03"/>
-		<item var1="kitchen"        var2="living_room"     potential="0.03"/>
 		<item var1="office"         var2="corridor"        potential="0.03"/>
 		<item var1="office"         var2="kitchen"         potential="0.03"/>
 		<item var1="office"         var2="office"          potential="0.91"/>
-		<item var1="office"         var2="living_room"     potential="0.03"/>
 		<item var1="living_room"    var2="corridor"        potential="0.03"/>
 		<item var1="living_room"    var2="kitchen"         potential="0.03"/>
 		<item var1="living_room"    var2="office"          potential="0.03"/>
-		<item var1="living_room"    var2="living_room"     potential="0.91"/>
 	</room_category_appearance>
 
     <default_shape_property_given_room_category>
-		<item var="var1" type="shape_property" />
+		<item var="var1" type="shape" />
 
 		<item var1="elongated"   potential="0.5"/>
 		<item var1="square"      potential="0.5"/>

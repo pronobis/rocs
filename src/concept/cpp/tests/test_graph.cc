@@ -24,6 +24,7 @@
 
 #include <map>
 #include <set>
+#include <iostream>
 
 #include "rocs/concept/Graph.h"
 
@@ -46,12 +47,13 @@ BOOST_AUTO_TEST_CASE(caseLoadGraphInformation)
 	BOOST_CHECK(gi.types["room_category"].values
 			== list_of("corridor")("kitchen")("living_room")("office"));
 	BOOST_CHECK(gi.types["shape"].values
-			== list_of("circular")("elongated")("square"));
+			== list_of("elongated")("square"));
 	BOOST_CHECK(gi.types["appearance"].values
 			== list_of("corridor")("kitchen")("office"));
 
 	BOOST_CHECK(gi.factors.size() == 4);
-	BOOST_CHECK(gi.factors["room_category_appearance"].potential.size() == 16);
+	
+	BOOST_CHECK(gi.factors["room_category_appearance"].potential.size() == 12);
 
 	vector<string> index = list_of("office")("office");
 	BOOST_CHECK_CLOSE_FRACTION(0.91,
