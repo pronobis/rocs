@@ -17,7 +17,7 @@
 // You should have received a copy of the GNU General Public License
 // along with ROCS. If not, see <http://www.gnu.org/licenses/>.
 // ==================================================================
-#include "rocs/concept/Graph.h"
+#include "rocs/concept/Graph-internal.h"
 #include "rocs/core/Configuration.h"
 #include "rocs/core/debug.h"
 
@@ -276,22 +276,6 @@ bool GraphInformation::CheckConsistency() const
 
 	return consistent;
 }
-
-class Variable {
- public:
-	explicit Variable(const VariableType *type):type_(type) {}
-
-	const VariableType *type_;
-};
-
-class Factor {
- public:
-	Factor(const FactorData *data, const vector<const Variable*> &variables)
-			:data_(data), variables_(variables) {}
-
-	const FactorData *data_;
-	vector<const Variable*> variables_;
-};
 
 const Variable* Graph::createVariable(const VariableType *type)
 {
