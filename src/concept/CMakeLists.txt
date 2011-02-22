@@ -2,11 +2,13 @@ if(ROCS_BUILD_MODULE_CONCEPT)
 
 	# Module
 	add_rocs_cpp_module(concept
-		SOURCES Graph.cc
-		HEADERS Graph.h
-		LINK_MODULES core)
+		SOURCES Graph.cc Query.cc
+		HEADERS Graph.h Query.h
+		LINK_MODULES core
+		LINK dai)
 
 	# Tests
 	add_rocs_cpp_test_suite(graph)
+	add_rocs_cpp_test_suite(query)
 
 endif(ROCS_BUILD_MODULE_CONCEPT)
