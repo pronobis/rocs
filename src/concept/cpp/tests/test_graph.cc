@@ -24,7 +24,6 @@
 
 #include <map>
 #include <set>
-#include <iostream>
 
 #include "rocs/concept/Graph.h"
 
@@ -52,7 +51,7 @@ BOOST_AUTO_TEST_CASE(caseLoadGraphInformation)
 			== list_of("corridor")("kitchen")("office"));
 
 	BOOST_CHECK(gi.factors.size() == 4);
-	
+
 	BOOST_CHECK(gi.factors["room_category_appearance"].potential.size() == 12);
 
 	vector<string> index = list_of("office")("office");
