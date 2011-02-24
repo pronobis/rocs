@@ -19,3 +19,11 @@ http://categorizingplaces.com/dataset.html
 All the 6 houses are available but without any images.
 Only the logs with labels.
 
+
+COLD - COsy Location Database
+-----------------------------
+http://cogvis.nada.kth.se/COLD/
+
+Only the place labbeling data is available here.
+And only the sequences recorded on cloudy1.
+
