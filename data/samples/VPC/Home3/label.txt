@@ -1,0 +1,26 @@
+1/
+6839
+1       430     transition
+431     1000    kitchen
+1001    1087    transition
+1088    1746    dining_room
+1747    1822    transition
+1823    2613    living_room
+2614    2895    transition
+2896    2919    corridor
+2920    2964    transition
+2965    3070    corridor
+3071    3230    transition
+3231    3645    bedroom
+3646    3761    transition
+3762    4099    bedroom
+4100    4237    transition
+4238    4307    bedroom
+4308    4626    transition
+4627    5375    workspace
+5376    5675    transition
+5676    6338    bathroom
+6339    6678    transition
+6679    6839    living_room
+-1      -1 end
+-1      -1 end

@@ -1,0 +1,22 @@
+1/
+3378
+1       606     dining_room
+607     704     transition
+705     1543    kitchen
+1544    1767    transition
+1768    2063    bathroom
+2064    2106    transition
+2107    2738    workspace
+2739    2810    transition
+2811    3209    living_room
+3210    3315    transition
+3316    3378    dining_room
+-1      -1      end
+2/
+1634
+1       403     bathroom
+404     645     transition
+646     1573    bedroom
+1574    1634    transition
+-1      -1      end
+-1      -1      end

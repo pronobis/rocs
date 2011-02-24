@@ -1,0 +1,62 @@
+1/
+5925
+1       281     family_room
+282     440     transition
+441     580     dining_room
+581     801     transition
+802     1010    bathroom
+1011    1098    transition
+1099    1324    bedroom
+1325    1446    transition
+1447    1600    bathroom
+1601    1625    transition
+1626    1825    closet
+1826    1869    transition
+1870    2100    closet
+2101    2206    transition
+2207    2865    bathroom
+2866    3106    transition
+3107    3514    bedroom
+3515    3682    transition
+3683    3722    dining_room
+3723    3883    transition
+3884    3965    living_room
+3966    4202    transition
+4203    4630    kitchen
+4631    5382    transition
+5383    5436    kitchen
+5437    5560    transition
+5561    5685    dining_room
+5686    5925    transition
+-1      -1      end
+2/
+1677
+1       136     transition
+137     418     workspace
+419     568     transition
+569     831     bathroom
+832     920     transition
+921     1250    bedroom
+1251    1498    transition
+1499    1590    bedroom
+1591    1677    transition
+-1      -1      end
+0/
+2391
+1       301     exercise_room
+302     424     transition
+425     507     media_room
+508     582     transition
+583     626     bathroom
+627     787     transition
+788     1053    bathroom
+1054    1101    transition
+1102    1440    bathroom
+1441    1452    transition
+1453    1682    media_room
+1683    1867    transition
+1868    2215    workspace
+2216    2318    transition
+2319    2391    workspace
+-1      -1      end
+-1      -1      end
