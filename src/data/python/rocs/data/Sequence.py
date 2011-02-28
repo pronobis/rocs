@@ -47,14 +47,20 @@ class Sequence:
   #################################################
   # The methods below are used to build statistics.
   #################################################
+  def HasCategory(self, cat):
+    return cat in self.category
+  
+  def HasCategoryEdge(self, cat1, cat2):
+    return (cat1, cat2) in self.category_edge
+  
+  # Order dependent. It is build from edges seen on log.
+  # If edges are symmetric this will also be.
   def NumberOfRoomsInCategory(self, cat):
     if cat in self.category:
       return len(self.category[cat])
     else:
       return 0
   
-  # Order dependent. It is build from room edges.
-  # If edges are symmetric this will also be.
   def NumberOfEdgesBetweenCategories(self, cat1, cat2):
     key = (cat1, cat2)
     if key in self.category_edge:
