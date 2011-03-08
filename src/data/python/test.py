@@ -15,13 +15,11 @@ def testCOLD():
 
 def testVPC():
   seq = VPC.VPCSequence('../../../data/samples/VPC/Home1')
-  print list(seq.iterSamples())
   categories = seq.category.keys()
   for cat1 in categories:
     for cat2 in categories:
       if seq.HasCategoryEdge(cat1, cat2):
         print "%s->%s => connection" % (cat1, cat2)
 
-
-
-testVPC()
+sequences = list(COLD.LoadSequences()) + list(VPC.LoadSequences())
+print sequences

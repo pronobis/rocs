@@ -29,6 +29,7 @@
 # if the same room is visting twice or are diferent instances of a given category.
 # For that reason functions as NumberOfEdges and NumberOfRooms are disabled.
 import re
+import glob
 from rocs.data.Sequence import Sequence, Sample
 
 class VPCSequence(Sequence):
@@ -109,3 +110,7 @@ def CanonizeRoomCategory(roomcat):
     if roomname in roomcategory_map:
         roomname = roomcategory_map[roomname]
     return roomname
+
+def LoadSequences(paths=glob.glob('../../../data/samples/VPC/*')):
+  for path in paths:
+    yield VPCSequence(path)

@@ -24,6 +24,7 @@
 # http://cogvis.nada.kth.se/COLD/
 #
 import re
+import glob
 from rocs.data.Sequence import Sequence, Sample
 
 class COLDSequence(Sequence):
@@ -69,4 +70,8 @@ def GuessRoomCategory(roomname):
   if roomname in roomcategory_map:
       roomname = roomcategory_map[roomname]
   return roomname
+
+def LoadSequences(paths=glob.glob('../../../data/samples/COLD/*/*')):
+  for path in paths:
+    yield COLDSequence(path)
 
