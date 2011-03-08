@@ -28,12 +28,14 @@ def SequencesWithConnection(a, b):
   return len([seq for seq in sequences if seq.HasCategoryEdge(a, b)])
     
 def SequencesWithRooms(a, b):
-  return len([seq for seq in sequences if (a and b) in seq.category])
+  return len([seq for seq in sequences if a in seq.category and b in seq.category])
 
 p_connection = dict()
 for a in room_cats:
   for b in room_cats:
-    if a < b:
-      p_connection[a, b] = SequencesWithConnection(a, b)
+    numem = SequencesWithConnection(a, b)
+    denom = SequencesWithRooms(a, b)
+    p_connection[a, b] = numem/float(denom) if denom != 0 else 0
 
-print p_connection
+for item in sorted(p_connection.items()):
+  print item
