@@ -35,10 +35,9 @@
 #include <stdio.h>   // for sprintf()
 #include <stdlib.h>  // for exit()
 #include <stdarg.h>  // for vargs
-namespace rocs
-{
-namespace core
-{
+
+namespace rocs {
+namespace core {
 
 // Debug level
 #ifndef ROCS_DEBUG_LEVEL

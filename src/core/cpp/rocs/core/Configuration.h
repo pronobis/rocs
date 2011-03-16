@@ -49,10 +49,8 @@
 #define TYPE_INI        3
 #define TYPE_INFO       4
 
-namespace rocs
-{
-namespace core
-{
+namespace rocs {
+namespace core {
 
 using boost::property_tree::ptree;
 

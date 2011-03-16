@@ -38,10 +38,8 @@
 #include <iterator>
 #include <sys/stat.h>
 
-namespace rocs
-{
-namespace core
-{
+namespace rocs {
+namespace core {
 
 /*!
  * Splits string into substrings.
