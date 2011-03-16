@@ -26,8 +26,6 @@
 # Use it to define direct dependencies of every component or app.
 # ------------------------------------------------------------------
 
-set(ROCS_BUILD_THIRDPARTY_LIBDAI yes)
-
 # Module Concept
 if(ROCS_BUILD_MODULE_CONCEPT)
 	set(ROCS_BUILD_MODULE_CONCEPT yes)
@@ -61,7 +59,7 @@ endif(ROCS_BUILD_MODULE_CORE)
 
 # Documentation
 if(ROCS_BUILD_DOC)
-	set(ROCS_FIND_DOXYGEN yes)	
+	set(ROCS_FIND_DOXYGEN yes)
 endif(ROCS_BUILD_DOC)
 
 # Testing

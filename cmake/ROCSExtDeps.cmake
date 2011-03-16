@@ -102,7 +102,7 @@ if(ROCS_FIND_OPENCV)
 			message(FATAL_ERROR "OpenCV library found, but the version is smaller than 2.0.")
 		endif(OpenCV_VERSION LESS 2)
 		# Set includes/libraries
-		include_directories(${OpenCV_INCLUDE_DIRS}/..)
+		include_directories(${OpenCV_INCLUDE_DIRS}/.. ${OpenCV_INCLUDE_DIRS})
 		link_directories(${OpenCV_LIBRARY_DIRS})
 	 	set(OPENCV_LIBRARIES ${OpenCV_LIBRARIES})
 	else(OpenCV_FOUND)

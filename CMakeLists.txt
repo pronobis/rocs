@@ -29,6 +29,7 @@ if ("${ROCS_DIR_INIT}" STREQUAL "")
 	endif("${ROCS_DIR_INIT}" STREQUAL "")
 endif("${ROCS_DIR_INIT}" STREQUAL "")
 set(ROCS_DIR ${ROCS_DIR_INIT} CACHE PATH "Path to the directory where ROCS should be installed.")
+set(CMAKE_INSTALL_PREFIX "${ROCS_DIR}" CACHE INTERNAL "Prefix prepended to install directories" FORCE)
 
 # Set build type
 if (NOT "${ROCS_BUILD_TYPE}" STREQUAL "")
@@ -58,6 +59,14 @@ set(CMAKE_MODULE_PATH "${ROCS_SRC_ROOT}/cmake" ${CMAKE_MODULE_PATH} )
 # General build configuration
 add_definitions(-Wall)
 
+# Debug level
+set(ROCS_DEBUG_LEVEL 0 CACHE STRING "Debug level used by ROCS (0-3).")
+add_definitions(-DROCS_DEBUG_LEVEL=${ROCS_DEBUG_LEVEL})
+
+# GPL 3rd-party components
+set(ROCS_INCLUDE_GPL TRUE CACHE BOOL "Should ROCS be compiled with GPL components?")
+add_definitions(-DROCS_INCLUDE_GPL=${ROCS_INCLUDE_GPL})
+
 # Includes
 ## General purpose macros
 include(BasicMacros) 
@@ -70,9 +79,6 @@ include(ROCSDeps)
 # Finding external dependencies
 include(ROCSExtDeps)
 
-# Debug level
-set(ROCS_DEBUG_LEVEL 0 CACHE PATH "Debug level used by ROCS (0-3).")
-ADD_DEFINITIONS(-DROCS_DEBUG_LEVEL=${ROCS_DEBUG_LEVEL})
 
 
 # ------------------------------------------------------------------
