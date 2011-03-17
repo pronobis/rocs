@@ -82,6 +82,13 @@ class ConceptualGraph(Sequence):
   def GuessVarType(self, varname):
     return re.sub('[0-9]+', '', varname)
 
+  def IterVarsByType(self, vartype):
+    return (x for x in self.varType if self.varType[x] == vartype)
+  
+  def IterRooms(self):
+    return self.IterVarsByType('room_category')
+  
+
 def LoadSequences(paths=glob.glob('../../../data/samples/ConceptualGraph/*')):
   for path in paths:
     yield ConcetualGraph(path)

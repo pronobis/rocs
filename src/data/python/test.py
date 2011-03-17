@@ -4,6 +4,7 @@
 #
 import rocs.data.databases.COLD as COLD
 import rocs.data.databases.VPC as VPC
+import rocs.data.databases.ConceptualGraph as CG
 
 def testCOLD():
   seq = COLD.COLDSequence('../../../data/samples/COLD/freiburg/seq1_cloudy1')
@@ -20,6 +21,12 @@ def testVPC():
     for cat2 in categories:
       if seq.HasCategoryEdge(cat1, cat2):
         print "%s->%s => connection" % (cat1, cat2)
+
+def testConceptualGraph():
+  cg = CG.ConceptualGraph('../../../data/samples/ConceptualGraph/sample1')
+  print(list(cg.IterRooms()))
+
+testConceptualGraph()
 
 sequences = list(COLD.LoadSequences()) # + list(VPC.LoadSequences())
 room_cats = set(cat for seq in sequences for cat in seq.category.keys())
