@@ -298,5 +298,16 @@ const Factor* Graph::CreateFactor(const FactorData *data,
 	return factor;
 }
 
+void Graph::ListFactors(vector<const Factor*> *output) const {
+	output->reserve(output->size() + factors_.size());
+	BOOST_FOREACH(const Factor &f, factors_)
+	  output->push_back(&f);
+}
+
+void ImaginaryGraph::ListFactors(vector<const Factor*> *output) const {
+	base_->ListFactors(output);
+	Graph::ListFactors(output);
+}
+
 }  // end namespace concept
 }  // end namespace rocs

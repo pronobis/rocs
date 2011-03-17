@@ -95,18 +95,38 @@ class Graph {
 	const Factor* CreateFactor(const FactorData *factorData,
 	                           const std::vector<const Variable*> &vars);
 
+    // Appends all factors of this graph to the given output vector.
+	void ListFactors(std::vector<const Factor*> *output) const;
+
  protected:
 	boost::ptr_vector<Variable> variables_;
 	boost::ptr_vector<Factor> factors_;
-
-	// This would not be needed if there was a way to iterate over factors.
-	friend class Query;
 
  private:
 	// DISALLOW COPY AND ASSIGN
 	Graph(const Graph &);
 	void operator = (const Graph &);
 };
+
+// Creates an imaginary graph on top of another graph like a wrapper.
+// This class allows to add new variables and factors on top of the
+// underlying graph without modifying it.
+class ImaginaryGraph : Graph {
+ public:
+	explicit ImaginaryGraph(const Graph *base);
+	virtual ~ImaginaryGraph();
+
+	void ListFactors(std::vector<const Factor*> *output) const;
+
+ protected:
+	const Graph *base_;
+
+ private:
+	// DISALLOW COPY AND ASSIGN
+	ImaginaryGraph(const ImaginaryGraph &);
+	void operator = (const ImaginaryGraph &);
+};
+
 }  // end namespace concept
 }  // end namespace rocs
 

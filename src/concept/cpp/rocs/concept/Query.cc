@@ -177,8 +177,10 @@ void Query::BuildInternal()
 		return;
 
 	internal_.reset(new QueryInternal());
-	BOOST_FOREACH(const Factor &f, graph_->factors_)
-		internal_->AddFactor(f);
+	vector<const Factor*> factors;
+	graph_->ListFactors(&factors);
+	BOOST_FOREACH(const Factor *f, factors)
+		internal_->AddFactor(*f);
 }
 
 void Query::Marginalize(const vector<const Variable*> &variables,
