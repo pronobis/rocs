@@ -19,6 +19,9 @@
 # along with ROCS. If not, see <http://www.gnu.org/licenses/>.
 # ==================================================================
 
+import conceptual
+import re
+
 # This class contains data that represents a given sample of a sequence.
 # Example all data associated with a given time.
 class Sample:
@@ -43,6 +46,22 @@ class Sequence:
   
   def iterSamples(self):
     raise 'Not implemented'
+  
+  def ExtractConceptualGraph(self):
+    def NodeName(room):
+      return "room_" + re.sub('-', '_', room)
+    
+    m = conceptual.Graph()
+    for room in self.room_samples:
+      node = m.AddNode(NodeName(room), 'room_category')
+      node.value = self.GetRoomCategory(room)
+    
+    n_edges = 0
+    for (room1, room2) in self.room_edges:
+      n_edges += 1
+      edge = m.AddEdge('f%d'%n_edges, 'room_connectivity', [NodeName(room1), NodeName(room2)])
+    
+    return m
   
   #################################################
   # The methods below are used to build statistics.

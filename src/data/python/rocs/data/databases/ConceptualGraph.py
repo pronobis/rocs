@@ -26,6 +26,7 @@ import re
 import os
 import glob
 from rocs.data.Sequence import Sequence, Sample
+import rocs.data.conceptual as conceptual
 
 class FactorGraph:
   def __init__(self, input):
@@ -45,28 +46,15 @@ class FactorGraph:
         potential[pid] = pval
       self.factors[f] = {'vars': zip(var_ids, var_sizes), 'potential': potential}
 
-class ConceptualGraph(Sequence):
-  def __init__(self, sequence_path):
-    Sequence.__init__(self)
-    self.path = sequence_path
-
-    """Load Factor Graph as printed by libDAI"""
-    self.loadFactorGraph(open(os.path.join(self.path, 'conceptual.fg'), 'r')) 
-
-    """Load variables and factors names."""
-    self.loadInfo(open(os.path.join(self.path, 'conceptual.info'), 'r'))
-  
-  def loadFactorGraph(self, input):
-    self.factorGraph = FactorGraph(input)
-  
-  def loadInfo(self, input):
+class Info():
+  def __init__(self, input):
     self.varName = {}
     self.varType = {}
     self.factorName = {}
     for line in input:
       line = line.rstrip('\n')
       if line == '': continue
-
+      
       [obj, name] = line.split()
       if obj[0] == 'x':
         '''Reading a variable'''
@@ -77,17 +65,22 @@ class ConceptualGraph(Sequence):
         assert obj[0] == 'f', 'Wrong format?'
         '''Reading a factor'''
         self.factorName[int(obj[1:])] = name
-    print self.varType
-
+  
   def GuessVarType(self, varname):
     return re.sub('[0-9]+', '', varname)
+  
+def LoadConceptualGraph(path):
+  fg = FactorGraph(open(os.path.join(path, 'conceptual.fg'), 'r'))
+  info = Info(open(os.path.join(path, 'conceptual.info'), 'r'))
+  
+  m = conceptual.Graph()
+  for var in info.varName:
+    m.AddNode(info.varName[var], info.varType[var])
+  for fac in fg.factors:
+    f = m.AddEdge("f%d" % fac, info.factorName[fac],
+                  list(info.varName[int(vid)] for (vid,vsize) in fg.factors[fac]['vars']))
+  return m
 
-  def IterVarsByType(self, vartype):
-    return (x for x in self.varType if self.varType[x] == vartype)
-  
-  def IterRooms(self):
-    return self.IterVarsByType('room_category')
-  
 
 def LoadSequences(paths=glob.glob('../../../data/samples/ConceptualGraph/*')):
   for path in paths:
