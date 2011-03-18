@@ -304,6 +304,10 @@ void Graph::ListFactors(vector<const Factor*> *output) const {
 	  output->push_back(&f);
 }
 
+ImaginaryGraph::ImaginaryGraph(const Graph *base) : base_(base) {}
+
+ImaginaryGraph::~ImaginaryGraph() {}
+
 void ImaginaryGraph::ListFactors(vector<const Factor*> *output) const {
 	base_->ListFactors(output);
 	Graph::ListFactors(output);

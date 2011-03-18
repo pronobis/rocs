@@ -81,22 +81,22 @@ class Query;
 class Graph {
  public:
 	Graph();
-	~Graph();
+	virtual ~Graph();
 
 	// Creates a new variable of the given type.
 	// Returns a reference to the newly created variable.
 	// VariableType must exist for the lifetime of this Graph.
 	// Graph maintains ownership on the returned variable.
-	const Variable* CreateVariable(const VariableType* type);
+	virtual const Variable* CreateVariable(const VariableType* type);
 
 	// Creates a factor between the given variables.
 	// FactorData must exist for the lifetime of this Graph.
 	// Graph maintains ownership on the returned factor.
-	const Factor* CreateFactor(const FactorData *factorData,
+	virtual const Factor* CreateFactor(const FactorData *factorData,
 	                           const std::vector<const Variable*> &vars);
 
     // Appends all factors of this graph to the given output vector.
-	void ListFactors(std::vector<const Factor*> *output) const;
+	virtual void ListFactors(std::vector<const Factor*> *output) const;
 
  protected:
 	boost::ptr_vector<Variable> variables_;
@@ -111,12 +111,12 @@ class Graph {
 // Creates an imaginary graph on top of another graph like a wrapper.
 // This class allows to add new variables and factors on top of the
 // underlying graph without modifying it.
-class ImaginaryGraph : Graph {
+class ImaginaryGraph : public Graph {
  public:
 	explicit ImaginaryGraph(const Graph *base);
 	virtual ~ImaginaryGraph();
 
-	void ListFactors(std::vector<const Factor*> *output) const;
+	virtual void ListFactors(std::vector<const Factor*> *output) const;
 
  protected:
 	const Graph *base_;
