@@ -89,13 +89,13 @@ class QueryInternal {
 			if (factorGraph_.get() == NULL)
 				MakeFactorGraph();
 
-			rocsDebug3("Running Loopy Belife Propagation...");
+			rocsDebug3("Running Loopy Belief Propagation...");
 			bp_.reset(new dai::BP(*factorGraph_,
 					daiOptions_("updates", string("SEQRND"))
 					           ("logdomain", false)));
 			bp_->init();
 			bp_->run();
-			rocsDebug3("Finished Loopy Belife Propagation...");
+			rocsDebug3("Finished Loopy Belief Propagation...");
 		}
 	}
 
