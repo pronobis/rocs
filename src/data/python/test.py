@@ -26,7 +26,6 @@ def testConceptualGraph():
   cg = CG.ConceptualGraph('../../../data/samples/ConceptualGraph/sample1')
   print(list(cg.IterRooms()))
 
-testConceptualGraph()
 
 sequences = list(COLD.LoadSequences()) # + list(VPC.LoadSequences())
 room_cats = set(cat for seq in sequences for cat in seq.category.keys())
@@ -37,12 +36,19 @@ def SequencesWithConnection(a, b):
 def SequencesWithRooms(a, b):
   return len([seq for seq in sequences if a in seq.category and b in seq.category])
 
-p_connection = dict()
-for a in room_cats:
-  for b in room_cats:
-    numem = SequencesWithConnection(a, b)
-    denom = SequencesWithRooms(a, b)
-    p_connection[a, b] = numem/float(denom) if denom != 0 else 0
+def print_room_category_connectivity():
+  print('<room_category_connectivity>')
+  print('  <item var="var1" type="room_category" />')
+  print('  <item var="var2" type="room_category" />')
+  
+  for a in room_cats:
+    for b in room_cats:
+      numem = SequencesWithConnection(a, b)
+      denom = SequencesWithRooms(a, b)
+      potential = numem/float(denom) if denom != 0 else 0
+      potential = numem
+      print('  <item var1=%-20s var2=%-20s potential="%d" />' % ('"%s"'%a, '"%s"'%b, potential))
+  print('</room_category_connectivity>')
 
-for item in sorted(p_connection.items()):
-  print item
+print_room_category_connectivity()
+
