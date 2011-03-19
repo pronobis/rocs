@@ -65,11 +65,11 @@ if(NOT ROCS_DONT_DEFINE_OPTIONS)
 	if(USE_MODULE_MATH)
 		set(ROCS_BUILD_MODULE_MATH YES)
 	endif(USE_MODULE_MATH)
-	# CV
-	option(USE_MODULE_CV "Use the module CV." NO)
-	if(USE_MODULE_CV)
-		set(ROCS_BUILD_MODULE_CV YES)
-	endif(USE_MODULE_CV)
+	# Vision
+	option(USE_MODULE_VISION "Use the module Vision." NO)
+	if(USE_MODULE_VISION)
+		set(ROCS_BUILD_MODULE_VISION YES)
+	endif(USE_MODULE_VISION)
 	# CV Apps
 	option(USE_MODULE_CV_APPS "Use applications of the module CV." NO)
 	if(USE_MODULE_CV_APPS)
