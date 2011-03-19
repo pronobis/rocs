@@ -70,9 +70,6 @@ macro(add_rocs_cpp_module)
 		endforeach(I)
 	endif(NOT "${ARG_LINK_MODULES}" STREQUAL "")
 
-	# Add dependency on OpenCV
-	target_link_libraries(rocs_${ARG_NAME} {OPENCV_LIBRARIES})
-
 	# Install
 	install(TARGETS rocs_${ARG_NAME} LIBRARY DESTINATION ${ROCS_DIR}/lib ARCHIVE DESTINATION lib)
 	install(FILES cpp/rocs/${ARG_NAME}.h DESTINATION ${ROCS_DIR}/include/rocs)
