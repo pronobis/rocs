@@ -30,5 +30,7 @@
 
 #include "rocs/core/Configuration.h"
 #include "rocs/core/FileInfo.h"
+#include "rocs/core/debug.h"
+#include "rocs/core/error.h"
 
 #endif /** _ROCS_CORE_CORE_H_ */
