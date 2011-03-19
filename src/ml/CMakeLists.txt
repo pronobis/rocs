@@ -2,13 +2,11 @@ if(ROCS_BUILD_MODULE_ML)
 
 	# Module
 	add_rocs_cpp_module(ml
-		SOURCES ChainGraph.cc
-		HEADERS ChainGraph.h
-		LINK_MODULES core
-		LINK dai)
+		SOURCES FactorGraph.cc
+		HEADERS FactorGraph.h
+		LINK ${OPENCV_LIBRARIES})
 
 	# Tests
-#	add_rocs_cpp_test_suite(graph)
-#	add_rocs_cpp_test_suite(query)
+	add_rocs_cpp_test_suite(test1)
 
 endif(ROCS_BUILD_MODULE_ML)

@@ -65,6 +65,11 @@ if(NOT ROCS_DONT_DEFINE_OPTIONS)
 	if(USE_MODULE_MATH)
 		set(ROCS_BUILD_MODULE_MATH YES)
 	endif(USE_MODULE_MATH)
+	# Ml
+	option(USE_MODULE_ML "Use the module Ml." NO)
+	if(USE_MODULE_ML)
+		set(ROCS_BUILD_MODULE_ML YES)
+	endif(USE_MODULE_ML)
 	# Vision
 	option(USE_MODULE_VISION "Use the module Vision." NO)
 	if(USE_MODULE_VISION)

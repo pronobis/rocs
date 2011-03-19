@@ -102,6 +102,7 @@ add_subdirectory_with_includes(${ROCS_SRC_THIRDPARTY}/libdai)
 # Modules
 add_subdirectory_with_includes(${ROCS_SRC_MODULES}/core)
 add_subdirectory_with_includes(${ROCS_SRC_MODULES}/math)
+add_subdirectory_with_includes(${ROCS_SRC_MODULES}/ml)
 add_subdirectory_with_includes(${ROCS_SRC_MODULES}/vision)
 add_subdirectory_with_includes(${ROCS_SRC_MODULES}/concept)
 
