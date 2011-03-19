@@ -18,15 +18,11 @@
 // along with ROCS. If not, see <http://www.gnu.org/licenses/>.
 // ==================================================================
 
-
 /*!
  * \file types.h
  *
- * The different types of data we can store
- *
- * Define the traits that will be used to determine the best data type to work with.
- *
- * partly taken from the library CImg
+ * Type traits.
+ * Partly taken from the library CImg
  *
  * \date Jun 18, 2010
  * \author Arnaud Ramey, Andrzej Pronobis
@@ -39,7 +35,7 @@
 #include <string>
 
 /* **** short defs from openCV */
-#define  CV_1F            0x3f800000
+#define CV_1F   0x3f800000
 #define CV_8U   0
 #define CV_8S   1
 #define CV_16U  2

@@ -24,8 +24,8 @@
  * \file Configuration.cc
  */
 
-#include "FileInfo.h"
-#include "Configuration.h"
+#include "rocs/core/FileInfo.h"
+#include "rocs/core/Configuration.h"
 
 // Stl & Boost
 #include <set>

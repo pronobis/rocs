@@ -28,8 +28,7 @@
 
 // ROCS includes
 #include "rocs/core/error.h"
-#include "rocs/core/types.h"
-#include "CommandLineHelp.h"
+#include "rocs/core/CommandLineHelp.h"
 // BOOST includes
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/xml_parser.hpp>
@@ -37,6 +36,7 @@
 #include <boost/property_tree/ini_parser.hpp>
 #include <boost/property_tree/info_parser.hpp>
 #include <boost/foreach.hpp>
+#include <boost/utility/value_init.hpp>
 // STL includes
 #include <vector>
 #include <iostream>
@@ -410,8 +410,7 @@ private:
 					continue;
 				bool was_found = false;
 				ptree sonson = sonson_it->second;
-				_T value = getValue<_T> (&sonson, keyTail,
-						Type<_T>::defaultValue(), was_found);
+				_T value = getValue<_T> (&sonson, keyTail, _T(), was_found);
 				if (was_found)
 				{
 					ans.push_back(value);
