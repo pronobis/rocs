@@ -32,9 +32,11 @@ set(ROCS_DIR ${ROCS_DIR_INIT} CACHE PATH "Path to the directory where ROCS shoul
 set(CMAKE_INSTALL_PREFIX "${ROCS_DIR}" CACHE INTERNAL "Prefix prepended to install directories" FORCE)
 
 # Set build type
-if (NOT "${ROCS_BUILD_TYPE}" STREQUAL "")
-    set(CMAKE_BUILD_TYPE ${ROCS_BUILD_TYPE})
-endif (NOT "${ROCS_BUILD_TYPE}" STREQUAL "")
+if("${ROCS_BUILD_TYPE}" STREQUAL "")
+    set(ROCS_BUILD_TYPE "Debug")
+endif("${ROCS_BUILD_TYPE}" STREQUAL "")
+set(ROCS_BUILD_TYPE ${ROCS_BUILD_TYPE} CACHE PATH "ROCS build type (Debug/Release).")
+set(CMAKE_BUILD_TYPE ${ROCS_BUILD_TYPE} CACHE INTERNAL "" FORCE)
 
 # Make ROCS_DIR available as preprocessor definition
 ADD_DEFINITIONS(-DROCS_DIR="${ROCS_DIR}")
@@ -60,12 +62,11 @@ set(CMAKE_MODULE_PATH "${ROCS_SRC_ROOT}/cmake" ${CMAKE_MODULE_PATH} )
 add_definitions(-Wall)
 
 # Debug level
-set(ROCS_DEBUG_LEVEL 0 CACHE STRING "Debug level used by ROCS (0-3).")
-add_definitions(-DROCS_DEBUG_LEVEL=${ROCS_DEBUG_LEVEL})
-
-# GPL 3rd-party components
-set(ROCS_INCLUDE_GPL TRUE CACHE BOOL "Should ROCS be compiled with GPL components?")
-add_definitions(-DROCS_INCLUDE_GPL=${ROCS_INCLUDE_GPL})
+if("${ROCS_MAX_DEBUG_LEVEL}" STREQUAL "")
+    set(ROCS_MAX_DEBUG_LEVEL 0)
+endif("${ROCS_MAX_DEBUG_LEVEL}" STREQUAL "")
+set(ROCS_MAX_DEBUG_LEVEL ${ROCS_MAX_DEBUG_LEVEL} CACHE STRING "Maximal debug level compiled into ROCS (0-3).")
+add_definitions(-DROCS_MAX_DEBUG_LEVEL=${ROCS_MAX_DEBUG_LEVEL})
 
 # Includes
 ## General purpose macros
