@@ -124,7 +124,7 @@ class TestData {
  * if you plan on adding another sample input consider
  * following the same scheme as this function.
  */
-class SampleTestData1 : TestData {
+class SampleTestData1 : public TestData {
  public:
 
 	SampleTestData1()
@@ -192,6 +192,55 @@ class SampleTestData1 : TestData {
 BOOST_AUTO_TEST_CASE(caseTestQueryMarginalization)
 {
 	SampleTestData1 data;
+	data.Run();
+}
+
+class SampleTestData2 : public SampleTestData1 {
+ public:
+	void Run()
+	{
+		const VariableType *ROOM_TYPE = &gi->types["room"];
+		const FactorData   *ROOM_CONN = &gi->factors["room_connectivity"];
+
+		// Create a very simple graph: 2 nodes connected by 1 factor.
+		const Variable *room1, *room2;
+		graph.reset(new Graph());
+		BOOST_REQUIRE(room1 = graph->CreateVariable(ROOM_TYPE));
+		BOOST_REQUIRE(room2 = graph->CreateVariable(ROOM_TYPE));
+		BOOST_REQUIRE(
+			graph->CreateFactor(ROOM_CONN, list_of(room1)(room2)));
+
+		// Create an Imaginary Graph and marginalize on a new node of it.
+		vector<double> im_output;
+		{
+			scoped_ptr<rocs::concept::ImaginaryGraph> im_graph(
+					new rocs::concept::ImaginaryGraph(graph.get()));
+			const Variable *im_room;
+			BOOST_REQUIRE(im_room = im_graph->CreateVariable(ROOM_TYPE));
+			BOOST_REQUIRE(im_graph->CreateFactor(ROOM_CONN, list_of(room1)(im_room)));
+
+			Query im_q(im_graph.get());
+			im_q.Marginalize(list_of(im_room), &im_output);
+		}
+
+		// Perform the same on a Graph.
+		vector<double> re_output;
+		{
+			const Variable *room3;
+			BOOST_REQUIRE(room3 = graph->CreateVariable(ROOM_TYPE));
+			BOOST_REQUIRE(graph->CreateFactor(ROOM_CONN, list_of(room1)(room3)));
+
+			Query q(graph.get());
+			q.Marginalize(list_of(room3), &re_output);
+		}
+
+		BOOST_CHECK(re_output == im_output);
+	}
+};
+
+BOOST_AUTO_TEST_CASE(caseTestQueryOnImaginaryGraph)
+{
+	SampleTestData2 data;
 	data.Run();
 }
 

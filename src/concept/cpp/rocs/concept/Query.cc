@@ -89,13 +89,13 @@ class QueryInternal {
 			if (factorGraph_.get() == NULL)
 				MakeFactorGraph();
 
-			rocsDebug3("Running Loopy Belife Propagation...");
+			rocsDebug3("Running Loopy Belief Propagation...");
 			bp_.reset(new dai::BP(*factorGraph_,
 					daiOptions_("updates", string("SEQRND"))
 					           ("logdomain", false)));
 			bp_->init();
 			bp_->run();
-			rocsDebug3("Finished Loopy Belife Propagation...");
+			rocsDebug3("Finished Loopy Belief Propagation...");
 		}
 	}
 
@@ -177,8 +177,10 @@ void Query::BuildInternal()
 		return;
 
 	internal_.reset(new QueryInternal());
-	BOOST_FOREACH(const Factor &f, graph_->factors_)
-		internal_->AddFactor(f);
+	vector<const Factor*> factors;
+	graph_->ListFactors(&factors);
+	BOOST_FOREACH(const Factor *f, factors)
+		internal_->AddFactor(*f);
 }
 
 void Query::Marginalize(const vector<const Variable*> &variables,

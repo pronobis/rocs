@@ -1,0 +1,121 @@
+x5 place0_appearance_property
+ 0 corridor
+ 1 kitchen
+ 2 living_room
+ 3 office
+
+x4 place0_shape_property
+ 0 elongated
+ 1 square
+
+x7 place1_appearance_property
+ 0 corridor
+ 1 kitchen
+ 2 living_room
+ 3 office
+
+x6 place1_shape_property
+ 0 elongated
+ 1 square
+
+x9 place2_appearance_property
+ 0 corridor
+ 1 kitchen
+ 2 living_room
+ 3 office
+
+x8 place2_shape_property
+ 0 elongated
+ 1 square
+
+x11 place4_appearance_property
+ 0 corridor
+ 1 kitchen
+ 2 living_room
+ 3 office
+
+x10 place4_shape_property
+ 0 elongated
+ 1 square
+
+x13 place6_appearance_property
+ 0 corridor
+ 1 kitchen
+ 2 living_room
+ 3 office
+
+x12 place6_shape_property
+ 0 elongated
+ 1 square
+
+x15 place7_appearance_property
+ 0 corridor
+ 1 kitchen
+ 2 living_room
+ 3 office
+
+x14 place7_shape_property
+ 0 elongated
+ 1 square
+
+x1 room0_category
+ 0 corridor
+ 1 dining_room
+ 2 hall
+ 3 hallway
+ 4 kitchen
+ 5 living_room
+ 6 office
+ 7 toilet
+
+x2 room1_category
+ 0 corridor
+ 1 dining_room
+ 2 hall
+ 3 hallway
+ 4 kitchen
+ 5 living_room
+ 6 office
+ 7 toilet
+
+x3 room2_category
+ 0 corridor
+ 1 dining_room
+ 2 hall
+ 3 hallway
+ 4 kitchen
+ 5 living_room
+ 6 office
+ 7 toilet
+
+f0 f(room_category1,room_category2)
+f1 f(room_category1,room_category2)
+f2 SingleRoomFactor
+f3 SingleRoomFactor
+f4 SingleRoomFactor
+f5 f(room_category1,object_table_property)
+f6 f(room_category1,shape_property)
+f7 ObservedShapePropertyFactor
+f8 f(room_category1,appearance_property)
+f9 ObservedAppearancePropertyFactor
+f10 f(room_category1,shape_property)
+f11 ObservedShapePropertyFactor
+f12 f(room_category1,appearance_property)
+f13 ObservedAppearancePropertyFactor
+f14 f(room_category1,shape_property)
+f15 ObservedShapePropertyFactor
+f16 f(room_category1,appearance_property)
+f17 ObservedAppearancePropertyFactor
+f18 f(room_category1,shape_property)
+f19 ObservedShapePropertyFactor
+f20 f(room_category1,appearance_property)
+f21 ObservedAppearancePropertyFactor
+f22 f(room_category1,shape_property)
+f23 ObservedShapePropertyFactor
+f24 f(room_category1,appearance_property)
+f25 ObservedAppearancePropertyFactor
+f26 f(room_category1,shape_property)
+f27 ObservedShapePropertyFactor
+f28 f(room_category1,appearance_property)
+f29 ObservedAppearancePropertyFactor
+
