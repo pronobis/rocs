@@ -34,31 +34,48 @@
 
 if(NOT ROCS_DONT_DEFINE_OPTIONS)
 	# Documentation
-	option(ROCS_BUILD_DOC "Build documentation." NO)
+	if("${ROCS_BUILD_DOC}" STREQUAL "")
+		set(ROCS_BUILD_DOC NO)
+	endif("${ROCS_BUILD_DOC}" STREQUAL "")
+	option(ROCS_BUILD_DOC "Build documentation." ${ROCS_BUILD_DOC})
 	# Tests
-	option(ROCS_BUILD_TESTS "Build tests." NO)
-	# Modules and components
-	## Core
+	if("${ROCS_BUILD_TESTS}" STREQUAL "")
+		set(ROCS_BUILD_TESTS YES)
+	endif("${ROCS_BUILD_TESTS}" STREQUAL "")
+	option(ROCS_BUILD_TESTS "Build tests." ${ROCS_BUILD_TESTS})
+	# GPL 3rd-party components
+	if("${ROCS_BUILD_GPL}" STREQUAL "")
+		set(ROCS_BUILD_GPL YES)
+	endif("${ROCS_BUILD_GPL}" STREQUAL "")
+	option(ROCS_BUILD_GPL "Should ROCS be compiled with GPL components?" ${ROCS_BUILD_GPL})
+	add_definitions(-DROCS_BUILD_GPL=${ROCS_BUILD_GPL})
+	# Build Qt GUI
+	if("${ROCS_BUILD_QTGUI}" STREQUAL "")
+		set(ROCS_BUILD_QTGUI YES)
+	endif("${ROCS_BUILD_QTGUI}" STREQUAL "")
+	option(ROCS_BUILD_QTGUI "Build components depending on Qt GUI." ${ROCS_BUILD_QTGUI})
+	add_definitions(-DROCS_BUILD_QTGUI=${ROCS_BUILD_QTGUI})
+	# Core
 	option(USE_MODULE_CORE "Use the module Core." NO)
 	if(USE_MODULE_CORE)
 		set(ROCS_BUILD_MODULE_CORE YES)
 	endif(USE_MODULE_CORE)
-	## Math
+	# Math
 	option(USE_MODULE_MATH "Use the module Math." NO)
 	if(USE_MODULE_MATH)
 		set(ROCS_BUILD_MODULE_MATH YES)
 	endif(USE_MODULE_MATH)
-	## CV
+	# CV
 	option(USE_MODULE_CV "Use the module CV." NO)
 	if(USE_MODULE_CV)
 		set(ROCS_BUILD_MODULE_CV YES)
 	endif(USE_MODULE_CV)
-	## CV Apps
+	# CV Apps
 	option(USE_MODULE_CV_APPS "Use applications of the module CV." NO)
 	if(USE_MODULE_CV_APPS)
 		set(ROCS_BUILD_MODULE_CV_APPS YES)
 	endif(USE_MODULE_CV_APPS)
-	## Concept
+	# Concept
 	option(USE_MODULE_CONCEPT "Use the module Concept." NO)
 	if(USE_MODULE_CONCEPT)
 		set(ROCS_BUILD_MODULE_CONCEPT YES)
