@@ -24,15 +24,16 @@
  * \file Configuration.cc
  */
 
+#include "FileInfo.h"
 #include "Configuration.h"
-#include "rocs/core/utils.h" // for fileExists()
+
+// Stl & Boost
 #include <set>
 #include <boost/algorithm/string.hpp>
 
 using namespace rocs::core;
 using namespace std;
 
-// cf http://www.boost.org/doc/libs/1_41_0/doc/html/boost_propertytree/parsers.html
 
 // ---------------------------------------------
 Configuration::Configuration()
@@ -131,7 +132,7 @@ void rocs::core::Configuration::addConfigFile(string filename)
 	/*
 	 * check the file exists
 	 */
-	if (!rocs::core::fileExists(filename))
+	if (!FileInfo::fileExists(filename))
 		rocsIOException("The given file '%s' does not exist.", filename.c_str());
 	// read the new file in a new tree
 	ptree new_tree;

@@ -37,7 +37,7 @@ namespace opencv = cv;
 #define MAT_DECOMP_CHOLESKY	DECOMP_CHOLESKY
 
 #include "rocs/math/ElemMath.h"
-#include "rocs/core/types.h"
+//#include "rocs/core/types.h"
 #include "rocs/core/error.h"
 
 namespace rocs

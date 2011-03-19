@@ -29,7 +29,6 @@
 // ROCS includes
 #include "rocs/core/error.h"
 #include "rocs/core/types.h"
-//#include "ConfigFileReader.h"
 #include "CommandLineHelp.h"
 // BOOST includes
 #include <boost/property_tree/ptree.hpp>
