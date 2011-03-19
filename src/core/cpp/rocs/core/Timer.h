@@ -35,13 +35,8 @@ using namespace std;
 
 
 /*!
- * a timer class
+ * Timer class. Also provides time related utility methods.
  */
-//!  A test class.
-/*!
-  A more elaborate class description.
-*/
-
 class Timer {
 public:
 	Timer() {
