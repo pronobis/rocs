@@ -72,6 +72,7 @@ macro(add_rocs_cpp_module)
 
 	# Install
 	install(TARGETS rocs_${ARG_NAME} LIBRARY DESTINATION ${ROCS_DIR}/lib ARCHIVE DESTINATION lib)
+	install(FILES cpp/rocs/${ARG_NAME}.h DESTINATION ${ROCS_DIR}/include/rocs)
 	install(FILES ${_HEADERS_} DESTINATION ${ROCS_DIR}/include/rocs/${ARG_NAME})
 
 	# Make the module available to others
