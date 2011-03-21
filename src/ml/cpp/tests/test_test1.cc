@@ -31,9 +31,45 @@
 // ROCS
 /* Nothing for now. This is just an example*/
 
+#include <boost/shared_ptr.hpp>
+
+class A
+{
+	int a;
+};
+
+
+class B: public A
+{
+public:
+	B(): b(int()), e(11) {}
+	int b;
+	double d;
+	double e;
+};
+
+
+class C: public A
+{
+public:
+	C(): c(double()) {}
+	double c;
+};
+
+
 /*! Define first test case. */
 BOOST_AUTO_TEST_CASE( case1 )
 {
+	boost::shared_ptr<A> p1(new B());
+	boost::shared_ptr<A> p2(new C());
+
+	boost::shared_ptr<B> p3 = boost::static_pointer_cast<B, A>(p1);
+	boost::shared_ptr<B> p4 = boost::static_pointer_cast<B, A>(p2);
+
+	BOOST_CHECK( p3->e == 11);
+	BOOST_CHECK( p4->e == 11);
+
+
 	BOOST_CHECK( 0 == 0 );
 	BOOST_REQUIRE( 0 == 0 );
 }

@@ -19,7 +19,7 @@
 // ==================================================================
 
 /*!
- * \file ShalowCopyable.h
+ * \file ShallowCopyable.h
  *
  * \date Mar 20, 2011
  * \author Andrzej Pronobis
@@ -41,10 +41,14 @@ namespace core {
 template <class Data>
 class ShallowCopyable
 {
-
 protected:
 
-	/*! Constructor, stores the pointer to data. */
+	/*! Type definition simplifying access to the
+	 * base ShallowCopyable class. */
+	typedef ShallowCopyable<Data> SC;
+
+	/*! Constructor, creates and instance of the data
+	 * and stores the pointer. */
 	ShallowCopyable(Data *d = 0) : _d(d)
 	{}
 
@@ -52,12 +56,19 @@ protected:
 	bool isNull()
 	{ return !_d; }
 
+	void setData(Data *d)
+	{ _d = boost::shared_ptr<Data>(d); }
 
-protected:
+	boost::shared_ptr<Data> &data()
+	{ return _d; }
+
+	const boost::shared_ptr<Data> &data() const
+	{ return _d; }
+
+private:
 
 	/*! Pointer to shared data. */
 	boost::shared_ptr<Data> _d;
-
 };
 
 

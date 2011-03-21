@@ -10,6 +10,11 @@ if(ROCS_BUILD_MODULE_CONCEPT)
 	# Remove deprecated includes messages
 	set_property(TARGET rocs_concept PROPERTY COMPILE_FLAGS "-Wno-deprecated")
 
+	# Apps
+	add_rocs_cpp_app(evaluate_scene 
+		SOURCES evaluate_scene.cc
+		LINK_MODULES concept ml core)
+
 	# Tests
 	add_rocs_cpp_test_suite(graph)
 	add_rocs_cpp_test_suite(query)

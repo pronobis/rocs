@@ -110,7 +110,7 @@ public:
 };
 
 /*!
- * The IO exception class.
+ * The I/O exception class.
  */
 class IOException: public Exception
 {
@@ -128,9 +128,82 @@ public:
 	 */
 	virtual std::string formatMessage(std::string error) throw ()
 	{
-		return "IO: " + error;
+		return "I/O error: " + error;
 	}
 };
+
+
+/*!
+ * Exception thrown when the uniqueness condition is violated.
+ */
+class UniquenessException: public Exception
+{
+public:
+
+	/*! Constructor setting values of the error location and message. */
+	UniquenessException(const std::string& where, const std::string& error) :
+		Exception(where, error)
+	{
+	}
+
+	/*!
+	 * Creates formatted error message based on the information
+	 * in the exception.
+	 */
+	virtual std::string formatMessage(std::string error) throw ()
+	{
+		return "Uniqueness error: " + error;
+	}
+};
+
+
+/*!
+ * Exception thrown when value conversion cannot be performed.
+ */
+class ConversionException: public Exception
+{
+public:
+
+	/*! Constructor setting values of the error location and message. */
+	ConversionException(const std::string& where, const std::string& error) :
+		Exception(where, error)
+	{
+	}
+
+	/*!
+	 * Creates formatted error message based on the information
+	 * in the exception.
+	 */
+	virtual std::string formatMessage(std::string error) throw ()
+	{
+		return "Conversion error: " + error;
+	}
+};
+
+
+/*!
+ * Exception thrown when the type of an object does not match the operation.
+ */
+class TypeException: public Exception
+{
+public:
+
+	/*! Constructor setting values of the error location and message. */
+	TypeException(const std::string& where, const std::string& error) :
+		Exception(where, error)
+	{
+	}
+
+	/*!
+	 * Creates formatted error message based on the information
+	 * in the exception.
+	 */
+	virtual std::string formatMessage(std::string error) throw ()
+	{
+		return "Conversion error: " + error;
+	}
+};
+
 
 /*! Convertion to string. */
 #define ROCS_ERROR_STRINGIFY(x) #x
@@ -194,6 +267,25 @@ static inline void exitWithError(const Exception& exc)
 		rocsDebug3("IOException '%s'", e.what()); \
 		throw e; \
 		}
+/*! Convenience macro throwing a uniqueness exception. */
+#define rocsUniquenessException( ... ) {\
+		rocs::core::UniquenessException e (__ROCS_HERE__, rocs::core::errMsg(__VA_ARGS__)); \
+		rocsDebug3("UniquenessException '%s'", e.what()); \
+		throw e; \
+		}
+/*! Convenience macro throwing a conversion exception. */
+#define rocsConversionException( ... ) {\
+		rocs::core::ConversionException e (__ROCS_HERE__, rocs::core::errMsg(__VA_ARGS__)); \
+		rocsDebug3("ConversionException '%s'", e.what()); \
+		throw e; \
+		}
+/*! Convenience macro throwing a type exception. */
+#define rocsTypeException( ... ) {\
+		rocs::core::TypeException e (__ROCS_HERE__, rocs::core::errMsg(__VA_ARGS__)); \
+		rocsDebug3("TypeException '%s'", e.what()); \
+		throw e; \
+		}
+
 /*!
  * Macro defining an assertion used only when debugging.
  */

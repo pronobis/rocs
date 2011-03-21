@@ -19,54 +19,10 @@
 // ==================================================================
 
 /*!
- * \file Factor.h
+ * \file ChainGraph.cc
  *
  * \date Mar 19, 2011
  * \author Andrzej Pronobis
  */
 
-#ifndef _ROCS_ML_FACTOR_H_
-#define _ROCS_ML_FACTOR_H_
-
-#include "rocs/ml/FactorClass.h"
-
-namespace rocs {
-namespace ml {
-
-
-
-class Factor
-{
-
-	Factor(int id, std::string name, const FactorClass &factorClass):
-		_id(id), _name(name), _factorClass(factorClass)
-	{}
-
-	Factor(int id, const FactorClass &factorClass):
-		_id(id), _factorClass(factorClass)
-	{}
-
-	Factor(int id, std::string name, const FactorClass &factorClass, const cv::Mat &potentials):
-		_id(id), _name(name), _factorClass(factorClass), _potentials(potentials)
-	{}
-
-	Factor(int id, const FactorClass &factorClass, const cv::Mat &potentials):
-		_id(id), _factorClass(factorClass), _potentials(potentials)
-	{}
-
-
-private:
-
-	int _id;
-	std::string _name;
-	FactorClass _factorClass;
-	cv::Mat _potentials;
-};
-
-
-
-}
-}
-
-
-#endif /* _ROCS_ML_FACTOR_H_ */
+#include "rocs/ml/ChainGraph.h"

@@ -19,39 +19,30 @@
 // ==================================================================
 
 /*!
- * \file Factor.h
+ * \file Variable.h
  *
  * \date Mar 19, 2011
  * \author Andrzej Pronobis
  */
 
-#ifndef _ROCS_ML_FACTOR_H_
-#define _ROCS_ML_FACTOR_H_
+#ifndef _ROCS_ML_VARIABLE_H_
+#define _ROCS_ML_VARIABLE_H_
 
-#include "rocs/ml/FactorClass.h"
+#include "rocs/ml/VariableClass.h"
 
 namespace rocs {
 namespace ml {
 
 
-
-class Factor
+class Variable
 {
 
-	Factor(int id, std::string name, const FactorClass &factorClass):
-		_id(id), _name(name), _factorClass(factorClass)
+	Variable(int id, std::string name, const VariableClass &varClass):
+		_id(id), _name(name), _varClass(varClass)
 	{}
 
-	Factor(int id, const FactorClass &factorClass):
-		_id(id), _factorClass(factorClass)
-	{}
-
-	Factor(int id, std::string name, const FactorClass &factorClass, const cv::Mat &potentials):
-		_id(id), _name(name), _factorClass(factorClass), _potentials(potentials)
-	{}
-
-	Factor(int id, const FactorClass &factorClass, const cv::Mat &potentials):
-		_id(id), _factorClass(factorClass), _potentials(potentials)
+	Variable(int id, const VariableClass &varClass):
+		_id(id), _varClass(varClass)
 	{}
 
 
@@ -59,8 +50,7 @@ private:
 
 	int _id;
 	std::string _name;
-	FactorClass _factorClass;
-	cv::Mat _potentials;
+	VariableClass _varClass;
 };
 
 
@@ -68,5 +58,4 @@ private:
 }
 }
 
-
-#endif /* _ROCS_ML_FACTOR_H_ */
+#endif /* _ROCS_ML_VARIABLE_H_ */
