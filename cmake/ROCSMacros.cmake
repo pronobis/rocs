@@ -31,6 +31,7 @@
 # <name> SOURCES <source_file> [<source_file> ...] 
 # HEADERS <header_file> [<header_file> ...]
 # LINK <library> [<library> ...]
+# LINK_MODULES <module> [<module> ...]
 macro(add_rocs_cpp_module)
 	# Parse arguments
 	parse_arguments(ARG "SOURCES;HEADERS;LINK;LINK_MODULES" "" ${ARGN})
@@ -81,18 +82,44 @@ endmacro(add_rocs_cpp_module)
 
 
 # Adds a C++ application
-macro(add_rocs_cpp_app _NAME_ _SOURCES_VAR_)
+# Arguments: 
+# <name> SOURCES <source_file> [<source_file> ...] 
+# LINK <library> [<library> ...]
+# LINK_MODULES <module> [<module> ...]
+macro(add_rocs_cpp_app)
+	# Parse arguments
+	parse_arguments(ARG "SOURCES;HEADERS;LINK;LINK_MODULES" "" ${ARGN})
+	list(GET ARG_DEFAULT_ARGS 0 ARG_NAME)
+
+	# Check if module name is set
+	if("${MODULE_NAME}" STREQUAL "")
+		message(FATAL_ERROR "Module must be defined before a test suite can be defined!")
+	endif("${MODULE_NAME}" STREQUAL "") 
+
 	# Get sources
 	set(_SOURCES_ "")
-	foreach(I ${${_SOURCES_VAR_}})
-		set(_SOURCES_ "${I}" ${_SOURCES_})
+	foreach(I ${ARG_SOURCES})
+		set(_SOURCES_ "cpp/apps/${I}" ${_SOURCES_})
 	endforeach(I)
 
-	# Add target
-	add_executable(${_NAME_} ${_SOURCES_})
+	# Add executable
+	add_executable(rocs_${ARG_NAME} ${_SOURCES_})
+
+	# Get and add linked libraries
+	if(NOT "${ARG_LINK}" STREQUAL "")
+		target_link_libraries(rocs_${ARG_NAME} ${ARG_LINK})
+	endif(NOT "${ARG_LINK}" STREQUAL "")
+
+	# Get and add linked module libraries
+	if(NOT "${ARG_LINK_MODULES}" STREQUAL "")
+		foreach(I ${ARG_LINK_MODULES})
+			add_dependencies(rocs_${ARG_NAME} rocs_${I})
+			target_link_libraries(rocs_${ARG_NAME} rocs_${I})
+		endforeach(I)
+	endif(NOT "${ARG_LINK_MODULES}" STREQUAL "")
 
 	# Install
-	install(TARGETS ${_NAME_} RUNTIME DESTINATION ${ROCS_DIR}/bin)
+	install(TARGETS rocs_${ARG_NAME} RUNTIME DESTINATION ${ROCS_DIR}/bin)
 endmacro(add_rocs_cpp_app)
 
 
