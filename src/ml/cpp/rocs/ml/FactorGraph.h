@@ -28,94 +28,198 @@
 #ifndef _ROCS_ML_FACTORGRAPH_H_
 #define _ROCS_ML_FACTORGRAPH_H_
 
+#include "rocs/ml/Factor.h"
+#include "rocs/ml/Variable.h"
+#include "rocs/core/ShallowCopyable.h"
+#include <list>
+
 namespace rocs {
 namespace ml {
 
-//#include "rocs/ml/Factor.h"
-//#include "rocs/ml/Variable.h"
+
+/*! Internal data of the @ref FactorGraph class. */
+struct FactorGraphData
+{
+	FactorGraphData(): maxVariableId(0), maxFactorId(0)
+	{}
+
+	/*! List of variable classes added to the graph. */
+	std::list<Variable> vars;
+
+	/*! List of factor classes added to the graph. */
+	std::list<Factor> factors;
+
+	std::map<int, Variable*> mapVarId;
+	std::map<std::string, Variable*> mapVarName;
+
+	std::map<int, Factor*> mapFactorId;
+	std::map<std::string, Factor*> mapFactorName;
+
+	/*! The largest variable Id added so far. */
+	int maxVariableId;
+
+	/*! The largest factor Id added so far. */
+	int maxFactorId;
+};
 
 
-/*
-!
+/*!
  * Class defining a factor graph.
  * It requires a solver class to perform all the inferences on the graph.
-
-class FactorGraph
+*/
+class FactorGraph : public core::ShallowCopyable<FactorGraphData>
 {
 public:
 
-	! Iterator used to iterate over factors.
+	/*! Iterator used to iterate over factors. */
 	typedef std::list<Factor>::iterator FactorIterator;
 
-	! Iterator used to iterate over variables.
+	/*! Iterator used to iterate over variables. */
 	typedef std::list<Variable>::iterator VariableIterator;
 
 
 public:
 
-	! Default constructor. Creates an empty factor graph.
-	FactorGraph()
+	/*! Default constructor. Creates an empty factor graph. */
+	FactorGraph(): SC(new FactorGraphData())
 	{}
 
-	!
-	 * Adds a factor to the graph.
-	 * \param factor Factor to be added.
-	 * \return Iterator pointing at the added factor.
 
-	FactorIterator &addFactor(const Factor &factor);
-
-	!
-	 * Creates a new factor and adds it to the graph.
-	 * The values of the factor are not set and need to be set later.
-	 * See the description of Factor for more details about the parameters.
-	 * @param variables Variables used to create the factor.
-	 * @return Iterator pointing at the added factor.
-
-	FactorIterator &addFactor(const std::vector<Variable> &variables);
-
-	!
-	 * Creates a new factor and adds it to the graph.
-	 * See the description of Factor for more details about the parameters.
-	 * @param variables Variables used to create the factor.
-	 * @param values Factor values.
-	 * @return Iterator pointing at the added factor.
-
-	FactorIterator &addFactor(const std::vector<Variable> &variables, const cv::Mat &values);
-
-	!
-	 * Adds a variable to the graph.
-	 * \param variable Variable to be added.
-	 * \return Iterator pointing at the added variable.
-
-	VariableIterator &addVariable(const Variable &variable);
-
-	!
-	 * Creates a new variable and adds it to the graph.
-	 * See the description of Variable for more details about the parameters.
-	 * \param states Number of states of the variable
-	 * \return Iterator pointing at the added variable.
-
-	VariableIterator &addVariable(unsigned int states);
+	Factor &addFactor(int id, std::string name, const FactorClass &factorClass,
+			const std::vector<Variable> &vars);
+	Factor &addFactor(int id, std::string name, const FactorClass &factorClass,
+			const std::vector<Variable> &vars, const cv::Mat &potentials);
+	Factor &addFactor(int id, const FactorClass &factorClass,
+			const std::vector<Variable> &vars)
+	{ return addFactor(id, std::string(), factorClass, vars); }
+	Factor &addFactor(int id, const FactorClass &factorClass,
+			const std::vector<Variable> &vars, const cv::Mat &potentials)
+	{ return addFactor(id, std::string(), factorClass, vars, potentials); }
+	Factor &addFactor(std::string name, const FactorClass &factorClass,
+			const std::vector<Variable> &vars)
+	{ return addFactor(getUniqueFactorId(), name, factorClass, vars); }
+	Factor &addFactor(std::string name, const FactorClass &factorClass,
+			const std::vector<Variable> &vars, const cv::Mat &potentials)
+	{ return addFactor(getUniqueFactorId(), name, factorClass, vars, potentials); }
+	Factor &addFactor(const FactorClass &factorClass,
+			const std::vector<Variable> &vars)
+	{ return addFactor(getUniqueFactorId(), std::string(), factorClass, vars); }
+	Factor &addFactor(const FactorClass &factorClass,
+			const std::vector<Variable> &vars, const cv::Mat &potentials)
+	{ return addFactor(getUniqueFactorId(), std::string(), factorClass, vars, potentials); }
 
 
-public:
+	Factor &addFactor(int id, std::string name, const FactorClass &factorClass,
+			const Variable &var);
+	Factor &addFactor(int id, std::string name, const FactorClass &factorClass,
+			const Variable &var, const cv::Mat &potentials);
+	Factor &addFactor(int id, const FactorClass &factorClass,
+			const Variable &var)
+	{ return addFactor(id, std::string(), factorClass, var); }
+	Factor &addFactor(int id, const FactorClass &factorClass,
+			const Variable &var, const cv::Mat &potentials)
+	{ return addFactor(id, std::string(), factorClass, var, potentials); }
+	Factor &addFactor(std::string name, const FactorClass &factorClass,
+			const Variable &var)
+	{ return addFactor(getUniqueFactorId(), name, factorClass, var); }
+	Factor &addFactor(std::string name, const FactorClass &factorClass,
+			const Variable &var, const cv::Mat &potentials)
+	{ return addFactor(getUniqueFactorId(), name, factorClass, var, potentials); }
+	Factor &addFactor(const FactorClass &factorClass,
+			const Variable &var)
+	{ return addFactor(getUniqueFactorId(), std::string(), factorClass, var); }
+	Factor &addFactor(const FactorClass &factorClass,
+			const Variable &var, const cv::Mat &potentials)
+	{ return addFactor(getUniqueFactorId(), std::string(), factorClass, var, potentials); }
 
-	! Returns the number of factors in the graph.
-	unsigned int factorCount() const;
 
-	! Returns the number of variables in the graph.
-	unsigned int variableCount() const;
+	Factor &addFactor(int id, std::string name, const FactorClass &factorClass,
+			const Variable &var1, const Variable &var2);
+	Factor &addFactor(int id, std::string name, const FactorClass &factorClass,
+			const Variable &var1, const Variable &var2, const cv::Mat &potentials);
+	Factor &addFactor(int id, const FactorClass &factorClass,
+			const Variable &var1, const Variable &var2)
+	{ return addFactor(id, std::string(), factorClass, var1, var2); }
+	Factor &addFactor(int id, const FactorClass &factorClass,
+			const Variable &var1, const Variable &var2, const cv::Mat &potentials)
+	{ return addFactor(id, std::string(), factorClass, var1, var2, potentials); }
+	Factor &addFactor(std::string name, const FactorClass &factorClass,
+			const Variable &var1, const Variable &var2)
+	{ return addFactor(getUniqueFactorId(), name, factorClass, var1, var2); }
+	Factor &addFactor(std::string name, const FactorClass &factorClass,
+			const Variable &var1, const Variable &var2, const cv::Mat &potentials)
+	{ return addFactor(getUniqueFactorId(), name, factorClass, var1, var2, potentials); }
+	Factor &addFactor(const FactorClass &factorClass,
+			const Variable &var1, const Variable &var2)
+	{ return addFactor(getUniqueFactorId(), std::string(), factorClass, var1, var2); }
+	Factor &addFactor(const FactorClass &factorClass,
+			const Variable &var1, const Variable &var2, const cv::Mat &potentials)
+	{ return addFactor(getUniqueFactorId(), std::string(), factorClass, var1, var2, potentials); }
+
+
+
+
+	Variable &addVariable(const Variable &v);
+
+	Variable &addVariable(int id, std::string name, const VariableClass &varClass);
+
+	Variable &addVariable(int id, const VariableClass &varClass)
+	{ return addVariable(id, std::string(), varClass); }
+
+	Variable &addVariable(std::string name, const VariableClass &varClass)
+	{ return addVariable(getUniqueVariableId(), name, varClass); }
+
+	Variable &addVariable(const VariableClass &varClass)
+	{ return addVariable(getUniqueVariableId(), std::string(), varClass); }
+
+
+
+	size_t variableCount() const
+	{ return data()->vars.size(); }
+
+	size_t factorCount() const
+	{ return data()->factors.size(); }
+
+	FactorIterator factorBegin()
+	{ return data()->factors.begin(); }
+
+	FactorIterator factorEnd()
+	{ return data()->factors.end(); }
+
+	Factor &factorFirst()
+	{ return data()->factors.front(); }
+
+	Factor &factorLast()
+	{ return data()->factors.back(); }
+
+	VariableIterator variableBegin()
+	{ return data()->vars.begin(); }
+
+	VariableIterator variableEnd()
+	{ return data()->vars.end(); }
+
+	Variable &variableFirst()
+	{ return data()->vars.front(); }
+
+	Variable &variableLast()
+	{ return data()->vars.back(); }
+
+	bool variableExists(int id) const
+	{ return data()->mapVarId.find(id)!=data()->mapVarId.end(); }
 
 
 private:
 
-	! Factors of the graph.
-	std::list<Factor> _factors;
+	int getUniqueVariableId()
+	{
+		return data()->maxVariableId+1;
+	}
 
-	! Variables of the graph.
-	std::list<Variable> _variables;
+	int getUniqueFactorId()
+	{
+		return data()->maxVariableId+1;
+	}
 };
-*/
 
 
 }

@@ -34,23 +34,41 @@ namespace rocs {
 namespace ml {
 
 
-class Variable
+
+struct VariableData
 {
+	VariableData(int id_, std::string name_, const VariableClass &varClass_):
+		id(id_), name(name_), varClass(varClass_)
+	{}
+
+	int id;
+	std::string name;
+	VariableClass varClass;
+};
+
+
+class Variable: public core::ShallowCopyable<VariableData>
+{
+public:
 
 	Variable(int id, std::string name, const VariableClass &varClass):
-		_id(id), _name(name), _varClass(varClass)
+		SC(new VariableData(id, name, varClass))
 	{}
 
 	Variable(int id, const VariableClass &varClass):
-		_id(id), _varClass(varClass)
+		SC(new VariableData(id, std::string(), varClass))
 	{}
 
 
-private:
+	std::string name() const
+	{ return data()->name; }
 
-	int _id;
-	std::string _name;
-	VariableClass _varClass;
+	int id() const
+	{ return data()->id; }
+
+	const VariableClass &variableClass()
+	{ return data()->varClass; }
+
 };
 
 

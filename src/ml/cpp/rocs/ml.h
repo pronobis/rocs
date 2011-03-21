@@ -29,7 +29,7 @@
 #define _ROCS_ML_ML_H_
 
 //#include "rocs/ml/ChainGraph.h"
-//#include "rocs/ml/FactorGraph.h"
+#include "rocs/ml/FactorGraph.h"
 #include "rocs/ml/FactorClassSet.h"
 #include "rocs/ml/VariableClassSet.h"
 

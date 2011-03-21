@@ -47,7 +47,6 @@ VariableClass &VariableClassSet::addVariableClass(int id, std::string name,
 	else
 	{ // Name provided
 		map<int, VariableClass *>::iterator it1 = data()->mapId.find(id);
-		map<string, VariableClass *>::iterator it2 = data()->mapName.find(name);
 
 		if (it1 != data()->mapId.end())
 		{ // Id found
@@ -60,6 +59,7 @@ VariableClass &VariableClassSet::addVariableClass(int id, std::string name,
 		else
 		{ // Id not found
 			// Name exists?
+			map<string, VariableClass *>::iterator it2 = data()->mapName.find(name);
 			if (it2 != data()->mapName.end())
 				rocsUniquenessException("Variable class with name '%s' already exists in this set.", name.c_str()); // Yes, exception
 		}

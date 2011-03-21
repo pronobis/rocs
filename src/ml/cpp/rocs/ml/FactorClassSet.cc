@@ -48,7 +48,6 @@ FactorClass &FactorClassSet::addFactorClass(int id, std::string name,
 	else
 	{ // Name provided
 		map<int, FactorClass *>::iterator it1 = data()->mapId.find(id);
-		map<string, FactorClass *>::iterator it2 = data()->mapName.find(name);
 
 		if (it1 != data()->mapId.end())
 		{ // Id found
@@ -61,6 +60,7 @@ FactorClass &FactorClassSet::addFactorClass(int id, std::string name,
 		else
 		{ // Id not found
 			// Name exists?
+			map<string, FactorClass *>::iterator it2 = data()->mapName.find(name);
 			if (it2 != data()->mapName.end())
 				rocsUniquenessException("Factor class with name '%s' already exists in this set.", name.c_str()); // Yes, exception
 		}
@@ -94,7 +94,6 @@ FactorClass &FactorClassSet::addFactorClass(int id, std::string name,
 	else
 	{ // Name provided
 		map<int, FactorClass *>::iterator it1 = data()->mapId.find(id);
-		map<string, FactorClass *>::iterator it2 = data()->mapName.find(name);
 
 		if (it1 != data()->mapId.end())
 		{ // Id found
@@ -107,6 +106,7 @@ FactorClass &FactorClassSet::addFactorClass(int id, std::string name,
 		else
 		{ // Id not found
 			// Name exists?
+			map<string, FactorClass *>::iterator it2 = data()->mapName.find(name);
 			if (it2 != data()->mapName.end())
 				rocsUniquenessException("Factor class with name '%s' already exists in this set.", name.c_str()); // Yes, exception
 		}
@@ -140,7 +140,6 @@ FactorClass &FactorClassSet::addFactorClass(int id, std::string name,
 	else
 	{ // Name provided
 		map<int, FactorClass *>::iterator it1 = data()->mapId.find(id);
-		map<string, FactorClass *>::iterator it2 = data()->mapName.find(name);
 
 		if (it1 != data()->mapId.end())
 		{ // Id found
@@ -153,6 +152,7 @@ FactorClass &FactorClassSet::addFactorClass(int id, std::string name,
 		else
 		{ // Id not found
 			// Name exists?
+			map<string, FactorClass *>::iterator it2 = data()->mapName.find(name);
 			if (it2 != data()->mapName.end())
 				rocsUniquenessException("Factor class with name '%s' already exists in this set.", name.c_str()); // Yes, exception
 		}

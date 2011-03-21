@@ -29,38 +29,144 @@
 #define _ROCS_ML_FACTOR_H_
 
 #include "rocs/ml/FactorClass.h"
+#include "rocs/ml/Variable.h"
+#include <opencv2/core/core.hpp>
 
 namespace rocs {
 namespace ml {
 
 
-
-class Factor
+struct FactorData
 {
-
-	Factor(int id, std::string name, const FactorClass &factorClass):
-		_id(id), _name(name), _factorClass(factorClass)
+	FactorData(int id_, std::string name_, const FactorClass &factorClass_):
+		id(id_), name(name_), factorClass(factorClass_)
 	{}
 
-	Factor(int id, const FactorClass &factorClass):
-		_id(id), _factorClass(factorClass)
+	FactorData(int id_, std::string name_, const FactorClass &factorClass_,
+			const cv::Mat &potentials_):
+		id(id_), name(name_), factorClass(factorClass_),
+		potentials(potentials_)
 	{}
 
-	Factor(int id, std::string name, const FactorClass &factorClass, const cv::Mat &potentials):
-		_id(id), _name(name), _factorClass(factorClass), _potentials(potentials)
+	FactorData(int id_, std::string name_, const FactorClass &factorClass_,
+			const std::vector<Variable> &vars_):
+		id(id_), name(name_), factorClass(factorClass_), vars(vars_)
 	{}
 
-	Factor(int id, const FactorClass &factorClass, const cv::Mat &potentials):
-		_id(id), _factorClass(factorClass), _potentials(potentials)
+	FactorData(int id_, std::string name_, const FactorClass &factorClass_,
+			const std::vector<Variable> &vars_, const cv::Mat &potentials_):
+		id(id_), name(name_), factorClass(factorClass_),
+		vars(vars_), potentials(potentials_)
 	{}
 
 
-private:
+	int id;
+	std::string name;
+	FactorClass factorClass;
+	std::vector<Variable> vars;
+	cv::Mat potentials;
+};
 
-	int _id;
-	std::string _name;
-	FactorClass _factorClass;
-	cv::Mat _potentials;
+
+class Factor: public core::ShallowCopyable<FactorData>
+{
+public:
+
+	Factor(int id, std::string name, const FactorClass &factorClass,
+		   const std::vector<Variable> &vars):
+		SC(new FactorData(id, name, factorClass, vars))
+	{}
+
+	Factor(int id, const FactorClass &factorClass,
+		   const std::vector<Variable> &vars):
+		SC(new FactorData(id, std::string(), factorClass, vars))
+	{}
+
+	Factor(int id, std::string name, const FactorClass &factorClass,
+		   const std::vector<Variable> &vars, const cv::Mat &potentials):
+		SC(new FactorData(id, name, factorClass, vars, potentials))
+	{}
+
+	Factor(int id, const FactorClass &factorClass,
+		   const std::vector<Variable> &vars, const cv::Mat &potentials):
+		SC(new FactorData(id, std::string(), factorClass, vars, potentials))
+	{}
+
+
+	Factor(int id, std::string name, const FactorClass &factorClass,
+		   const Variable &var):
+		SC(new FactorData(id, name, factorClass))
+	{
+		data()->vars.push_back(var);
+	}
+
+	Factor(int id, const FactorClass &factorClass,
+		   const Variable &var):
+		SC(new FactorData(id, std::string(), factorClass))
+	{
+		data()->vars.push_back(var);
+	}
+
+	Factor(int id, std::string name, const FactorClass &factorClass,
+		   const Variable &var, const cv::Mat &potentials):
+		SC(new FactorData(id, name, factorClass, potentials))
+	{
+		data()->vars.push_back(var);
+	}
+
+	Factor(int id, const FactorClass &factorClass,
+		   const Variable &var, const cv::Mat &potentials):
+		SC(new FactorData(id, std::string(), factorClass, potentials))
+	{
+		data()->vars.push_back(var);
+	}
+
+
+	Factor(int id, std::string name, const FactorClass &factorClass,
+		   const Variable &var1, const Variable &var2):
+		SC(new FactorData(id, name, factorClass))
+	{
+		data()->vars.push_back(var1);
+		data()->vars.push_back(var2);
+	}
+
+	Factor(int id, const FactorClass &factorClass,
+		   const Variable &var1, const Variable &var2):
+		SC(new FactorData(id, std::string(), factorClass))
+	{
+		data()->vars.push_back(var1);
+		data()->vars.push_back(var2);
+	}
+
+	Factor(int id, std::string name, const FactorClass &factorClass,
+		   const Variable &var1, const Variable &var2, const cv::Mat &potentials):
+		SC(new FactorData(id, name, factorClass, potentials))
+	{
+		data()->vars.push_back(var1);
+		data()->vars.push_back(var2);
+	}
+
+	Factor(int id, const FactorClass &factorClass,
+		   const Variable &var1, const Variable &var2, const cv::Mat &potentials):
+		SC(new FactorData(id, std::string(), factorClass, potentials))
+	{
+		data()->vars.push_back(var1);
+		data()->vars.push_back(var2);
+	}
+
+
+	std::string name() const
+	{ return data()->name; }
+
+	int id() const
+	{ return data()->id; }
+
+	const FactorClass &factorClass()
+	{ return data()->factorClass; }
+
+	const cv::Mat &potentials()
+	{ return data()->potentials; }
+
 };
 
 
