@@ -42,117 +42,200 @@ struct FactorData
 		id(id_), name(name_), factorClass(factorClass_)
 	{}
 
-	FactorData(int id_, std::string name_, const FactorClass &factorClass_,
-			const cv::Mat &potentials_):
-		id(id_), name(name_), factorClass(factorClass_),
-		potentials(potentials_)
+	FactorData(int id_, std::string name_, const std::vector<Variable> &vars_,
+			const FactorClass &factorClass_):
+		id(id_), name(name_), vars(vars_), factorClass(factorClass_)
 	{}
-
-	FactorData(int id_, std::string name_, const FactorClass &factorClass_,
-			const std::vector<Variable> &vars_):
-		id(id_), name(name_), factorClass(factorClass_), vars(vars_)
-	{}
-
-	FactorData(int id_, std::string name_, const FactorClass &factorClass_,
-			const std::vector<Variable> &vars_, const cv::Mat &potentials_):
-		id(id_), name(name_), factorClass(factorClass_),
-		vars(vars_), potentials(potentials_)
-	{}
-
 
 	int id;
 	std::string name;
-	FactorClass factorClass;
 	std::vector<Variable> vars;
-	cv::Mat potentials;
+	FactorClass factorClass;
+	size_t stateCount;
+	bool hasClass;
 };
 
 
+/*!
+ *
+ */
 class Factor: public core::ShallowCopyable<FactorData>
 {
 public:
 
-	Factor(int id, std::string name, const FactorClass &factorClass,
-		   const std::vector<Variable> &vars):
-		SC(new FactorData(id, name, factorClass, vars))
-	{}
-
-	Factor(int id, const FactorClass &factorClass,
-		   const std::vector<Variable> &vars):
-		SC(new FactorData(id, std::string(), factorClass, vars))
-	{}
-
-	Factor(int id, std::string name, const FactorClass &factorClass,
-		   const std::vector<Variable> &vars, const cv::Mat &potentials):
-		SC(new FactorData(id, name, factorClass, vars, potentials))
-	{}
-
-	Factor(int id, const FactorClass &factorClass,
-		   const std::vector<Variable> &vars, const cv::Mat &potentials):
-		SC(new FactorData(id, std::string(), factorClass, vars, potentials))
-	{}
-
-
-	Factor(int id, std::string name, const FactorClass &factorClass,
-		   const Variable &var):
-		SC(new FactorData(id, name, factorClass))
+	// Accepts variable vector & factor class
+	Factor(int id, const std::vector<Variable> &vars,
+			const FactorClass &factorClass):
+		SC(new FactorData(id, std::string(), vars, factorClass))
 	{
-		data()->vars.push_back(var);
+		// Check if the variables match the factor class
+		rocsAssert(vars.size() == factorClass.variableClasses().size())
+		for (size_t i=0; i<vars.size(); ++i)
+			rocsAssert(vars[i].stateCount() == factorClass.variableClasses()[i].stateCount());
+
+		calculateStateCount();
 	}
 
-	Factor(int id, const FactorClass &factorClass,
-		   const Variable &var):
+	Factor(int id, std::string name, const std::vector<Variable> &vars,
+		   const FactorClass &factorClass):
+		SC(new FactorData(id, name, vars, factorClass))
+	{
+		// Check if the variables match the factor class
+		rocsAssert(vars.size() == factorClass.variableClasses().size())
+		for (size_t i=0; i<vars.size(); ++i)
+			rocsAssert(vars[i].stateCount() == factorClass.variableClasses()[i].stateCount());
+
+		calculateStateCount();
+	}
+
+	// Accepts variable vector & potentials - creates own class
+	Factor(int id, const std::vector<Variable> &vars,
+			const cv::Mat &potentials):
+		SC(new FactorData(id, std::string(), vars,
+				FactorClass(-1, extractClasses(vars), potentials)))
+	{
+		// Check if the variables match the factor class
+		rocsAssert(potentials.type() == CV_64F);
+		size_t potentialsDims = (potentials.size[1])?static_cast<size_t>(potentials.dims):1;
+		rocsAssert(vars.size() == potentialsDims);
+		for (size_t i=0; i<vars.size(); ++i)
+			rocsAssert(vars[i].stateCount() == static_cast<size_t>(potentials.size[i]));
+
+		calculateStateCount();
+	}
+
+	Factor(int id, std::string name, const std::vector<Variable> &vars,
+			const cv::Mat &potentials):
+		SC(new FactorData(id, name, vars,
+				FactorClass(-1, extractClasses(vars), potentials)))
+	{
+		// Check if the variables match the factor class
+		rocsAssert(potentials.type() == CV_64F);
+		size_t potentialsDims = (potentials.size[1])?static_cast<size_t>(potentials.dims):1;
+		rocsAssert(vars.size() == potentialsDims);
+		for (size_t i=0; i<vars.size(); ++i)
+			rocsAssert(vars[i].stateCount() == static_cast<size_t>(potentials.size[i]));
+
+		calculateStateCount();
+	}
+
+
+	// Accepts single variable & factor class
+	Factor(int id, const Variable &var,
+			const FactorClass &factorClass):
 		SC(new FactorData(id, std::string(), factorClass))
 	{
+		// Check if the variables match the factor class
+		rocsAssert(factorClass.variableClasses().size() == 1)
+		rocsAssert(var.stateCount() == factorClass.variableClasses()[0].stateCount());
+
 		data()->vars.push_back(var);
+		calculateStateCount();
 	}
 
-	Factor(int id, std::string name, const FactorClass &factorClass,
-		   const Variable &var, const cv::Mat &potentials):
-		SC(new FactorData(id, name, factorClass, potentials))
-	{
-		data()->vars.push_back(var);
-	}
-
-	Factor(int id, const FactorClass &factorClass,
-		   const Variable &var, const cv::Mat &potentials):
-		SC(new FactorData(id, std::string(), factorClass, potentials))
-	{
-		data()->vars.push_back(var);
-	}
-
-
-	Factor(int id, std::string name, const FactorClass &factorClass,
-		   const Variable &var1, const Variable &var2):
+	Factor(int id, std::string name, const Variable &var,
+			const FactorClass &factorClass):
 		SC(new FactorData(id, name, factorClass))
 	{
-		data()->vars.push_back(var1);
-		data()->vars.push_back(var2);
+		// Check if the variables match the factor class
+		rocsAssert(factorClass.variableClasses().size() == 1)
+		rocsAssert(var.stateCount() == factorClass.variableClasses()[0].stateCount());
+
+		data()->vars.push_back(var);
+		calculateStateCount();
 	}
 
-	Factor(int id, const FactorClass &factorClass,
-		   const Variable &var1, const Variable &var2):
+	// Accepts single variable & potentials - own class
+	Factor(int id, const Variable &var, const cv::Mat &potentials):
+		SC(new FactorData(id, std::string(), FactorClass(-1, var.variableClass(), potentials)))
+	{
+		// Check if the variables match the factor class
+		rocsAssert(potentials.type() == CV_64F);
+		size_t potentialsDims = (potentials.size[1])?static_cast<size_t>(potentials.dims):1;
+		rocsAssert(potentialsDims == 1);
+		rocsAssert(var.stateCount() == static_cast<size_t>(potentials.size[0]));
+
+		data()->vars.push_back(var);
+		calculateStateCount();
+	}
+
+	Factor(int id, std::string name, const Variable &var,
+			const cv::Mat &potentials):
+		SC(new FactorData(id, name, FactorClass(-1, var.variableClass(), potentials)))
+	{
+		// Check if the variables match the factor class
+		rocsAssert(potentials.type() == CV_64F);
+		size_t potentialsDims = (potentials.size[1])?static_cast<size_t>(potentials.dims):1;
+		rocsAssert(potentialsDims == 1);
+		rocsAssert(var.stateCount() == static_cast<size_t>(potentials.size[0]));
+
+		data()->vars.push_back(var);
+		calculateStateCount();
+	}
+
+
+	// Accepts two variables & factor class
+	Factor(int id, const Variable &var1, const Variable &var2,
+			const FactorClass &factorClass ):
 		SC(new FactorData(id, std::string(), factorClass))
 	{
+		// Check if the variables match the factor class
+		rocsAssert(factorClass.variableClasses().size() == 2)
+		rocsAssert(var1.stateCount() == factorClass.variableClasses()[0].stateCount());
+		rocsAssert(var2.stateCount() == factorClass.variableClasses()[1].stateCount());
+
 		data()->vars.push_back(var1);
 		data()->vars.push_back(var2);
+		calculateStateCount();
 	}
 
-	Factor(int id, std::string name, const FactorClass &factorClass,
-		   const Variable &var1, const Variable &var2, const cv::Mat &potentials):
-		SC(new FactorData(id, name, factorClass, potentials))
+	Factor(int id, std::string name, const Variable &var1, const Variable &var2,
+			const FactorClass &factorClass):
+		SC(new FactorData(id, name, factorClass))
 	{
+		// Check if the variables match the factor class
+		rocsAssert(factorClass.variableClasses().size() == 2)
+		rocsAssert(var1.stateCount() == factorClass.variableClasses()[0].stateCount());
+		rocsAssert(var2.stateCount() == factorClass.variableClasses()[1].stateCount());
+
 		data()->vars.push_back(var1);
 		data()->vars.push_back(var2);
+		calculateStateCount();
 	}
 
-	Factor(int id, const FactorClass &factorClass,
-		   const Variable &var1, const Variable &var2, const cv::Mat &potentials):
-		SC(new FactorData(id, std::string(), factorClass, potentials))
+	// Accepts two variables & potentials - own class
+	Factor(int id, const Variable &var1, const Variable &var2,
+			const cv::Mat &potentials):
+		SC(new FactorData(id, std::string(), FactorClass(-1, extractClasses(var1, var2), potentials)))
 	{
+		// Check if the variables match the factor class
+		rocsAssert(potentials.type() == CV_64F);
+		size_t potentialsDims = (potentials.size[1])?static_cast<size_t>(potentials.dims):1;
+		rocsAssert(potentialsDims == 2);
+		rocsAssert(var1.stateCount() == static_cast<size_t>(potentials.size[0]));
+		rocsAssert(var2.stateCount() == static_cast<size_t>(potentials.size[1]));
+
 		data()->vars.push_back(var1);
 		data()->vars.push_back(var2);
+		calculateStateCount();
 	}
+
+	Factor(int id, std::string name, const Variable &var1, const Variable &var2,
+			const cv::Mat &potentials):
+		SC(new FactorData(id, name, FactorClass(-1, extractClasses(var1, var2), potentials)))
+	{
+		// Check if the variables match the factor class
+		rocsAssert(potentials.type() == CV_64F);
+		size_t potentialsDims = (potentials.size[1])?static_cast<size_t>(potentials.dims):1;
+		rocsAssert(potentialsDims == 2);
+		rocsAssert(var1.stateCount() == static_cast<size_t>(potentials.size[0]));
+		rocsAssert(var2.stateCount() == static_cast<size_t>(potentials.size[1]));
+
+		data()->vars.push_back(var1);
+		data()->vars.push_back(var2);
+		calculateStateCount();
+	}
+
 
 
 	std::string name() const
@@ -161,12 +244,44 @@ public:
 	int id() const
 	{ return data()->id; }
 
-	const FactorClass &factorClass()
+	const FactorClass &factorClass() const
 	{ return data()->factorClass; }
 
-	const cv::Mat &potentials()
-	{ return data()->potentials; }
+	const cv::Mat &potentials() const
+	{ return data()->factorClass.potentials(); }
 
+	const std::vector<Variable> &variables() const
+	{ return data()->vars; }
+
+	size_t stateCount() const
+	{ return data()->stateCount; }
+
+
+private:
+
+	void calculateStateCount()
+	{
+		size_t stateCount = 1;
+		for(size_t i=0; i<data()->vars.size(); ++i)
+			stateCount*=data()->vars[i].stateCount();
+		data()->stateCount = stateCount;
+	}
+
+	std::vector<VariableClass> extractClasses(const std::vector<Variable> &vars) const
+	{
+		std::vector<VariableClass> vcs;
+		for (size_t i=0; i<vars.size(); ++i)
+			vcs.push_back(vars[i].variableClass());
+		return vcs;
+	}
+
+	std::vector<VariableClass> extractClasses(const Variable &var1, const Variable &var2) const
+	{
+		std::vector<VariableClass> vcs;
+		vcs.push_back(var1.variableClass());
+		vcs.push_back(var2.variableClass());
+		return vcs;
+	}
 };
 
 

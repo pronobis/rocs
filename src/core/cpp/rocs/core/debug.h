@@ -20,7 +20,7 @@
 
 /*!
  * Here we define the macros that print out debug messages when
- * ROCS_DEBUG_LEVEL is > 0.
+ * ROCS_MAX_DEBUG_LEVEL is > 0.
  *
  * \author Arnaud Ramey, Andrzej Pronobis
  * \file utils.h
@@ -37,8 +37,8 @@ namespace rocs {
 namespace core {
 
 // Debug level
-#ifndef ROCS_DEBUG_LEVEL
-	#define ROCS_DEBUG_LEVEL 0
+#ifndef ROCS_MAX_DEBUG_LEVEL
+	#define ROCS_MAX_DEBUG_LEVEL 0
 #endif
 
 /*! Stringified __LINE__ */
@@ -56,10 +56,10 @@ namespace core {
 
 /*!
  * Debugging macro including debug level. Prints out
- * debug messages when ROCS_DEBUG_LEVEL is > 0.
+ * debug messages when ROCS_MAX_DEBUG_LEVEL is > 0.
  */
 #define rocsDebug( level, ... ) { \
-	if ( ROCS_DEBUG_LEVEL >= level ) ROCS_DEBUG(__VA_ARGS__) \
+	if ( ROCS_MAX_DEBUG_LEVEL >= level ) ROCS_DEBUG(__VA_ARGS__) \
 }
 
 /*!

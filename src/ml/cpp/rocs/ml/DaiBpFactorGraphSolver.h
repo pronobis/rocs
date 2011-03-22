@@ -19,63 +19,67 @@
 // ==================================================================
 
 /*!
- * \file Variable.h
+ * libdai factor graph solver.
  *
- * \date Mar 19, 2011
  * \author Andrzej Pronobis
+ * \file DaiBpFactorGraphSolver.h
  */
 
-#ifndef _ROCS_ML_VARIABLE_H_
-#define _ROCS_ML_VARIABLE_H_
+#ifndef _ROCS_ML_DAIBPFACTORGRAPHSOLVER_H_
+#define _ROCS_ML_DAIBPFACTORGRAPHSOLVER_H_
 
-#include "rocs/ml/VariableClass.h"
+#include "rocs/ml/FactorGraphSolver.h"
+
+#define DAI_WITH_BP
+#include <dai/alldai.h>
 
 namespace rocs {
 namespace ml {
 
+class Factor;
 
 
-struct VariableData
-{
-	VariableData(int id_, std::string name_, const VariableClass &varClass_):
-		id(id_), name(name_), varClass(varClass_)
-	{}
-
-	int id;
-	std::string name;
-	VariableClass varClass;
-};
-
-
-class Variable: public core::ShallowCopyable<VariableData>
+class DaiBpFactorGraphSolver : public FactorGraphSolver
 {
 public:
 
-	Variable(int id, const VariableClass &varClass):
-		SC(new VariableData(id, std::string(), varClass))
+	DaiBpFactorGraphSolver(FactorGraph *fg);
+
+	virtual ~DaiBpFactorGraphSolver()
 	{}
 
-	Variable(int id, std::string name, const VariableClass &varClass):
-		SC(new VariableData(id, name, varClass))
-	{}
+	/*! Performs all inferences on the graph. */
+	virtual void solve();
 
-	std::string name() const
-	{ return data()->name; }
+	/*! Saves the graph in the DAI format to a file. */
+	void saveDaiGraph(std::string fileName);
 
-	int id() const
-	{ return data()->id; }
 
-	const VariableClass &variableClass() const
-	{ return data()->varClass; }
+	dai::PropertySet &daiOptions()
+	{ return _daiOptions; }
 
-	size_t stateCount() const
-	{ return data()->varClass.stateCount(); }
+
+private:
+
+	/*! Creates a single DAI factor and adds it to a list. */
+	void addDaiFactor(const Factor& factor);
+
+	/*! Creates the DAI graph. */
+	void prepareDaiGraph();
+
+
+private:
+
+	std::vector<dai::Factor> _factors;
+	dai::FactorGraph _factorGraph;
+	dai::BP _bp;
+    dai::PropertySet _daiOptions;
 
 };
 
 
-
 }
 }
 
-#endif /* _ROCS_ML_VARIABLE_H_ */
+#endif /** _ROCS_ML_DAIFACTORGRAPHSOLVER_H_ */
+

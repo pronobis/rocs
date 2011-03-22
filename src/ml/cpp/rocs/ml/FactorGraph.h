@@ -66,7 +66,7 @@ struct FactorGraphData
 /*!
  * Class defining a factor graph.
  * It requires a solver class to perform all the inferences on the graph.
-*/
+ */
 class FactorGraph : public core::ShallowCopyable<FactorGraphData>
 {
 public:
@@ -77,6 +77,12 @@ public:
 	/*! Iterator used to iterate over variables. */
 	typedef std::list<Variable>::iterator VariableIterator;
 
+	/*! Iterator used to iterate over factors. */
+	typedef std::list<Factor>::const_iterator ConstFactorIterator;
+
+	/*! Iterator used to iterate over variables. */
+	typedef std::list<Variable>::const_iterator ConstVariableIterator;
+
 
 public:
 
@@ -85,81 +91,107 @@ public:
 	{}
 
 
-	Factor &addFactor(int id, std::string name, const FactorClass &factorClass,
-			const std::vector<Variable> &vars);
-	Factor &addFactor(int id, std::string name, const FactorClass &factorClass,
-			const std::vector<Variable> &vars, const cv::Mat &potentials);
-	Factor &addFactor(int id, const FactorClass &factorClass,
-			const std::vector<Variable> &vars)
-	{ return addFactor(id, std::string(), factorClass, vars); }
-	Factor &addFactor(int id, const FactorClass &factorClass,
-			const std::vector<Variable> &vars, const cv::Mat &potentials)
-	{ return addFactor(id, std::string(), factorClass, vars, potentials); }
-	Factor &addFactor(std::string name, const FactorClass &factorClass,
-			const std::vector<Variable> &vars)
-	{ return addFactor(getUniqueFactorId(), name, factorClass, vars); }
-	Factor &addFactor(std::string name, const FactorClass &factorClass,
-			const std::vector<Variable> &vars, const cv::Mat &potentials)
-	{ return addFactor(getUniqueFactorId(), name, factorClass, vars, potentials); }
-	Factor &addFactor(const FactorClass &factorClass,
-			const std::vector<Variable> &vars)
-	{ return addFactor(getUniqueFactorId(), std::string(), factorClass, vars); }
-	Factor &addFactor(const FactorClass &factorClass,
-			const std::vector<Variable> &vars, const cv::Mat &potentials)
-	{ return addFactor(getUniqueFactorId(), std::string(), factorClass, vars, potentials); }
+public: // Factors
+
+	// Accepting vector of variables & factor class
+	Factor &addFactor(int id, std::string name, const std::vector<Variable> &vars,
+			const FactorClass &factorClass);
+
+	Factor &addFactor(int id, const std::vector<Variable> &vars,
+			const FactorClass &factorClass)
+		{ return addFactor(id, std::string(), vars, factorClass); }
+
+	Factor &addFactor(std::string name, const std::vector<Variable> &vars,
+			const FactorClass &factorClass)
+		{ return addFactor(getUniqueFactorId(), name, vars, factorClass); }
+
+	Factor &addFactor(const std::vector<Variable> &vars, const FactorClass &factorClass)
+		{ return addFactor(getUniqueFactorId(), std::string(), vars, factorClass); }
 
 
-	Factor &addFactor(int id, std::string name, const FactorClass &factorClass,
-			const Variable &var);
-	Factor &addFactor(int id, std::string name, const FactorClass &factorClass,
-			const Variable &var, const cv::Mat &potentials);
-	Factor &addFactor(int id, const FactorClass &factorClass,
-			const Variable &var)
-	{ return addFactor(id, std::string(), factorClass, var); }
-	Factor &addFactor(int id, const FactorClass &factorClass,
-			const Variable &var, const cv::Mat &potentials)
-	{ return addFactor(id, std::string(), factorClass, var, potentials); }
-	Factor &addFactor(std::string name, const FactorClass &factorClass,
-			const Variable &var)
-	{ return addFactor(getUniqueFactorId(), name, factorClass, var); }
-	Factor &addFactor(std::string name, const FactorClass &factorClass,
-			const Variable &var, const cv::Mat &potentials)
-	{ return addFactor(getUniqueFactorId(), name, factorClass, var, potentials); }
-	Factor &addFactor(const FactorClass &factorClass,
-			const Variable &var)
-	{ return addFactor(getUniqueFactorId(), std::string(), factorClass, var); }
-	Factor &addFactor(const FactorClass &factorClass,
-			const Variable &var, const cv::Mat &potentials)
-	{ return addFactor(getUniqueFactorId(), std::string(), factorClass, var, potentials); }
+	// Accepting vector of variables & potentials
+	Factor &addFactor(int id, std::string name,	const std::vector<Variable> &vars,
+			const cv::Mat &potentials);
+
+	Factor &addFactor(int id, const std::vector<Variable> &vars,
+			const cv::Mat &potentials)
+		{ return addFactor(id, std::string(), vars, potentials); }
+
+	Factor &addFactor(std::string name, const std::vector<Variable> &vars,
+			const cv::Mat &potentials)
+		{ return addFactor(getUniqueFactorId(), name, vars, potentials); }
+
+	Factor &addFactor(const std::vector<Variable> &vars,
+			const cv::Mat &potentials)
+		{ return addFactor(getUniqueFactorId(), std::string(), vars, potentials); }
 
 
-	Factor &addFactor(int id, std::string name, const FactorClass &factorClass,
-			const Variable &var1, const Variable &var2);
-	Factor &addFactor(int id, std::string name, const FactorClass &factorClass,
-			const Variable &var1, const Variable &var2, const cv::Mat &potentials);
-	Factor &addFactor(int id, const FactorClass &factorClass,
-			const Variable &var1, const Variable &var2)
-	{ return addFactor(id, std::string(), factorClass, var1, var2); }
-	Factor &addFactor(int id, const FactorClass &factorClass,
-			const Variable &var1, const Variable &var2, const cv::Mat &potentials)
-	{ return addFactor(id, std::string(), factorClass, var1, var2, potentials); }
-	Factor &addFactor(std::string name, const FactorClass &factorClass,
-			const Variable &var1, const Variable &var2)
-	{ return addFactor(getUniqueFactorId(), name, factorClass, var1, var2); }
-	Factor &addFactor(std::string name, const FactorClass &factorClass,
-			const Variable &var1, const Variable &var2, const cv::Mat &potentials)
-	{ return addFactor(getUniqueFactorId(), name, factorClass, var1, var2, potentials); }
-	Factor &addFactor(const FactorClass &factorClass,
-			const Variable &var1, const Variable &var2)
-	{ return addFactor(getUniqueFactorId(), std::string(), factorClass, var1, var2); }
-	Factor &addFactor(const FactorClass &factorClass,
-			const Variable &var1, const Variable &var2, const cv::Mat &potentials)
-	{ return addFactor(getUniqueFactorId(), std::string(), factorClass, var1, var2, potentials); }
+	// Accepting single variable & factor class
+	Factor &addFactor(int id, std::string name, const Variable &var,
+			const FactorClass &factorClass);
+
+	Factor &addFactor(int id, const Variable &var,
+			const FactorClass &factorClass)
+	{ return addFactor(id, std::string(), var, factorClass); }
+
+	Factor &addFactor(std::string name, const Variable &var,
+			const FactorClass &factorClass)
+	{ return addFactor(getUniqueFactorId(), name, var, factorClass); }
+
+	Factor &addFactor(const Variable &var, const FactorClass &factorClass)
+	{ return addFactor(getUniqueFactorId(), std::string(), var, factorClass); }
 
 
+	// Accepting single variable & potentials
+	Factor &addFactor(int id, std::string name, const Variable &var,
+			const cv::Mat &potentials);
+
+	Factor &addFactor(int id, const Variable &var,
+			const cv::Mat &potentials)
+	{ return addFactor(id, std::string(), var, potentials); }
+
+	Factor &addFactor(std::string name, const Variable &var,
+			const cv::Mat &potentials)
+	{ return addFactor(getUniqueFactorId(), name, var, potentials); }
+
+	Factor &addFactor(const Variable &var, const cv::Mat &potentials)
+	{ return addFactor(getUniqueFactorId(), std::string(), var, potentials); }
 
 
-	Variable &addVariable(const Variable &v);
+	// Accepting two variables & factor class
+	Factor &addFactor(int id, std::string name, const Variable &var1, const Variable &var2,
+			const FactorClass &factorClass);
+
+	Factor &addFactor(int id, const Variable &var1, const Variable &var2,
+			const FactorClass &factorClass)
+	{ return addFactor(id, std::string(), var1, var2, factorClass); }
+
+	Factor &addFactor(std::string name, const Variable &var1, const Variable &var2,
+			const FactorClass &factorClass)
+	{ return addFactor(getUniqueFactorId(), name, var1, var2, factorClass); }
+
+	Factor &addFactor(const Variable &var1, const Variable &var2,
+			const FactorClass &factorClass)
+	{ return addFactor(getUniqueFactorId(), std::string(), var1, var2, factorClass); }
+
+
+	// Accepting two variables & potentials
+	Factor &addFactor(int id, std::string name, const Variable &var1, const Variable &var2,
+			const cv::Mat &potentials);
+
+	Factor &addFactor(int id, const Variable &var1, const Variable &var2,
+			const cv::Mat &potentials)
+	{ return addFactor(id, std::string(), var1, var2, potentials); }
+
+	Factor &addFactor(std::string name, const Variable &var1, const Variable &var2,
+			const cv::Mat &potentials)
+	{ return addFactor(getUniqueFactorId(), name, var1, var2, potentials); }
+
+	Factor &addFactor(const Variable &var1, const Variable &var2, const cv::Mat &potentials)
+	{ return addFactor(getUniqueFactorId(), std::string(), var1, var2, potentials); }
+
+
+public: // Variables
 
 	Variable &addVariable(int id, std::string name, const VariableClass &varClass);
 
@@ -186,6 +218,12 @@ public:
 	FactorIterator factorEnd()
 	{ return data()->factors.end(); }
 
+	ConstFactorIterator factorBegin() const
+	{ return data()->factors.begin(); }
+
+	ConstFactorIterator factorEnd() const
+	{ return data()->factors.end(); }
+
 	Factor &factorFirst()
 	{ return data()->factors.front(); }
 
@@ -196,6 +234,12 @@ public:
 	{ return data()->vars.begin(); }
 
 	VariableIterator variableEnd()
+	{ return data()->vars.end(); }
+
+	ConstVariableIterator variableBegin() const
+	{ return data()->vars.begin(); }
+
+	ConstVariableIterator variableEnd() const
 	{ return data()->vars.end(); }
 
 	Variable &variableFirst()
@@ -217,8 +261,11 @@ private:
 
 	int getUniqueFactorId()
 	{
-		return data()->maxVariableId+1;
+		return data()->maxFactorId+1;
 	}
+
+	Factor *verifyFactorIdAndName(int it, std::string name);
+
 };
 
 

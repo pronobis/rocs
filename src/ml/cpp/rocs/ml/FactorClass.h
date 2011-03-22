@@ -69,26 +69,79 @@ public:
 	FactorClass(int id, std::vector<VariableClass> varClasses,
 			    const cv::Mat &potentials) :
 				SC(new FactorClassData(id, std::string(), varClasses, potentials))
-	{}
-
+	{
+		// Check if the variables classes match the potentials
+		rocsAssert(potentials.type() == CV_64F);
+		size_t potentialsDims = (potentials.size[1])?static_cast<size_t>(potentials.dims):1;
+		rocsAssert(varClasses.size() == potentialsDims);
+		for (size_t i=0; i<varClasses.size(); ++i)
+			rocsAssert(varClasses[i].stateCount() == static_cast<size_t>(potentials.size[i]));
+	}
 
 	FactorClass(int id, std::string name, std::vector<VariableClass> varClasses,
 		        const cv::Mat &potentials) :
 		    	SC(new FactorClassData(id, name, varClasses, potentials))
-	{}
+	{
+		// Check if the variables classes match the potentials
+		rocsAssert(potentials.type() == CV_64F);
+		size_t potentialsDims = (potentials.size[1])?static_cast<size_t>(potentials.dims):1;
+		rocsAssert(varClasses.size() == potentialsDims);
+		for (size_t i=0; i<varClasses.size(); ++i)
+			rocsAssert(varClasses[i].stateCount() == static_cast<size_t>(potentials.size[i]));
+	}
 
+	FactorClass(int id, const VariableClass &varClass,
+		        const cv::Mat &potentials) :
+		    	SC(new FactorClassData(id, std::string(), potentials))
+	{
+		// Check if the variables classes match the potentials
+		rocsAssert(potentials.type() == CV_64F);
+		size_t potentialsDims = (potentials.size[1])?static_cast<size_t>(potentials.dims):1;
+		rocsAssert(potentialsDims == 1);
+		rocsAssert(varClass.stateCount() == static_cast<size_t>(potentials.size[0]));
+
+		data()->varClasses.push_back(varClass);
+	}
 
 	FactorClass(int id, std::string name, const VariableClass &varClass,
 		        const cv::Mat &potentials) :
 		    	SC(new FactorClassData(id, name, potentials))
 	{
+		// Check if the variables classes match the potentials
+		rocsAssert(potentials.type() == CV_64F);
+		size_t potentialsDims = (potentials.size[1])?static_cast<size_t>(potentials.dims):1;
+		rocsAssert(potentialsDims == 1);
+		rocsAssert(varClass.stateCount() == static_cast<size_t>(potentials.size[0]));
+
 		data()->varClasses.push_back(varClass);
+	}
+
+	FactorClass(int id, const VariableClass &varClass1,
+			const VariableClass &varClass2, const cv::Mat &potentials) :
+		    	SC(new FactorClassData(id, std::string(), potentials))
+	{
+		// Check if the variables classes match the potentials
+		rocsAssert(potentials.type() == CV_64F);
+		size_t potentialsDims = (potentials.size[1])?static_cast<size_t>(potentials.dims):1;
+		rocsAssert(potentialsDims == 2);
+		rocsAssert(varClass1.stateCount() == static_cast<size_t>(potentials.size[0]));
+		rocsAssert(varClass2.stateCount() == static_cast<size_t>(potentials.size[1]));
+
+		data()->varClasses.push_back(varClass1);
+		data()->varClasses.push_back(varClass2);
 	}
 
 	FactorClass(int id, std::string name, const VariableClass &varClass1,
 			const VariableClass &varClass2, const cv::Mat &potentials) :
 		    	SC(new FactorClassData(id, name, potentials))
 	{
+		// Check if the variables classes match the potentials
+		rocsAssert(potentials.type() == CV_64F);
+		size_t potentialsDims = (potentials.size[1])?static_cast<size_t>(potentials.dims):1;
+		rocsAssert(potentialsDims == 2);
+		rocsAssert(varClass1.stateCount() == static_cast<size_t>(potentials.size[0]));
+		rocsAssert(varClass2.stateCount() == static_cast<size_t>(potentials.size[1]));
+
 		data()->varClasses.push_back(varClass1);
 		data()->varClasses.push_back(varClass2);
 	}
@@ -110,11 +163,11 @@ public:
 	{ return data()->id; }
 
 
-	const cv::Mat &potentials()
+	const cv::Mat &potentials() const
 	{ return data()->potentials; }
 
 
-	const std::vector<VariableClass> &variableClasses()
+	const std::vector<VariableClass> &variableClasses() const
 	{ return data()->varClasses; }
 
 };

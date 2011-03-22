@@ -19,63 +19,52 @@
 // ==================================================================
 
 /*!
- * \file Variable.h
+ * Factor graph solver interface.
  *
- * \date Mar 19, 2011
  * \author Andrzej Pronobis
+ * \file FactorGraphSolver.h
  */
 
-#ifndef _ROCS_ML_VARIABLE_H_
-#define _ROCS_ML_VARIABLE_H_
-
-#include "rocs/ml/VariableClass.h"
+#ifndef _ROCS_ML_FACTORGRAPHSOLVER_H_
+#define _ROCS_ML_FACTORGRAPHSOLVER_H_
 
 namespace rocs {
 namespace ml {
 
 
-
-struct VariableData
-{
-	VariableData(int id_, std::string name_, const VariableClass &varClass_):
-		id(id_), name(name_), varClass(varClass_)
-	{}
-
-	int id;
-	std::string name;
-	VariableClass varClass;
-};
+class FactorGraph;
 
 
-class Variable: public core::ShallowCopyable<VariableData>
+/*!
+ * Interface of a generic factor graph solver.
+ */
+class FactorGraphSolver
 {
 public:
 
-	Variable(int id, const VariableClass &varClass):
-		SC(new VariableData(id, std::string(), varClass))
+	FactorGraphSolver(const FactorGraph *fg): _graph(fg)
 	{}
 
-	Variable(int id, std::string name, const VariableClass &varClass):
-		SC(new VariableData(id, name, varClass))
-	{}
+	virtual ~FactorGraphSolver()
+	{};
 
-	std::string name() const
-	{ return data()->name; }
+	void setGraph(const FactorGraph *fg)
+	{ _graph = fg; }
 
-	int id() const
-	{ return data()->id; }
+	virtual void solve() = 0;
 
-	const VariableClass &variableClass() const
-	{ return data()->varClass; }
+	const FactorGraph *graph() const
+	{ return _graph; }
 
-	size_t stateCount() const
-	{ return data()->varClass.stateCount(); }
+
+private:
+
+	const FactorGraph *_graph;
 
 };
 
 
-
 }
 }
 
-#endif /* _ROCS_ML_VARIABLE_H_ */
+#endif /** _ROCS_ML_FACTORGRAPHSOLVER_H_ */

@@ -34,37 +34,14 @@ namespace ml {
 
 
 // ---------------------------------------------
-Factor &FactorGraph::addFactor(int id, std::string name, const FactorClass &factorClass,
-		const std::vector<Variable> &vars)
+Factor &FactorGraph::addFactor(int id, std::string name, const std::vector<Variable> &vars,
+		const FactorClass &factorClass)
 {
-	// Was name provided?
-	if (name.empty())
-	{
-		// Id exists?
-		map<int, Factor *>::iterator it = data()->mapFactorId.find(id);
-		if (it != data()->mapFactorId.end())
-			return *(it->second); // Yes, return
-	}
-	else
-	{ // Name provided
-		map<int, Factor *>::iterator it1 = data()->mapFactorId.find(id);
+	rocsDebug3("Adding FactorGraph factor id:%d name:'%s'.", id, name.c_str());
 
-		if (it1 != data()->mapFactorId.end())
-		{ // Id found
-			// Name matches?
-			if (it1->second->name() == name)
-				return *(it1->second); // Yes, return
-			else
-				rocsUniquenessException("Factor with ID '%d' already exists in this pool.", id); // No, exception
-		}
-		else
-		{ // Id not found
-			// Name exists?
-			map<string, Factor *>::iterator it2 = data()->mapFactorName.find(name);
-			if (it2 != data()->mapFactorName.end())
-				rocsUniquenessException("Factor with name '%s' already exists in this set.", name.c_str()); // Yes, exception
-		}
-	}
+	Factor *factor=verifyFactorIdAndName(id, name);
+	if (factor)
+		return *factor;
 
 	// Check if the variables exist
 	for (size_t i=0; i<vars.size(); ++i)
@@ -72,7 +49,7 @@ Factor &FactorGraph::addFactor(int id, std::string name, const FactorClass &fact
 			rocsError("Variable id:%d does not exist in the graph.", vars[i].id());
 
 	// Create a new class
-	data()->factors.push_back(Factor(id, name, factorClass, vars));
+	data()->factors.push_back(Factor(id, name, vars, factorClass));
 	Factor &f = factorLast();
 	data()->mapFactorId[id] = &f;
 	if (!name.empty())
@@ -84,37 +61,14 @@ Factor &FactorGraph::addFactor(int id, std::string name, const FactorClass &fact
 
 
 // ---------------------------------------------
-Factor &FactorGraph::addFactor(int id, std::string name, const FactorClass &factorClass,
-		const std::vector<Variable> &vars, const cv::Mat &potentials)
+Factor &FactorGraph::addFactor(int id, std::string name, const std::vector<Variable> &vars,
+		const cv::Mat &potentials)
 {
-	// Was name provided?
-	if (name.empty())
-	{
-		// Id exists?
-		map<int, Factor *>::iterator it = data()->mapFactorId.find(id);
-		if (it != data()->mapFactorId.end())
-			return *(it->second); // Yes, return
-	}
-	else
-	{ // Name provided
-		map<int, Factor *>::iterator it1 = data()->mapFactorId.find(id);
+	rocsDebug3("Adding FactorGraph factor id:%d name:'%s'.", id, name.c_str());
 
-		if (it1 != data()->mapFactorId.end())
-		{ // Id found
-			// Name matches?
-			if (it1->second->name() == name)
-				return *(it1->second); // Yes, return
-			else
-				rocsUniquenessException("Factor with ID '%d' already exists in this pool.", id); // No, exception
-		}
-		else
-		{ // Id not found
-			// Name exists?
-			map<string, Factor *>::iterator it2 = data()->mapFactorName.find(name);
-			if (it2 != data()->mapFactorName.end())
-				rocsUniquenessException("Factor with name '%s' already exists in this set.", name.c_str()); // Yes, exception
-		}
-	}
+	Factor * factor = verifyFactorIdAndName(id, name);
+	if (factor)
+		return *factor;
 
 	// Check if the variables exist
 	for (size_t i=0; i<vars.size(); ++i)
@@ -122,7 +76,7 @@ Factor &FactorGraph::addFactor(int id, std::string name, const FactorClass &fact
 			rocsError("Variable id:%d does not exist in the graph.", vars[i].id());
 
 	// Create a new class
-	data()->factors.push_back(Factor(id, name, factorClass, vars, potentials));
+	data()->factors.push_back(Factor(id, name, vars, potentials));
 	Factor &f = factorLast();
 	data()->mapFactorId[id] = &f;
 	if (!name.empty())
@@ -135,44 +89,21 @@ Factor &FactorGraph::addFactor(int id, std::string name, const FactorClass &fact
 
 
 // ---------------------------------------------
-Factor &FactorGraph::addFactor(int id, std::string name, const FactorClass &factorClass,
-		const Variable &var)
+Factor &FactorGraph::addFactor(int id, std::string name, const Variable &var,
+		const FactorClass &factorClass)
 {
-	// Was name provided?
-	if (name.empty())
-	{
-		// Id exists?
-		map<int, Factor *>::iterator it = data()->mapFactorId.find(id);
-		if (it != data()->mapFactorId.end())
-			return *(it->second); // Yes, return
-	}
-	else
-	{ // Name provided
-		map<int, Factor *>::iterator it1 = data()->mapFactorId.find(id);
+	rocsDebug3("Adding FactorGraph factor id:%d name:'%s'.", id, name.c_str());
 
-		if (it1 != data()->mapFactorId.end())
-		{ // Id found
-			// Name matches?
-			if (it1->second->name() == name)
-				return *(it1->second); // Yes, return
-			else
-				rocsUniquenessException("Factor with ID '%d' already exists in this pool.", id); // No, exception
-		}
-		else
-		{ // Id not found
-			// Name exists?
-			map<string, Factor *>::iterator it2 = data()->mapFactorName.find(name);
-			if (it2 != data()->mapFactorName.end())
-				rocsUniquenessException("Factor with name '%s' already exists in this set.", name.c_str()); // Yes, exception
-		}
-	}
+	Factor * factor = verifyFactorIdAndName(id, name);
+	if (factor)
+		return *factor;
 
 	// Check if the variables exist
 	if (!variableExists(var.id()))
 		rocsError("Variable id:%d does not exist in the graph.", var.id());
 
 	// Create a new class
-	data()->factors.push_back(Factor(id, name, factorClass, var));
+	data()->factors.push_back(Factor(id, name, var, factorClass));
 	Factor &f = factorLast();
 	data()->mapFactorId[id] = &f;
 	if (!name.empty())
@@ -184,44 +115,21 @@ Factor &FactorGraph::addFactor(int id, std::string name, const FactorClass &fact
 
 
 // ---------------------------------------------
-Factor &FactorGraph::addFactor(int id, std::string name, const FactorClass &factorClass,
-		const Variable &var, const cv::Mat &potentials)
+Factor &FactorGraph::addFactor(int id, std::string name, const Variable &var,
+		const cv::Mat &potentials)
 {
-	// Was name provided?
-	if (name.empty())
-	{
-		// Id exists?
-		map<int, Factor *>::iterator it = data()->mapFactorId.find(id);
-		if (it != data()->mapFactorId.end())
-			return *(it->second); // Yes, return
-	}
-	else
-	{ // Name provided
-		map<int, Factor *>::iterator it1 = data()->mapFactorId.find(id);
+	rocsDebug3("Adding FactorGraph factor id:%d name:'%s'.", id, name.c_str());
 
-		if (it1 != data()->mapFactorId.end())
-		{ // Id found
-			// Name matches?
-			if (it1->second->name() == name)
-				return *(it1->second); // Yes, return
-			else
-				rocsUniquenessException("Factor with ID '%d' already exists in this pool.", id); // No, exception
-		}
-		else
-		{ // Id not found
-			// Name exists?
-			map<string, Factor *>::iterator it2 = data()->mapFactorName.find(name);
-			if (it2 != data()->mapFactorName.end())
-				rocsUniquenessException("Factor with name '%s' already exists in this set.", name.c_str()); // Yes, exception
-		}
-	}
+	Factor * factor = verifyFactorIdAndName(id, name);
+	if (factor)
+		return *factor;
 
 	// Check if the variables exist
 	if (!variableExists(var.id()))
 		rocsError("Variable id:%d does not exist in the graph.", var.id());
 
 	// Create a new class
-	data()->factors.push_back(Factor(id, name, factorClass, var, potentials));
+	data()->factors.push_back(Factor(id, name, var, potentials));
 	Factor &f = factorLast();
 	data()->mapFactorId[id] = &f;
 	if (!name.empty())
@@ -234,37 +142,14 @@ Factor &FactorGraph::addFactor(int id, std::string name, const FactorClass &fact
 
 
 // ---------------------------------------------
-Factor &FactorGraph::addFactor(int id, std::string name, const FactorClass &factorClass,
-		const Variable &var1, const Variable &var2)
+Factor &FactorGraph::addFactor(int id, std::string name, const Variable &var1, const Variable &var2,
+		const FactorClass &factorClass)
 {
-	// Was name provided?
-	if (name.empty())
-	{
-		// Id exists?
-		map<int, Factor *>::iterator it = data()->mapFactorId.find(id);
-		if (it != data()->mapFactorId.end())
-			return *(it->second); // Yes, return
-	}
-	else
-	{ // Name provided
-		map<int, Factor *>::iterator it1 = data()->mapFactorId.find(id);
+	rocsDebug3("Adding FactorGraph factor id:%d name:'%s'.", id, name.c_str());
 
-		if (it1 != data()->mapFactorId.end())
-		{ // Id found
-			// Name matches?
-			if (it1->second->name() == name)
-				return *(it1->second); // Yes, return
-			else
-				rocsUniquenessException("Factor with ID '%d' already exists in this pool.", id); // No, exception
-		}
-		else
-		{ // Id not found
-			// Name exists?
-			map<string, Factor *>::iterator it2 = data()->mapFactorName.find(name);
-			if (it2 != data()->mapFactorName.end())
-				rocsUniquenessException("Factor with name '%s' already exists in this set.", name.c_str()); // Yes, exception
-		}
-	}
+	Factor * factor = verifyFactorIdAndName(id, name);
+	if (factor)
+		return *factor;
 
 	// Check if the variables exist
 	if (!variableExists(var1.id()))
@@ -273,7 +158,7 @@ Factor &FactorGraph::addFactor(int id, std::string name, const FactorClass &fact
 		rocsError("Variable id:%d does not exist in the graph.", var2.id());
 
 	// Create a new class
-	data()->factors.push_back(Factor(id, name, factorClass, var1, var2));
+	data()->factors.push_back(Factor(id, name, var1, var2, factorClass));
 	Factor &f = factorLast();
 	data()->mapFactorId[id] = &f;
 	if (!name.empty())
@@ -285,37 +170,14 @@ Factor &FactorGraph::addFactor(int id, std::string name, const FactorClass &fact
 
 
 // ---------------------------------------------
-Factor &FactorGraph::addFactor(int id, std::string name, const FactorClass &factorClass,
-		const Variable &var1, const Variable &var2, const cv::Mat &potentials)
+Factor &FactorGraph::addFactor(int id, std::string name, const Variable &var1, const Variable &var2,
+		const cv::Mat &potentials)
 {
-	// Was name provided?
-	if (name.empty())
-	{
-		// Id exists?
-		map<int, Factor *>::iterator it = data()->mapFactorId.find(id);
-		if (it != data()->mapFactorId.end())
-			return *(it->second); // Yes, return
-	}
-	else
-	{ // Name provided
-		map<int, Factor *>::iterator it1 = data()->mapFactorId.find(id);
+	rocsDebug3("Adding FactorGraph factor id:%d name:'%s'.", id, name.c_str());
 
-		if (it1 != data()->mapFactorId.end())
-		{ // Id found
-			// Name matches?
-			if (it1->second->name() == name)
-				return *(it1->second); // Yes, return
-			else
-				rocsUniquenessException("Factor with ID '%d' already exists in this pool.", id); // No, exception
-		}
-		else
-		{ // Id not found
-			// Name exists?
-			map<string, Factor *>::iterator it2 = data()->mapFactorName.find(name);
-			if (it2 != data()->mapFactorName.end())
-				rocsUniquenessException("Factor with name '%s' already exists in this set.", name.c_str()); // Yes, exception
-		}
-	}
+	Factor * factor = verifyFactorIdAndName(id, name);
+	if (factor)
+		return *factor;
 
 	// Check if the variables exist
 	if (!variableExists(var1.id()))
@@ -324,7 +186,7 @@ Factor &FactorGraph::addFactor(int id, std::string name, const FactorClass &fact
 		rocsError("Variable id:%d does not exist in the graph.", var2.id());
 
 	// Create a new class
-	data()->factors.push_back(Factor(id, name, factorClass, var1, var2, potentials));
+	data()->factors.push_back(Factor(id, name, var1, var2, potentials));
 	Factor &f = factorLast();
 	data()->mapFactorId[id] = &f;
 	if (!name.empty())
@@ -338,6 +200,8 @@ Factor &FactorGraph::addFactor(int id, std::string name, const FactorClass &fact
 // ---------------------------------------------
 Variable &FactorGraph::addVariable(int id, std::string name, const VariableClass &varClass)
 {
+	rocsDebug3("Adding FactorGraph variable id:%d name:'%s'.", id, name.c_str());
+
 	// Was name provided?
 	if (name.empty())
 	{
@@ -379,6 +243,40 @@ Variable &FactorGraph::addVariable(int id, std::string name, const VariableClass
 }
 
 
+// ---------------------------------------------
+Factor *FactorGraph::verifyFactorIdAndName(int id, std::string name)
+{
+	// Was name provided?
+	if (name.empty())
+	{
+		// Id exists?
+		map<int, Factor *>::iterator it = data()->mapFactorId.find(id);
+		if (it != data()->mapFactorId.end())
+			return (it->second); // Yes, return
+	}
+	else
+	{ // Name provided
+		map<int, Factor *>::iterator it1 = data()->mapFactorId.find(id);
+
+		if (it1 != data()->mapFactorId.end())
+		{ // Id found
+			// Name matches?
+			if (it1->second->name() == name)
+				return (it1->second); // Yes, return
+			else
+				rocsUniquenessException("Factor with ID '%d' already exists in this pool.", id); // No, exception
+		}
+		else
+		{ // Id not found
+			// Name exists?
+			map<string, Factor *>::iterator it2 = data()->mapFactorName.find(name);
+			if (it2 != data()->mapFactorName.end())
+				rocsUniquenessException("Factor with name '%s' already exists in this set.", name.c_str()); // Yes, exception
+		}
+	}
+
+	return 0;
+}
 
 
 }

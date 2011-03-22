@@ -14,6 +14,7 @@ if(ROCS_BUILD_MODULE_CONCEPT)
 	add_rocs_cpp_app(evaluate_scene 
 		SOURCES evaluate_scene.cc
 		LINK_MODULES concept ml core)
+	set_property(TARGET rocs_evaluate_scene PROPERTY COMPILE_FLAGS "-Wno-deprecated")
 
 	# Tests
 	add_rocs_cpp_test_suite(graph)

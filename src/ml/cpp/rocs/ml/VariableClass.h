@@ -208,7 +208,6 @@ public:
 	std::string name() const
 	{ return data()->name; }
 
-
 	/*!
 	 * Returns the ID of the variable class.
 	 * @return ID of the variable class.
