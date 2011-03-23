@@ -71,9 +71,9 @@ void DaiBpFactorGraphSolver::addDaiFactor(const Factor& factor)
 	dai::VarSet daiVarSet;
 	const vector<Variable> &vars = factor.variables();
 	vector<dai::Var> daiVars;
-	for(size_t i=0; i<vars.size(); ++i)
+	for(size_t i=vars.size(); i>0; --i)
 	{
-		dai::Var var(vars[i].id(), vars[i].stateCount());
+		dai::Var var(vars[i-1].id(), vars[i-1].stateCount());
 		daiVars.push_back(var);
 		daiVarSet.insert(var);
 	}
@@ -82,10 +82,7 @@ void DaiBpFactorGraphSolver::addDaiFactor(const Factor& factor)
 	dai::Factor daiFactor(daiVarSet);
 	dai::Permute daiPermute(daiVars, true);
 	size_t stateCount = factor.stateCount();
-	cv::Mat transposed = factor.potentials().t();
-	transposed.clone();
 	const double * potentials = reinterpret_cast<double*>(factor.potentials().data);
-	cout<<transposed.size[0]<<" "<<transposed.size[1]<<" "<<stateCount<<" " << potentials << endl;
 	for (size_t li = 0; li < stateCount; ++li)
 		daiFactor.set(daiPermute.convertLinearIndex(li), potentials[li]);
 
