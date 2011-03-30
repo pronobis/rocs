@@ -84,5 +84,5 @@ def LoadConceptualGraph(path):
 
 def LoadSequences(paths=glob.glob('../../../data/samples/ConceptualGraph/*')):
   for path in paths:
-    yield ConcetualGraph(path)
+    yield LoadConcetualGraph(path)
 
