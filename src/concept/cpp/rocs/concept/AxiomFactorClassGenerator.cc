@@ -37,33 +37,6 @@ namespace concept {
 using namespace ml;
 
 
-void recurseSupportRequirement(cv::Mat &potentials, int *indices, int depth, int maxDepth)
-{
-  if (depth > maxDepth) {
-    potentials.at<double>(indices) = 0;
-  }
-  else {
-    //Case: ~ONt(z,y)
-    indices[depth*3] = 0;  	//~ONt(zn,y)
-    indices[depth*3+1] = 0;    	//~ON(x,zn)
-    indices[depth*3+2] = 0;  	//~IN(x,zn)
-    recurseSupportRequirement(potentials, indices, depth+3, maxDepth);
-    indices[depth*3+1] = 1;    	//ON(x,zn)
-    recurseSupportRequirement(potentials, indices, depth+3, maxDepth);
-    indices[depth*3+1] = 0;    	//~ON(x,zn)
-    indices[depth*3+2] = 1;  	//IN(x,zn)
-    recurseSupportRequirement(potentials, indices, depth+3, maxDepth);
-    indices[depth*3+1] = 1;    	//ON(x,zn)
-    recurseSupportRequirement(potentials, indices, depth+3, maxDepth);
-
-    // ONt(z,y) and ~ON(x,z) and ~IN(x,z)) (case when ~ONt(z,y) already covered above)
-    indices[depth*3] = 1;
-    indices[depth*3+1] = 0;
-    indices[depth*3+2] = 0;
-    recurseSupportRequirement(potentials, indices, depth+3, maxDepth);
-  }
-}
-
 void AxiomFactorClassGenerator::generate(size_t inCount, size_t ontCount, size_t onCount)
 {
   {
@@ -159,51 +132,57 @@ void AxiomFactorClassGenerator::generate(size_t inCount, size_t ontCount, size_t
     _containmentSupportsFactorClass = &_fcs->addFactorClass(classes, containmentSupportsPotentials);
   }
 
-  if (0)
-  {
-    int dimensions = inCount + ontCount + onCount;
-    int *sizes = new int[dimensions];
-    for (int i = 0; i < dimensions; i++) {
-      sizes[i] = 2;
-    }
-    cv::Mat directSupportRequiredPotentials(dimensions, sizes, CV_64F);
-    directSupportRequiredPotentials.setTo(1);
-
-    //For all (x,y)
-    // If ONt(x,y) and ~ON(x,y)
-    //  For all z1
-    //   if (~ONt(z,y) or (~ON(x,z) and ~IN(x,z)))
-    //    For all z2...
-    //      ...
-    //      set false
-
-    std::vector<ml::VariableClass>classes;
-    //classes filled out as follows:
-    //ONt(x,y) (LHS),
-    //ON(x,y) (RHS),
-    //IN(x,y),
-    //ONt(z1,y)		
-    //ON(x,z1) 		
-    //IN(x,z1) 		
-    //ONt(z2,y) ...//excluding ONt(x,y)
-    //ON(x,z2)     //excluding ON(x,y)
-    //IN(x,z2)     //excluding IN(x,y)
-    for(int i = 0; i < dimensions; i+=3) {
-      classes.push_back(*_ontRelationVariableClass);
-      classes.push_back(*_onRelationVariableClass);
-      classes.push_back(*_inRelationVariableClass);
-    }
-
-    int *indices = new int[dimensions];
-    indices[0] = 1;//ONt(x,y)
-    indices[1] = 0;//~ON(x,y)
-    indices[2] = 0;//~IN(x,y)
-    recurseSupportRequirement(directSupportRequiredPotentials, indices, 3, dimensions);
-    indices[2] = 1;//IN(x,y)
-    recurseSupportRequirement(directSupportRequiredPotentials, indices, 3, dimensions);
-
-    _directSupportRequiredFactorClass = &_fcs->addFactorClass(classes, directSupportRequiredPotentials);
-  }
+//  if (0)
+//  {
+//    cv::Mat directSupportRequiredPotentials(dimensions, sizes, CV_64F);
+//    directSupportRequiredPotentials.setTo(1);
+//
+//    //For all (x,y)
+//    // If ONt(x,y) and ~ON(x,y)
+//    //  For all z1
+//    //   if (~ONt(z,y) or (~ON(x,z) and ~IN(x,z)))
+//    //    For all z2...
+//    //      ...
+//    //      set false
+//
+//    std::vector<ml::VariableClass>classes;
+//    //classes filled out as follows:
+//    //ONt(x,y) (LHS),
+//    //ON(x,y) (RHS),
+//    //IN(x,y),
+//    //inCount-1 IN(x,z) relations
+//    //onCount-1 ON(x,z) relations
+//    //ontCount-1 ONt(z,y) relations
+//    //ONt(z2,y) ...//excluding ONt(x,y)
+//    //ON(x,z2)     //excluding ON(x,y)
+//    //IN(x,z2)     //excluding IN(x,y)
+//    classes.push_back(*_ontRelationVariableClass);
+//    classes.push_back(*_onRelationVariableClass);
+//    classes.push_back(*_inRelationVariableClass);
+//    for(int i = 0; i < inCount-1; i++) {
+//      classes.push_back(*_inRelationVariableClass);
+//    }
+//    for(int i = 0; i < onCount-1; i++) {
+//      classes.push_back(*_onRelationVariableClass);
+//    }
+//    for(int i = 0; i < ontCount-1; i++) {
+//      classes.push_back(*_ontRelationVariableClass);
+//    }
+//
+//
+//    int *indices = new int[dimensions];
+//    indices[0] = 1;//ONt(x,y)
+//    indices[1] = 0;//~ON(x,y)
+//    indices[2] = 0;//~IN(x,y)
+//    recurseSupportRequirement(directSupportRequiredPotentials,
+//	Ont_zmap, On_zmap, In_zmap,
+//	indices, 3, 
+//	dimensions);
+//    indices[2] = 1;//IN(x,y)
+//    recurseSupportRequirement(directSupportRequiredPotentials, indices, 3, dimensions);
+//
+//    _directSupportRequiredFactorClass = &_fcs->addFactorClass(classes, directSupportRequiredPotentials);
+//  }
 
   if(0)
   {
