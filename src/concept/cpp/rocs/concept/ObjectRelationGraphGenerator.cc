@@ -31,7 +31,7 @@
 #include "rocs/ml/FactorGraph.h"
 #include "rocs/ml/FactorClassSet.h"
 #include "rocs/ml/VariableClassSet.h"
-
+#include <set>
 
 namespace rocs {
 namespace concept {
@@ -121,6 +121,141 @@ void ObjectRelationGraphGenerator::createObjectRelationVariables()
 
 		}
 	}
+}
+
+//Given: list of zs
+//Given: map from z to ONt(zn,y) ID
+//Given: map from z to ON(x,zn) ID
+//Given: map from z to IN(x,zn) ID
+
+void recurseSupportRequirement_In(cv::Mat &potentials, 
+    bool dontcare,
+    map<string, int> &Ont_zmap, 
+    map<string, int> &On_zmap, 
+    map<string, int> &In_zmap,
+    int *indices,
+    set<string> &zVals,
+    set<string>::iterator zIt);
+void recurseSupportRequirement_On(cv::Mat &potentials, 
+    bool dontcare,
+    map<string, int> &Ont_zmap, 
+    map<string, int> &On_zmap, 
+    map<string, int> &In_zmap,
+    int *indices,
+    set<string> &zVals,
+    set<string>::iterator zIt);
+void recurseSupportRequirement_Ont(cv::Mat &potentials, 
+    map<string, int> &Ont_zmap, 
+    map<string, int> &On_zmap, 
+    map<string, int> &In_zmap,
+    int *indices,
+    set<string> &zVals,
+    set<string>::iterator zIt)
+{
+  if (zIt == zVals.end()) {
+    potentials.at<double>(indices) = 0;
+  }
+  else if (Ont_zmap.count(*zIt) > 0) {
+    // If there is an ONt(z,y) relation
+    int index = Ont_zmap[*zIt];
+    indices[index] = 0; //Set it to false
+    // Go on to vary ON(x,zn), with don't-care
+    recurseSupportRequirement_On(potentials, true,
+	Ont_zmap, On_zmap, In_zmap, indices, zVals, zIt);
+
+    // Now set it ONt(z,y) to true,
+    indices[index] = 1;
+    // Go on to vary ON(x,zn), without don't-care
+    recurseSupportRequirement_On(potentials, false,
+	Ont_zmap, On_zmap, In_zmap, indices, zVals, zIt);
+  }
+  else {
+    // No ONt(z,y) relation exists
+    // Don't set any index, but recurse as if it had been 0
+    // Go on to vary ON(x,zn), with don't-care
+    recurseSupportRequirement_On(potentials, true,
+	Ont_zmap, On_zmap, In_zmap, indices, zVals, zIt);
+  }
+}
+
+void recurseSupportRequirement_On(cv::Mat &potentials, 
+    bool dontcare,
+    map<string, int> &Ont_zmap, 
+    map<string, int> &On_zmap, 
+    map<string, int> &In_zmap,
+    int *indices,
+    set<string> &zVals,
+    set<string>::iterator zIt)
+{
+  if (On_zmap.count(*zIt) > 0) {
+    // If there is an ON(z,y) relation
+    int index = On_zmap[*zIt];
+
+    if (dontcare) {
+      // Doesn't matter what the value is; recurse for both 0 and 1
+      indices[index] = 0;
+      recurseSupportRequirement_In(potentials, false,
+	  Ont_zmap, On_zmap, In_zmap, indices, zVals, zIt);
+      indices[index] = 1;
+      recurseSupportRequirement_In(potentials, false,
+	  Ont_zmap, On_zmap, In_zmap, indices, zVals, zIt);
+    }
+    else {
+      // We care about the value of ON(x,z) and IN(x,z). They must both be 0
+      // or this state is not forbidden.
+      indices[index] = 0; //Set it to false
+      // Go on to vary ON(x,zn), without don't-care
+      recurseSupportRequirement_In(potentials, true,
+	  Ont_zmap, On_zmap, In_zmap, indices, zVals, zIt);
+    }
+  }
+  else {
+    // No relation exists; recurse but set no index
+    recurseSupportRequirement_In(potentials, dontcare,
+	Ont_zmap, On_zmap, In_zmap, indices, zVals, zIt);
+  }
+}
+
+void recurseSupportRequirement_In(cv::Mat &potentials, 
+    bool dontcare,
+    map<string, int> &Ont_zmap, 
+    map<string, int> &On_zmap, 
+    map<string, int> &In_zmap,
+    int *indices,
+    set<string> &zVals,
+    set<string>::iterator zIt)
+{
+  if (In_zmap.count(*zIt) > 0) {
+    // If there is an IN(z,y) relation
+    int index = In_zmap[*zIt];
+
+    if (dontcare) {
+      // Doesn't matter what the value is; recurse for both 0 and 1
+      indices[index] = 0;
+      // Go on to vary the next z
+      zIt++;
+      recurseSupportRequirement_Ont(potentials,
+	  Ont_zmap, On_zmap, In_zmap, indices, zVals, zIt);
+      indices[index] = 1;
+      recurseSupportRequirement_Ont(potentials, 
+	  Ont_zmap, On_zmap, In_zmap, indices, zVals, zIt);
+    }
+    else {
+      // We care about the value of IN(x,z). It must be 0
+      // or this state is not forbidden.
+      indices[index] = 0; //Set it to false
+      // Go on to vary the next z
+      zIt++;
+      recurseSupportRequirement_Ont(potentials,
+	  Ont_zmap, On_zmap, In_zmap, indices, zVals, zIt);
+    }
+  }
+  else {
+    // No relation exists; recurse but set no index
+    zIt++;
+    recurseSupportRequirement_Ont(potentials, 
+	Ont_zmap, On_zmap, In_zmap, indices, zVals, zIt);
+  }
 }
 
 
@@ -263,57 +398,125 @@ void ObjectRelationGraphGenerator::createAxiomFactors()
 			}
 		}
 	}
+
+
+
+
+//void recurseSupportRequirement(cv::Mat &potentials, int *indices, int depth, int maxDepth)
+//{
+//  if (depth > maxDepth) {
+//    potentials.at<double>(indices) = 0;
+//  }
+//  else {
+//    // If there is a ONt(z,y) relation,
+//    // 
+//    
+//    if (
+//    //Case: ~ONt(z,y)
+//    indices[depth*3] = 0;  	//~ONt(zn,y)
+//    
+//
+//    indices[depth*3+1] = 0;    	//~ON(x,zn)
+//    indices[depth*3+2] = 0;  	//~IN(x,zn)
+//    recurseSupportRequirement(potentials, indices, depth+3, maxDepth);
+//    indices[depth*3+1] = 1;    	//ON(x,zn)
+//    recurseSupportRequirement(potentials, indices, depth+3, maxDepth);
+//    indices[depth*3+1] = 0;    	//~ON(x,zn)
+//    indices[depth*3+2] = 1;  	//IN(x,zn)
+//    recurseSupportRequirement(potentials, indices, depth+3, maxDepth);
+//    indices[depth*3+1] = 1;    	//ON(x,zn)
+//    recurseSupportRequirement(potentials, indices, depth+3, maxDepth);
+//
+//    // ONt(z,y) and ~ON(x,z) and ~IN(x,z)) (case when ~ONt(z,y) already covered above)
+//    indices[depth*3] = 1;
+//    indices[depth*3+1] = 0;
+//    indices[depth*3+2] = 0;
+//    recurseSupportRequirement(potentials, indices, depth+3, maxDepth);
+//  }
+//}
+
 	// (10)
-
-
-
-
-
-/*
+	// ONt(x,y)
 	for (size_t i=0; i<_ontRelations.size(); ++i)
 	{
-		Relation &rOnt1 = _ontRelations[i];
-		Relation *rOn1 = findOnRelation(rOnt1.object1Id, rOnt1.object2Id);
-		Relation *rIn1 = findInRelation(rOnt1.object1Id, rOnt1.object2Id);
+	  Relation &rOnt1 = _ontRelations[i];
+	  Relation *rOn1 = findOnRelation(rOnt1.object1Id, rOnt1.object2Id);
+	  Relation *rIn1 = findInRelation(rOnt1.object1Id, rOnt1.object2Id);
+	  const string & x = rOnt1.object1Id;
+	  const string & y = rOnt1.object2Id;
 
-		for (size_t k=0; k<)
+	  int inCount = _inRelations.size();
+	  int onCount = _onRelations.size();
+	  int ontCount = _ontRelations.size();
+	  int dimensions = inCount + ontCount + onCount;
+	  int *sizes = new int[dimensions];
+	  int *indices = new int[dimensions];
+	  for (int i = 0; i < dimensions; i++) {
+	    sizes[i] = 2;
+	  }
+	  cv::Mat directSupportRequiredPotentials(dimensions, sizes, CV_64F);
+	  directSupportRequiredPotentials.setTo(1);
 
+	  vector<Variable> varVect;
+	  varVect.push_back(*rOnt1.variable);
+	  varVect.push_back(*rOn1->variable);
+	  varVect.push_back(*rIn1->variable);
+
+	  // Maps from z object ID to the index number 
+	  map<string, int> Ont_zmap;
+	  map<string, int> On_zmap;
+	  map<string, int> In_zmap;
+
+	  // Look for all ONt(z,y)
+	  int variableIndex = 3;
+	  set<string> zVals;
+	  for (int i = 0; i < ontCount; i++) {
+	    if (_ontRelations[i].object2Id == y &&
+		_ontRelations[i].object1Id != x) {
+	      string z = _ontRelations[i].object1Id;
+	      zVals.insert(z);
+	      Ont_zmap[z] = variableIndex;
+	      varVect.push_back(*_ontRelations[i].variable);
+	      variableIndex++;
+	    }
+	  }
+	  // Look for all ON(x,z)
+	  for (int i = 0; i < onCount; i++) {
+	    if (_onRelations[i].object1Id == x &&
+		_onRelations[i].object2Id != y) {
+	      string z = _onRelations[i].object2Id;
+	      zVals.insert(z);
+	      On_zmap[z] = variableIndex;
+	      varVect.push_back(*_onRelations[i].variable);
+	      variableIndex++;
+	    }
+	  }
+	  // Look for all IN(x,z)
+	  for (int i = 0; i < inCount; i++) {
+	    if (_inRelations[i].object1Id == x &&
+		_inRelations[i].object2Id != y) {
+	      string z = _inRelations[i].object2Id;
+	      zVals.insert(z);
+	      In_zmap[z] = i;
+	      varVect.push_back(*_inRelations[i].variable);
+	      variableIndex++;
+	    }
+	  }
+
+	  indices[0] = 1; //ONt(x,y)
+	  indices[1] = 0; //~ON(x,y)
+	  indices[2] = 0; //~IN(x,y)
+	  recurseSupportRequirement_Ont(directSupportRequiredPotentials,
+	      Ont_zmap, On_zmap, In_zmap,
+	      indices, zVals, zVals.begin());
+	  indices[2] = 1; //~IN(x,y)
+	  recurseSupportRequirement_Ont(directSupportRequiredPotentials,
+	      Ont_zmap, On_zmap, In_zmap,
+	      indices, zVals, zVals.begin());
+
+
+	  _fg->addFactor(varVect, directSupportRequiredPotentials);
 	}
-
-
-
-
-
-
-	for (size_t i=0; i<_inRelations.size(); ++i)
-	{
-		Relation &r1 = _inRelations[i];
-		for (size_t j=0; j<_ontRelations.size(); ++j)
-		{
-			Relation &r2 = _ontRelations[j];
-			if (r1.object2Id == r2.object1Id)
-			{
-				vector<Variable> varVect;
-				varVect.push_back(*r1.variable);
-				varVect.push_back(*r2.variable);
-				varVect.push_back(*(findOntRelation(r1.object1Id, r2.object2Id)->variable));
-
-				_fg->addFactor(varVect, _axiomFactorGraphGenerator->containmentSupportsFactorClass());
-			}
-		}
-	}
-
-
-*/
-
-
-
-
-
-
-
-
-
 }
 
 
