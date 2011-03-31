@@ -77,7 +77,12 @@ private:
 
 	ml::FactorClassSet *_fcs;
 
-	ml::FactorClass *_supportIrreflexiveFactorClass;
+	ml::FactorClass *_supportAntisymmetricalFactorClass;
+	ml::FactorClass *_containmentAntisymmetricalFactorClass;
+	ml::FactorClass *_supportImpliesTransitiveSupportFactorClass;
+	ml::FactorClass *_supportTransitiveFactorClass;
+	ml::FactorClass *_containmentTransitiveFactorClass;
+
 };
 
 

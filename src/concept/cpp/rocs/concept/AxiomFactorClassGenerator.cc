@@ -38,9 +38,83 @@ using namespace ml;
 
 void AxiomFactorClassGenerator::generate()
 {
-	cv::Mat supportIrreflexivePotentials;
-	_supportIrreflexiveFactorClass = &_fcs->addFactorClass(*_ontRelationVariableClass,
-			*_ontRelationVariableClass, supportIrreflexivePotentials);
+  {
+    int sizes[] = {2, 2};
+    cv::Mat supportAntisymmetricalPotentials(2, sizes, CV_64F);
+    supportAntisymmetricalPotentials.setTo(1);
+    int indices[] = {1,1};
+    supportAntisymmetricalPotentials.at(indices) = 0;
+
+    _supportAntisymmetricalFactorClass = &_fcs->addFactorClass(*_ontRelationVariableClass,
+	*_ontRelationVariableClass, supportAntisymmetricalPotentials);
+  }
+
+  {
+    int sizes[] = {2, 2};
+    cv::Mat containmentAntisymmetricalPotentials(2, sizes, CV_64F);
+    containmentAntisymmetricalPotentials.setTo(1);
+    int indices[] = {1,1};
+    containmentAntisymmetricalPotentials.at(indices) = 0;
+
+    _containmentAntisymmetricalFactorClass = &_fcs->addFactorClass(*_ontRelationVariableClass,
+	*_ontRelationVariableClass, containmentAntisymmetricalPotentials);
+  }
+
+  {
+    int sizes[] = {2, 2};
+    cv::Mat supportImpliesTransitiveSupportPotentials(2, sizes, CV_64F);
+    supportImpliesTransitiveSupportPotentials.setTo(1);
+    int indices[] = {1,0};
+    supportImpliesTransitiveSupportPotentials.at(indices) = 0;
+
+    _supportImpliesTransitiveSupportFactorClass = &_fcs->addFactorClass(*_onRelationVariableClass,
+	*_ontRelationVariableClass, supportImpliesTransitiveSupportFactorClass);
+  }
+
+  {
+    int sizes[] = {2, 2, 2};
+    cv::Mat supportTransitivePotentials(3, sizes, CV_64F);
+    supportTransitivePotentials.setTo(1);
+    int indices[] = {1,1,0};//Forbid true, true, false case
+    supportTransitivePotentials.at(indices) = 0;
+
+    std::vector<ml::FactorClass *>classes;
+    classes.push_back(_ontRelationVariableClass);
+    classes.push_back(_ontRelationVariableClass);
+    classes.push_back(_ontRelationVariableClass);
+
+    _supportTransitiveFactorClass = &_fcs->addFactorClass(classes, supportTransitivePotentials);
+  }
+
+  {
+    int sizes[] = {2, 2, 2};
+    cv::Mat containmentTransitivePotentials(3, sizes, CV_64F);
+    containmentTransitivePotentials.setTo(1);
+    int indices[] = {1,1,0};//Forbid true, true, false case
+    containmentTransitivePotentials.at(indices) = 0;
+
+    std::vector<ml::FactorClass *>classes;
+    classes.push_back(_inRelationVariableClass);
+    classes.push_back(_inRelationVariableClass);
+    classes.push_back(_inRelationVariableClass);
+
+    _containmentTransitiveFactorClass = &_fcs->addFactorClass(classes, containmentTransitivePotentials);
+  }
+
+  {
+    int sizes[] = {2, 2, 2};
+    cv::Mat generousContainmentPotentials(3, sizes, CV_64F);
+    generousContainmentPotentials.setTo(1);
+    int indices[] = {1,1,0};//Forbid true, true, false case
+    generousContainmentPotentials.at(indices) = 0;
+
+    std::vector<ml::FactorClass *>classes;
+    classes.push_back(_ontRelationVariableClass);
+    classes.push_back(_inRelationVariableClass);
+    classes.push_back(_inRelationVariableClass);
+
+    _generousContainmentFactorClass = &_fcs->addFactorClass(classes, generousContainmentPotentials);
+  }
 }
 
 
