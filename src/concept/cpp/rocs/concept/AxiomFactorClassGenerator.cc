@@ -37,6 +37,33 @@ namespace concept {
 using namespace ml;
 
 
+void recurseSupportRequirement(cv::Mat &potentials, int *indices, int depth, int maxDepth)
+{
+  if (depth > maxDepth) {
+    potentials.at<double>(indices) = 0;
+  }
+  else {
+    //Case: ~ONt(z,y)
+    indices[depth*3] = 0;  	//~ONt(zn,y)
+    indices[depth*3+1] = 0;    	//~ON(x,zn)
+    indices[depth*3+2] = 0;  	//~IN(x,zn)
+    recurseSupportRequirement(potentials, indices, depth+3, maxDepth);
+    indices[depth*3+1] = 1;    	//ON(x,zn)
+    recurseSupportRequirement(potentials, indices, depth+3, maxDepth);
+    indices[depth*3+1] = 0;    	//~ON(x,zn)
+    indices[depth*3+2] = 1;  	//IN(x,zn)
+    recurseSupportRequirement(potentials, indices, depth+3, maxDepth);
+    indices[depth*3+1] = 1;    	//ON(x,zn)
+    recurseSupportRequirement(potentials, indices, depth+3, maxDepth);
+
+    // ONt(z,y) and ~ON(x,z) and ~IN(x,z)) (case when ~ONt(z,y) already covered above)
+    indices[depth*3] = 1;
+    indices[depth*3+1] = 0;
+    indices[depth*3+2] = 0;
+    recurseSupportRequirement(potentials, indices, depth+3, maxDepth);
+  }
+}
+
 void AxiomFactorClassGenerator::generate(size_t inCount, size_t ontCount, size_t onCount)
 {
   {
@@ -44,7 +71,7 @@ void AxiomFactorClassGenerator::generate(size_t inCount, size_t ontCount, size_t
     cv::Mat supportAntisymmetricalPotentials(2, sizes, CV_64F);
     supportAntisymmetricalPotentials.setTo(1);
     int indices[] = {1,1};
-    supportAntisymmetricalPotentials.at(indices) = 0;
+    supportAntisymmetricalPotentials.at<double>(indices) = 0;
 
     _supportAntisymmetricalFactorClass = &_fcs->addFactorClass(*_ontRelationVariableClass,
 	*_ontRelationVariableClass, supportAntisymmetricalPotentials);
@@ -55,7 +82,7 @@ void AxiomFactorClassGenerator::generate(size_t inCount, size_t ontCount, size_t
     cv::Mat containmentAntisymmetricalPotentials(2, sizes, CV_64F);
     containmentAntisymmetricalPotentials.setTo(1);
     int indices[] = {1,1};
-    containmentAntisymmetricalPotentials.at(indices) = 0;
+    containmentAntisymmetricalPotentials.at<double>(indices) = 0;
 
     _containmentAntisymmetricalFactorClass = &_fcs->addFactorClass(*_ontRelationVariableClass,
 	*_ontRelationVariableClass, containmentAntisymmetricalPotentials);
@@ -66,10 +93,10 @@ void AxiomFactorClassGenerator::generate(size_t inCount, size_t ontCount, size_t
     cv::Mat supportImpliesTransitiveSupportPotentials(2, sizes, CV_64F);
     supportImpliesTransitiveSupportPotentials.setTo(1);
     int indices[] = {1,0};
-    supportImpliesTransitiveSupportPotentials.at(indices) = 0;
+    supportImpliesTransitiveSupportPotentials.at<double>(indices) = 0;
 
     _supportImpliesTransitiveSupportFactorClass = &_fcs->addFactorClass(*_onRelationVariableClass,
-	*_ontRelationVariableClass, supportImpliesTransitiveSupportFactorClass);
+	*_ontRelationVariableClass, supportImpliesTransitiveSupportPotentials);
   }
 
   {
@@ -77,12 +104,12 @@ void AxiomFactorClassGenerator::generate(size_t inCount, size_t ontCount, size_t
     cv::Mat supportTransitivePotentials(3, sizes, CV_64F);
     supportTransitivePotentials.setTo(1);
     int indices[] = {1,1,0};//Forbid true, true, false case
-    supportTransitivePotentials.at(indices) = 0;
+    supportTransitivePotentials.at<double>(indices) = 0;
 
-    std::vector<ml::FactorClass *>classes;
-    classes.push_back(_ontRelationVariableClass);
-    classes.push_back(_ontRelationVariableClass);
-    classes.push_back(_ontRelationVariableClass);
+    std::vector<ml::VariableClass>classes;
+    classes.push_back(*_ontRelationVariableClass);
+    classes.push_back(*_ontRelationVariableClass);
+    classes.push_back(*_ontRelationVariableClass);
 
     _supportTransitiveFactorClass = &_fcs->addFactorClass(classes, supportTransitivePotentials);
   }
@@ -92,12 +119,12 @@ void AxiomFactorClassGenerator::generate(size_t inCount, size_t ontCount, size_t
     cv::Mat containmentTransitivePotentials(3, sizes, CV_64F);
     containmentTransitivePotentials.setTo(1);
     int indices[] = {1,1,0};//Forbid true, true, false case
-    containmentTransitivePotentials.at(indices) = 0;
+    containmentTransitivePotentials.at<double>(indices) = 0;
 
-    std::vector<ml::FactorClass *>classes;
-    classes.push_back(_inRelationVariableClass);
-    classes.push_back(_inRelationVariableClass);
-    classes.push_back(_inRelationVariableClass);
+    std::vector<ml::VariableClass>classes;
+    classes.push_back(*_inRelationVariableClass);
+    classes.push_back(*_inRelationVariableClass);
+    classes.push_back(*_inRelationVariableClass);
 
     _containmentTransitiveFactorClass = &_fcs->addFactorClass(classes, containmentTransitivePotentials);
   }
@@ -107,12 +134,12 @@ void AxiomFactorClassGenerator::generate(size_t inCount, size_t ontCount, size_t
     cv::Mat generousContainmentPotentials(3, sizes, CV_64F);
     generousContainmentPotentials.setTo(1);
     int indices[] = {1,1,0};//Forbid true, true, false case
-    generousContainmentPotentials.at(indices) = 0;
+    generousContainmentPotentials.at<double>(indices) = 0;
 
-    std::vector<ml::FactorClass *>classes;
-    classes.push_back(_ontRelationVariableClass);
-    classes.push_back(_inRelationVariableClass);
-    classes.push_back(_inRelationVariableClass);
+    std::vector<ml::VariableClass>classes;
+    classes.push_back(*_ontRelationVariableClass);
+    classes.push_back(*_inRelationVariableClass);
+    classes.push_back(*_inRelationVariableClass);
 
     _generousContainmentFactorClass = &_fcs->addFactorClass(classes, generousContainmentPotentials);
   }
@@ -122,12 +149,12 @@ void AxiomFactorClassGenerator::generate(size_t inCount, size_t ontCount, size_t
     cv::Mat containmentSupportsPotentials(3, sizes, CV_64F);
     containmentSupportsPotentials.setTo(1);
     int indices[] = {1,1,0};//Forbid true, true, false case
-    containmentSupportsPotentials.at(indices) = 0;
+    containmentSupportsPotentials.at<double>(indices) = 0;
 
-    std::vector<ml::FactorClass *>classes;
-    classes.push_back(_inRelationVariableClass);
-    classes.push_back(_ontRelationVariableClass);
-    classes.push_back(_ontRelationVariableClass);
+    std::vector<ml::VariableClass>classes;
+    classes.push_back(*_inRelationVariableClass);
+    classes.push_back(*_ontRelationVariableClass);
+    classes.push_back(*_ontRelationVariableClass);
 
     _containmentSupportsFactorClass = &_fcs->addFactorClass(classes, containmentSupportsPotentials);
   }
@@ -138,15 +165,44 @@ void AxiomFactorClassGenerator::generate(size_t inCount, size_t ontCount, size_t
     for (int i = 0; i < dimensions; i++) {
       sizes[i] = 2;
     }
-    cv::Mat directSupportRequiredPotentials(dimension, sizes, CV_64F);
+    cv::Mat directSupportRequiredPotentials(dimensions, sizes, CV_64F);
     directSupportRequiredPotentials.setTo(1);
 
-    //Forbidden IFF:
-    //not ON(x,y) AND
-    //for ALL z, 
+    //For all (x,y)
+    // If ONt(x,y) and ~ON(x,y)
+    //  For all z1
+    //   if (~ONt(z,y) or (~ON(x,z) and ~IN(x,z)))
+    //    For all z2...
+    //      ...
+    //      set false
+
+      //Assuming here that each relation in onRelationVariableClass
+      //has the same ordinal as the corresponding one in ontRelationVariableClass.
+
+      std::vector<ml::VariableClass>classes;
+      //classes filled out as follows:
+      //ONt(x,y) (LHS),
+      //ON(x,y) (RHS),
+      //IN(x,y),
+      //ONt(z1,y) ... ONt(zn,y) //excluding ONt(x,y)
+      //ON(x,z1) ... ON(x,zn) //excluding ON(x,y)
+      //IN(x,z1) ... IN(x,z1) //excluding IN(x,y)
+      for(int i = 0; i < dimensions; i+=3) {
+	classes.push_back(*_ontRelationVariableClass);
+	classes.push_back(*_onRelationVariableClass);
+	classes.push_back(*_inRelationVariableClass);
+      }
+
+      int *indices = new int[dimensions];
+      indices[0] = 1;//ONt(x,y)
+      indices[1] = 0;//~ON(x,y)
+      indices[2] = 0;//~IN(x,y)
+      recurseSupportRequirement(directSupportRequiredPotentials, indices, 3, dimensions);
+      indices[2] = 1;//IN(x,y)
+      recurseSupportRequirement(directSupportRequiredPotentials, indices, 3, dimensions);
   }
 }
 
 
-}
-}
+};
+};
