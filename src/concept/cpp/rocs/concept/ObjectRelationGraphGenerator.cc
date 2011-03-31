@@ -90,32 +90,32 @@ void ObjectRelationGraphGenerator::createObjectRelationVariables()
 			string &o2 = _objects[j];
 
 			// On
-			if (!onExceptionMatches(o1, o2))
+			if ((o1!=o2) && (!onExceptionMatches(o1, o2)))
 			{
 				Relation r;
 				r.object1Id = o1;
 				r.object2Id = o2;
-				r.variable = &_fg->addVariable(*_onRelationVariableClass);
+				r.variable = &_fg->addVariable(r.object1Id+"-on-"+r.object2Id,*_onRelationVariableClass);
 				_onRelations.push_back(r);
 			}
 
 			// Ont
-			if (!ontExceptionMatches(o1, o2))
+			if ((o1!=o2) && (!ontExceptionMatches(o1, o2)))
 			{
 				Relation r;
 				r.object1Id = o1;
 				r.object2Id = o2;
-				r.variable = &_fg->addVariable(*_ontRelationVariableClass);
+				r.variable = &_fg->addVariable(r.object1Id+"-ont-"+r.object2Id,*_ontRelationVariableClass);
 				_ontRelations.push_back(r);
 			}
 
 			// In
-			if (!inExceptionMatches(o1, o2))
+			if ((o1!=o2) && (!inExceptionMatches(o1, o2)))
 			{
 				Relation r;
 				r.object1Id = o1;
 				r.object2Id = o2;
-				r.variable = &_fg->addVariable(*_inRelationVariableClass);
+				r.variable = &_fg->addVariable(r.object1Id+"-in-"+r.object2Id,*_inRelationVariableClass);
 				_inRelations.push_back(r);
 			}
 
@@ -126,7 +126,193 @@ void ObjectRelationGraphGenerator::createObjectRelationVariables()
 
 void ObjectRelationGraphGenerator::createAxiomFactors()
 {
-	// We go through all the relation variables and create all proper factors.
+	// Basic axioms
+	// (3)
+	for (size_t i=0; i<_ontRelations.size(); ++i)
+	{
+		Relation &r1 = _ontRelations[i];
+		for (size_t j=i+1; j<_ontRelations.size(); ++j)
+		{
+			Relation &r2 = _ontRelations[j];
+			if ((r1.object1Id == r2.object2Id) && (r1.object2Id== r2.object1Id))
+			{
+				_fg->addFactor("(3) "+r1.variable->name()+" "+r2.variable->name(),
+						*r1.variable, *r2.variable, _axiomFactorGraphGenerator->supportAntisymmetricalFactorClass());
+			}
+		}
+	}
+	// (4)
+	for (size_t i=0; i<_inRelations.size(); ++i)
+	{
+		Relation &r1 = _inRelations[i];
+		for (size_t j=i+1; j<_inRelations.size(); ++j)
+		{
+			Relation &r2 = _inRelations[j];
+			if ((r1.object1Id == r2.object2Id) && (r1.object2Id== r2.object1Id))
+			{
+				_fg->addFactor("(4) "+r1.variable->name()+" "+r2.variable->name(),
+						*r1.variable, *r2.variable, _axiomFactorGraphGenerator->containmentAntisymmetricalFactorClass());
+			}
+		}
+	}
+	// Transitivity axioms
+	// (5)
+	for (size_t i=0; i<_onRelations.size(); ++i)
+	{
+		Relation &r1 = _onRelations[i];
+		for (size_t j=0; j<_ontRelations.size(); ++j)
+		{
+			Relation &r2 = _ontRelations[j];
+			if ((r1.object1Id == r2.object1Id) && (r1.object2Id== r2.object2Id))
+			{
+				_fg->addFactor("(5) "+r1.variable->name()+" "+r2.variable->name(),
+						*r1.variable, *r2.variable, _axiomFactorGraphGenerator->supportImpliesTransitiveSupportFactorClass());
+			}
+		}
+	}
+	// (6)
+	for (size_t i=0; i<_ontRelations.size(); ++i)
+	{
+		Relation &r1 = _ontRelations[i];
+		for (size_t j=0; j<_ontRelations.size(); ++j)
+		{
+			Relation &r2 = _ontRelations[j];
+			if (r1.object2Id == r2.object1Id)
+			{
+				vector<Variable> varVect;
+				varVect.push_back(*r1.variable);
+				varVect.push_back(*r2.variable);
+				Relation *rel=findOntRelation(r1.object1Id, r2.object2Id);
+				if (rel)
+				{
+					varVect.push_back(*rel->variable);
+
+					_fg->addFactor("(6) "+r1.variable->name()+" "+r2.variable->name()+" "+rel->variable->name(),
+							varVect, _axiomFactorGraphGenerator->supportTransitiveFactorClass());
+				}
+			}
+		}
+	}
+	// (7)
+	for (size_t i=0; i<_inRelations.size(); ++i)
+	{
+		Relation &r1 = _inRelations[i];
+		for (size_t j=0; j<_inRelations.size(); ++j)
+		{
+			Relation &r2 = _inRelations[j];
+			if (r1.object2Id == r2.object1Id)
+			{
+				vector<Variable> varVect;
+				varVect.push_back(*r1.variable);
+				varVect.push_back(*r2.variable);
+				Relation *rel=findInRelation(r1.object1Id, r2.object2Id);
+				if (rel)
+				{
+					varVect.push_back(*rel->variable);
+
+					_fg->addFactor("(7) "+r1.variable->name()+" "+r2.variable->name()+" "+rel->variable->name(),
+							varVect, _axiomFactorGraphGenerator->containmentTransitiveFactorClass());
+				}
+			}
+		}
+	}
+	//  Interchangeability axioms
+	// (8)
+	for (size_t i=0; i<_ontRelations.size(); ++i)
+	{
+		Relation &r1 = _ontRelations[i];
+		for (size_t j=0; j<_inRelations.size(); ++j)
+		{
+			Relation &r2 = _inRelations[j];
+			if (r1.object2Id == r2.object1Id)
+			{
+				vector<Variable> varVect;
+				varVect.push_back(*r1.variable);
+				varVect.push_back(*r2.variable);
+				Relation *rel=findInRelation(r1.object1Id, r2.object2Id);
+				if (rel)
+				{
+					varVect.push_back(*rel->variable);
+
+					_fg->addFactor("(8) "+r1.variable->name()+" "+r2.variable->name()+" "+rel->variable->name(),
+							varVect, _axiomFactorGraphGenerator->generousContainmentFactorClass());
+				}
+			}
+		}
+	}
+	// (9)
+	for (size_t i=0; i<_inRelations.size(); ++i)
+	{
+		Relation &r1 = _inRelations[i];
+		for (size_t j=0; j<_ontRelations.size(); ++j)
+		{
+			Relation &r2 = _ontRelations[j];
+			if (r1.object2Id == r2.object1Id)
+			{
+				vector<Variable> varVect;
+				varVect.push_back(*r1.variable);
+				varVect.push_back(*r2.variable);
+				Relation *rel =findOntRelation(r1.object1Id, r2.object2Id);
+				if (rel)
+				{
+					varVect.push_back(*rel->variable);
+
+					_fg->addFactor("(9) "+r1.variable->name()+" "+r2.variable->name()+" "+rel->variable->name(),
+							varVect, _axiomFactorGraphGenerator->containmentSupportsFactorClass());
+				}
+			}
+		}
+	}
+	// (10)
+
+
+
+
+
+/*
+	for (size_t i=0; i<_ontRelations.size(); ++i)
+	{
+		Relation &rOnt1 = _ontRelations[i];
+		Relation *rOn1 = findOnRelation(rOnt1.object1Id, rOnt1.object2Id);
+		Relation *rIn1 = findInRelation(rOnt1.object1Id, rOnt1.object2Id);
+
+		for (size_t k=0; k<)
+
+	}
+
+
+
+
+
+
+	for (size_t i=0; i<_inRelations.size(); ++i)
+	{
+		Relation &r1 = _inRelations[i];
+		for (size_t j=0; j<_ontRelations.size(); ++j)
+		{
+			Relation &r2 = _ontRelations[j];
+			if (r1.object2Id == r2.object1Id)
+			{
+				vector<Variable> varVect;
+				varVect.push_back(*r1.variable);
+				varVect.push_back(*r2.variable);
+				varVect.push_back(*(findOntRelation(r1.object1Id, r2.object2Id)->variable));
+
+				_fg->addFactor(varVect, _axiomFactorGraphGenerator->containmentSupportsFactorClass());
+			}
+		}
+	}
+
+
+*/
+
+
+
+
+
+
+
+
 
 }
 
@@ -146,8 +332,8 @@ void ObjectRelationGraphGenerator::createObservationFactors()
 			if (r)
 			{
 				double p[2] = {1-ro.value, ro.value};
-				cv::Mat potentials(2, 0, CV_64F, p);
-				_fg->addFactor(*r->variable, potentials);
+				cv::Mat potentials(2, 1, CV_64F, p);
+				_fg->addFactor(ro.object1Id+"-on-"+ro.object2Id+" observation", *r->variable, potentials);
 			}
 		}
 	}
@@ -163,8 +349,8 @@ void ObjectRelationGraphGenerator::createObservationFactors()
 			if (r)
 			{
 				double p[2] = {1-ro.value, ro.value};
-				cv::Mat potentials(2, 0, CV_64F, p);
-				_fg->addFactor(*r->variable, potentials);
+				cv::Mat potentials(2, 1, CV_64F, p);
+				_fg->addFactor(ro.object1Id+"-ont-"+ro.object2Id+" observation", *r->variable, potentials);
 			}
 		}
 	}
@@ -179,8 +365,8 @@ void ObjectRelationGraphGenerator::createObservationFactors()
 			if (r)
 			{
 				double p[2] = {1-ro.value, ro.value};
-				cv::Mat potentials(2, 0, CV_64F, p);
-				_fg->addFactor(*r->variable, potentials);
+				cv::Mat potentials(2, 1, CV_64F, p);
+				_fg->addFactor(ro.object1Id+"-in-"+ro.object2Id+" observation", *r->variable, potentials);
 			}
 		}
 	}

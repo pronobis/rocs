@@ -1,13 +1,15 @@
+#include "rocs/concept.h"
 #include "rocs/ml.h"
 
 //#include <opencv2/core/core.hpp>
 
 using namespace rocs;
 using namespace rocs::ml;
+using namespace rocs::concept;
 
 int main(int argc, char **argv)
 {
-	// Sets and graphs
+/*	// Sets and graphs
 	VariableClassSet vcs;
 	FactorClassSet fcs;
 	FactorGraph fg;
@@ -31,8 +33,28 @@ int main(int argc, char **argv)
 	cv::Mat potentials2(2, 0, CV_64F, p1);
 	Factor f1 = fg.addFactor(v2, potentials2);
 	Factor f2 = fg.addFactor(v1, v2, fc1);
-	Factor f3 = fg.addFactor(v2, v3, fc1);
+	Factor f3 = fg.addFactor(v2, v3, fc1);*/
 
+
+	FactorGraph fg;
+	ObjectRelationGraphGenerator orgg(&fg);
+	orgg.addObject("A");
+	orgg.addObject("B");
+	orgg.addObject("T");
+	orgg.addInRelationException("T","");
+	orgg.addOnRelationException("T","");
+	orgg.addOntRelationException("T","");
+	orgg.addOnRelationObservation("B", "A", 0.8);
+	orgg.addOnRelationObservation("A", "B", 0.05);
+	orgg.addOnRelationObservation("B", "T", 0.8);
+	orgg.addOnRelationObservation("A", "T", 0.95);
+	orgg.addInRelationObservation("B", "A", 0.05);
+	orgg.addInRelationObservation("A", "B", 0.05);
+	orgg.addInRelationObservation("B", "T", 0);
+	orgg.addInRelationObservation("A", "T", 0);
+	orgg.generate();
+
+	cout <<fg;
 
 	DaiBpFactorGraphSolver solver(&fg);
 	solver.solve();

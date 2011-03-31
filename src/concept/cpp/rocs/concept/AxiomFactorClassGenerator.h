@@ -60,7 +60,7 @@ public:
 	~AxiomFactorClassGenerator()
 	{}
 
-	void generate(size_t inCount, size_t intCount, size_t onCount);
+	void generate(size_t inCount, size_t ontCount, size_t onCount);
 
 
 public:
@@ -69,6 +69,51 @@ public:
 	{
 		return *_supportAntisymmetricalFactorClass;
 	}
+	ml::FactorClass &containmentAntisymmetricalFactorClass()
+	{
+		return *_containmentAntisymmetricalFactorClass;
+	}
+	ml::FactorClass &supportImpliesTransitiveSupportFactorClass()
+	{
+		return *_supportImpliesTransitiveSupportFactorClass;
+	}
+	ml::FactorClass &supportTransitiveFactorClass()
+	{
+		return *_supportTransitiveFactorClass;
+	}
+	ml::FactorClass &containmentTransitiveFactorClass()
+	{
+		return *_containmentTransitiveFactorClass;
+	}
+	ml::FactorClass &generousContainmentFactorClass()
+	{
+		return *_generousContainmentFactorClass;
+	}
+	ml::FactorClass &containmentSupportsFactorClass()
+	{
+		return *_containmentSupportsFactorClass;
+	}
+	ml::FactorClass &directSupportRequiredFactorClass()
+	{
+		return *_directSupportRequiredFactorClass;
+	}
+	ml::FactorClass &supportRequiredFactorClass()
+	{
+		return *_supportRequiredFactorClass;
+	}
+	ml::FactorClass &uniqueSupportFactorClass()
+	{
+		return *_uniqueSupportFactorClass;
+	}
+	ml::FactorClass &uniqueTransitiveSupportFactorClass()
+	{
+		return *_uniqueTransitiveSupportFactorClass;
+	}
+	ml::FactorClass &uniqueInnessFactorClass()
+	{
+		return *_uniqueInnessFactorClass;
+	}
+
 
 
 private:

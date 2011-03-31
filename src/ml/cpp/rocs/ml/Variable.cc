@@ -31,6 +31,11 @@ namespace rocs {
 namespace ml {
 
 
+std::ostream& operator<<(std::ostream &out, const Variable &v)
+{
+	out << "Variable id:" << v.id()<< " name:"<< v.name()<<std::endl;
+    return out;
+}
 
 
 }

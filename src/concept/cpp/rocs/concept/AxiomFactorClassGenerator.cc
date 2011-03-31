@@ -159,6 +159,7 @@ void AxiomFactorClassGenerator::generate(size_t inCount, size_t ontCount, size_t
     _containmentSupportsFactorClass = &_fcs->addFactorClass(classes, containmentSupportsPotentials);
   }
 
+  if (0)
   {
     int dimensions = inCount + ontCount + onCount;
     int *sizes = new int[dimensions];
@@ -204,6 +205,7 @@ void AxiomFactorClassGenerator::generate(size_t inCount, size_t ontCount, size_t
     _directSupportRequiredFactorClass = &_fcs->addFactorClass(classes, directSupportRequiredPotentials);
   }
 
+  if(0)
   {
     int dimensions = inCount + ontCount;
     int *sizes = new int[dimensions];

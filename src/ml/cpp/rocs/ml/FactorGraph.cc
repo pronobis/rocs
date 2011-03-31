@@ -279,5 +279,22 @@ Factor *FactorGraph::verifyFactorIdAndName(int id, std::string name)
 }
 
 
+
+std::ostream& operator<<(std::ostream &out, const FactorGraph &fg)
+{
+	out << "Factor Graph" << std::endl;
+	out << "------------------------" << std::endl;
+	for (FactorGraph::ConstVariableIterator it = fg.variableBegin(); it!=fg.variableEnd(); ++it)
+		out << *it;
+	for (FactorGraph::ConstFactorIterator it = fg.factorBegin(); it!=fg.factorEnd(); ++it)
+		out << *it;
+
+
+	out << std::endl;
+    return out;
+}
+
+
+
 }
 }

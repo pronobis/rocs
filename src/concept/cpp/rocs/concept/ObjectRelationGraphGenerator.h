@@ -106,8 +106,9 @@ public:
 	void generate()
 	{
 		createObjectRelationVariables();
-//		_axiomFactorGraphGenerator->generate();  // TODO
+		_axiomFactorGraphGenerator->generate(_inRelations.size(), _ontRelations.size(), _onRelations.size());
 		createAxiomFactors();
+		createObservationFactors();
 	}
 
 	void addObject(std::string id)
@@ -145,7 +146,7 @@ public:
 	 * @param object1Id
 	 * @param object2Id
 	 */
-	void addOntRelationObservation(const std::string &object1Id, const std::string &object2Id)
+	void addOntRelationException(const std::string &object1Id, const std::string &object2Id)
 	{
 		_ontRelationExceptions.push_back(RelationException(object1Id, object2Id));
 	}

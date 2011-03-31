@@ -31,6 +31,24 @@
 namespace rocs {
 namespace ml {
 
+using namespace cv;
+using namespace std;
+
+std::ostream& operator<<(std::ostream &out, const Factor &f)
+{
+	out << "Factor id:" << f.id()<< " name:"<< f.name()<<std::endl;
+    if (f.potentials().dims<=2)
+    	out << f.potentials();
+    else
+	{
+    	for (size_t i=0; i<f.potentials().total(); ++i)
+    		out << reinterpret_cast<double*>(f.potentials().data)[i]<<" ";
+		out <<endl;
+	}
+
+    out << std::endl;
+    return out;
+}
 
 
 
