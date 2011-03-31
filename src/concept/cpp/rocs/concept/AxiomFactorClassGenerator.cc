@@ -28,6 +28,7 @@
 #include "rocs/concept/AxiomFactorClassGenerator.h"
 
 #include "rocs/ml/FactorClassSet.h"
+#include <opencv2/core/core.hpp>
 
 namespace rocs {
 namespace concept {
