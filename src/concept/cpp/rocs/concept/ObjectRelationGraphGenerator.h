@@ -162,6 +162,17 @@ public:
 	}
 
 
+	const std::vector<Relation> &inRelations()
+	{ return _inRelations; }
+
+	const std::vector<Relation> &onRelations()
+	{ return _onRelations; }
+
+	const std::vector<Relation> &ontRelations()
+	{ return _ontRelations; }
+
+
+
 private:
 
 	void createObjectRelationVariables();

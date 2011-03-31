@@ -28,12 +28,13 @@
 #ifndef _ROCS_ML_FACTORGRAPHSOLVER_H_
 #define _ROCS_ML_FACTORGRAPHSOLVER_H_
 
+#include "rocs/ml/Factor.h"
+
 namespace rocs {
 namespace ml {
 
-
 class FactorGraph;
-
+class Variable;
 
 /*!
  * Interface of a generic factor graph solver.

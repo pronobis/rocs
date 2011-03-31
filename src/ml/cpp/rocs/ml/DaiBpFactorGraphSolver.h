@@ -51,12 +51,17 @@ public:
 	/*! Performs all inferences on the graph. */
 	virtual void solve();
 
+	virtual void solveMP();
+
 	/*! Saves the graph in the DAI format to a file. */
 	void saveDaiGraph(std::string fileName);
 
+	std::vector<size_t> getMAP();
 
 	dai::PropertySet &daiOptions()
 	{ return _daiOptions; }
+
+	virtual dai::Factor getMarginal(const Variable &variable);
 
 
 private:
@@ -74,7 +79,6 @@ private:
 	dai::FactorGraph _factorGraph;
 	dai::BP _bp;
     dai::PropertySet _daiOptions;
-
 };
 
 

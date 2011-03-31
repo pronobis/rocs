@@ -72,7 +72,7 @@ public:
 	{
 		// Check if the variables classes match the potentials
 		rocsAssert(potentials.type() == CV_64F);
-		size_t potentialsDims = (potentials.size[1]>1)?static_cast<size_t>(potentials.dims):1;
+		size_t potentialsDims = (potentials.size[0]>1)?static_cast<size_t>(potentials.dims):1;
 		rocsAssert(varClasses.size() == potentialsDims);
 		for (size_t i=0; i<varClasses.size(); ++i)
 			rocsAssert(varClasses[i].stateCount() == static_cast<size_t>(potentials.size[i]));
@@ -84,7 +84,7 @@ public:
 	{
 		// Check if the variables classes match the potentials
 		rocsAssert(potentials.type() == CV_64F);
-		size_t potentialsDims = (potentials.size[1]>1)?static_cast<size_t>(potentials.dims):1;
+		size_t potentialsDims = (potentials.size[0]>1)?static_cast<size_t>(potentials.dims):1;
 		rocsAssert(varClasses.size() == potentialsDims);
 		for (size_t i=0; i<varClasses.size(); ++i)
 			rocsAssert(varClasses[i].stateCount() == static_cast<size_t>(potentials.size[i]));
@@ -96,9 +96,9 @@ public:
 	{
 		// Check if the variables classes match the potentials
 		rocsAssert(potentials.type() == CV_64F);
-		size_t potentialsDims = (potentials.size[1]>1)?static_cast<size_t>(potentials.dims):1;
+		size_t potentialsDims = (potentials.size[0]>1)?static_cast<size_t>(potentials.dims):1;
 		rocsAssert(potentialsDims == 1);
-		rocsAssert(varClass.stateCount() == static_cast<size_t>(potentials.size[0]));
+		rocsAssert(varClass.stateCount() == static_cast<size_t>(potentials.size[1]));
 
 		data()->varClasses.push_back(varClass);
 	}
@@ -109,9 +109,9 @@ public:
 	{
 		// Check if the variables classes match the potentials
 		rocsAssert(potentials.type() == CV_64F);
-		size_t potentialsDims = (potentials.size[1]>1)?static_cast<size_t>(potentials.dims):1;
+		size_t potentialsDims = (potentials.size[0]>1)?static_cast<size_t>(potentials.dims):1;
 		rocsAssert(potentialsDims == 1);
-		rocsAssert(varClass.stateCount() == static_cast<size_t>(potentials.size[0]));
+		rocsAssert(varClass.stateCount() == static_cast<size_t>(potentials.size[1]));
 
 		data()->varClasses.push_back(varClass);
 	}
@@ -122,7 +122,7 @@ public:
 	{
 		// Check if the variables classes match the potentials
 		rocsAssert(potentials.type() == CV_64F);
-		size_t potentialsDims = (potentials.size[1]>1)?static_cast<size_t>(potentials.dims):1;
+		size_t potentialsDims = (potentials.size[0]>1)?static_cast<size_t>(potentials.dims):1;
 		rocsAssert(potentialsDims == 2);
 		rocsAssert(varClass1.stateCount() == static_cast<size_t>(potentials.size[0]));
 		rocsAssert(varClass2.stateCount() == static_cast<size_t>(potentials.size[1]));
@@ -137,7 +137,7 @@ public:
 	{
 		// Check if the variables classes match the potentials
 		rocsAssert(potentials.type() == CV_64F);
-		size_t potentialsDims = (potentials.size[1]>1)?static_cast<size_t>(potentials.dims):1;
+		size_t potentialsDims = (potentials.size[0]>1)?static_cast<size_t>(potentials.dims):1;
 		rocsAssert(potentialsDims == 2);
 		rocsAssert(varClass1.stateCount() == static_cast<size_t>(potentials.size[0]));
 		rocsAssert(varClass2.stateCount() == static_cast<size_t>(potentials.size[1]));

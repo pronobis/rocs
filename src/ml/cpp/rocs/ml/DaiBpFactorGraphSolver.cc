@@ -63,6 +63,20 @@ void DaiBpFactorGraphSolver::solve()
 
 
 // ---------------------------------------------
+void DaiBpFactorGraphSolver::solveMP()
+{
+	prepareDaiGraph();
+
+	// Run inference
+	rocsDebug2("Performing all inferences on a DAI factor graph using BP.");
+	_bp = dai::BP(_factorGraph, _daiOptions("updates",string("SEQRND"))("logdomain",false)("inference",string("MAXPROD"))("damping",string("0.1")));
+
+	_bp.init();
+	_bp.run();
+}
+
+
+// ---------------------------------------------
 void DaiBpFactorGraphSolver::addDaiFactor(const Factor& factor)
 {
 	rocsDebug3("Converting a factor id:%d name:'%s' to a DAI factor.", factor.id(), factor.name().c_str() )
@@ -80,7 +94,9 @@ void DaiBpFactorGraphSolver::addDaiFactor(const Factor& factor)
 
 	// Create the factor
 	dai::Factor daiFactor(daiVarSet);
-	dai::Permute daiPermute(daiVars, true);
+	dai::Permute daiPermute(daiVars, false);
+	for (size_t i=0; i<daiPermute.sigma().size(); ++i)
+		rocsDebug3("%d %d -> %d", daiVars[i].label(), i, daiPermute.sigma()[i]);
 	size_t stateCount = factor.stateCount();
 	const double * potentials = reinterpret_cast<double*>(factor.potentials().data);
 	for (size_t li = 0; li < stateCount; ++li)
@@ -113,6 +129,60 @@ void DaiBpFactorGraphSolver::saveDaiGraph(std::string fileName)
 	prepareDaiGraph();
 	_factorGraph.WriteToFile(fileName.c_str());
 }
+
+// ---------------------------------------------
+dai::Factor DaiBpFactorGraphSolver::getMarginal(const Variable &variable)
+{
+	// Find DAI variables
+	const dai::Var *var = 0;
+	for (size_t i=0; i<_factorGraph.vars().size(); ++i)
+		if (static_cast<int>(_factorGraph.var(i).label()) == variable.id())
+			var = &_factorGraph.var(i);
+
+	if (!var)
+		rocsException("Unable to find the variable!");
+
+	return _bp.belief(*var);
+}
+
+
+// ---------------------------------------------
+vector<size_t> DaiBpFactorGraphSolver::getMAP()
+{
+	return _bp.findMaximum();
+}
+
+
+
+/*
+void CalcMarginal(const vector<const Variable*> vars,
+                  vector<double> *output)
+{
+	dai::VarSet dai_varset(
+		dai::SmallSet<dai::Var>(dai_vars.begin(), dai_vars.end(),
+		                        dai_vars.size()));
+
+	rocsDebug3("Asking belief on set of %ld variables.", dai_varset.size());
+    dai::Factor marginal = bp_->belief(dai_varset);
+
+	// Convert output to original variable order.
+	size_t nrStates = 1;
+	for (size_t i = 0; i < dai_vars.size(); ++i )
+		nrStates *= dai_vars[i].states();
+
+	DAI_ASSERT(marginal.nrStates() == nrStates);
+	dai::Permute permindex(dai_vars, true);
+	for (size_t li = 0; li < nrStates; ++li)
+		output->push_back(marginal.get(permindex.convertLinearIndex(li)));
+}
+*/
+
+
+
+
+
+
+
 
 
 

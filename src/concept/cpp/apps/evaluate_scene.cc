@@ -44,10 +44,10 @@ int main(int argc, char **argv)
 	orgg.addInRelationException("T","");
 	orgg.addOnRelationException("T","");
 	orgg.addOntRelationException("T","");
-	orgg.addOnRelationObservation("B", "A", 0.8);
-	orgg.addOnRelationObservation("A", "B", 0.05);
+	orgg.addOnRelationObservation("B", "A", 0.05);
+	orgg.addOnRelationObservation("A", "B", 0.8);
 	orgg.addOnRelationObservation("B", "T", 0.8);
-	orgg.addOnRelationObservation("A", "T", 0.95);
+	orgg.addOnRelationObservation("A", "T", 0.05);
 	orgg.addInRelationObservation("B", "A", 0.05);
 	orgg.addInRelationObservation("A", "B", 0.05);
 	orgg.addInRelationObservation("B", "T", 0);
@@ -57,8 +57,43 @@ int main(int argc, char **argv)
 	cout <<fg;
 
 	DaiBpFactorGraphSolver solver(&fg);
-	solver.solve();
+	solver.solveMP();
 
 	solver.saveDaiGraph("test.fg");
+
+	vector<size_t> map = solver.getMAP();
+	int i=0;
+	for (FactorGraph::ConstVariableIterator it = fg.variableBegin(); it!=fg.variableEnd(); ++it)
+	{
+		cout << it->name() << " " << map[i] << endl;
+		i++;
+	}
+
+
+
+	solver.solve();
+
+	// Display results
+	cout << "In:" << endl;
+	for (size_t i=0; i<orgg.inRelations().size(); ++i)
+	{
+		const ObjectRelationGraphGenerator::Relation &r = orgg.inRelations()[i];
+		dai::Factor f = solver.getMarginal(*r.variable);
+		cout << r.object1Id << " IN " << r.object2Id << " " << f[1] << endl;
+	}
+	cout << "On:" << endl;
+	for (size_t i=0; i<orgg.inRelations().size(); ++i)
+	{
+		const ObjectRelationGraphGenerator::Relation &r = orgg.onRelations()[i];
+		dai::Factor f = solver.getMarginal(*r.variable);
+		cout << r.object1Id << " ON " << r.object2Id << " " << f[1] << endl;
+	}
+	cout << "Ont:" << endl;
+	for (size_t i=0; i<orgg.inRelations().size(); ++i)
+	{
+		const ObjectRelationGraphGenerator::Relation &r = orgg.ontRelations()[i];
+		dai::Factor f = solver.getMarginal(*r.variable);
+		cout << r.object1Id << " ONT " << r.object2Id << " " << f[1] << endl;
+	}
 
 }

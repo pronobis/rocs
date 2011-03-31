@@ -331,8 +331,9 @@ void ObjectRelationGraphGenerator::createObservationFactors()
 			Relation *r = findOnRelation(ro.object1Id, ro.object2Id);
 			if (r)
 			{
-				double p[2] = {1-ro.value, ro.value};
-				cv::Mat potentials(2, 1, CV_64F, p);
+				cv::Mat potentials(1, 2, CV_64F);
+				potentials.at<double>(0) = 1-ro.value;
+				potentials.at<double>(1) = ro.value;
 				_fg->addFactor(ro.object1Id+"-on-"+ro.object2Id+" observation", *r->variable, potentials);
 			}
 		}
@@ -348,8 +349,9 @@ void ObjectRelationGraphGenerator::createObservationFactors()
 			Relation *r = findOntRelation(ro.object1Id, ro.object2Id);
 			if (r)
 			{
-				double p[2] = {1-ro.value, ro.value};
-				cv::Mat potentials(2, 1, CV_64F, p);
+				cv::Mat potentials(1, 2, CV_64F);
+				potentials.at<double>(0) = 1-ro.value;
+				potentials.at<double>(1) = ro.value;
 				_fg->addFactor(ro.object1Id+"-ont-"+ro.object2Id+" observation", *r->variable, potentials);
 			}
 		}
@@ -364,8 +366,9 @@ void ObjectRelationGraphGenerator::createObservationFactors()
 			Relation *r = findInRelation(ro.object1Id, ro.object2Id);
 			if (r)
 			{
-				double p[2] = {1-ro.value, ro.value};
-				cv::Mat potentials(2, 1, CV_64F, p);
+				cv::Mat potentials(1, 2, CV_64F);
+				potentials.at<double>(0) = 1-ro.value;
+				potentials.at<double>(1) = ro.value;
 				_fg->addFactor(ro.object1Id+"-in-"+ro.object2Id+" observation", *r->variable, potentials);
 			}
 		}
