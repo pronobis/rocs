@@ -37,7 +37,7 @@ using namespace ml;
 
 
 void AxiomFactorClassGenerator::generate(size_t inCount, size_t intCount, size_t onCount)
-{/*
+{
   {
     int sizes[] = {2, 2};
     cv::Mat supportAntisymmetricalPotentials(2, sizes, CV_64F);
@@ -114,7 +114,7 @@ void AxiomFactorClassGenerator::generate(size_t inCount, size_t intCount, size_t
     classes.push_back(_inRelationVariableClass);
 
     _generousContainmentFactorClass = &_fcs->addFactorClass(classes, generousContainmentPotentials);
-  } */
+  }
 }
 
 
