@@ -58,7 +58,7 @@ public:
 	~AxiomFactorClassGenerator()
 	{}
 
-	void generate();
+	void generate(size_t inCount, size_t intCount, size_t onCount);
 
 
 public:

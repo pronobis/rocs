@@ -36,7 +36,7 @@ namespace concept {
 using namespace ml;
 
 
-void AxiomFactorClassGenerator::generate()
+void AxiomFactorClassGenerator::generate(size_t inCount, size_t intCount, size_t onCount)
 {
   {
     int sizes[] = {2, 2};
