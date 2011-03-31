@@ -2,9 +2,9 @@ if(ROCS_BUILD_MODULE_CONCEPT)
 
 	# Module
 	add_rocs_cpp_module(concept
-		SOURCES Graph.cc Query.cc
-		HEADERS Graph.h Query.h
-		LINK_MODULES core
+		SOURCES Graph.cc Query.cc ObjectRelationGraphGenerator.cc AxiomFactorClassGenerator.cc
+		HEADERS Graph.h Query.h ObjectRelationGraphGenerator.h AxiomFactorClassGenerator.h
+		LINK_MODULES ml core
 		LINK dai)
 
 	# Remove deprecated includes messages
