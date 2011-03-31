@@ -115,6 +115,22 @@ void AxiomFactorClassGenerator::generate()
 
     _generousContainmentFactorClass = &_fcs->addFactorClass(classes, generousContainmentPotentials);
   }
+
+  {
+    int sizes[] = {2, 2, 2};
+    cv::Mat containmentSupportsPotentials(3, sizes, CV_64F);
+    containmentSupportsPotentials.setTo(1);
+    int indices[] = {1,1,0};//Forbid true, true, false case
+    containmentSupportsPotentials.at(indices) = 0;
+
+    std::vector<ml::FactorClass *>classes;
+    classes.push_back(_inRelationVariableClass);
+    classes.push_back(_ontRelationVariableClass);
+    classes.push_back(_ontRelationVariableClass);
+
+    _containmentSupportsFactorClass = &_fcs->addFactorClass(classes, containmentSupportsPotentials);
+  }
+
 }
 
 
