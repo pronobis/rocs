@@ -25,7 +25,15 @@
 import rocs.data.databases.ConceptualGraph as CG
 import sys
 
+def SetFromObservedProperty(cg):
+  for fname, f in cg.edge.items():
+    if f.type.startswith('Observed') and len(f.nodes) == 1:
+      ((p_argmax,), p_max) = max(f.potential.iteritems(), key=lambda x:x[1])
+      cg.node[f.nodes[0]].observed_value = p_argmax
+      f.dot_hide = True
+
 if __name__ == "__main__":
   for path in sys.argv[1:]:
     cg = CG.LoadConceptualGraph(path)
+    SetFromObservedProperty(cg)
     cg.SaveAsDot(sys.stdout)

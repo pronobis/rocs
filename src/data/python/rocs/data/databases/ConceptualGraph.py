@@ -35,22 +35,34 @@ class FactorGraph:
     for f in range(num_factors):
       assert next(input).rstrip('\n') == ""
       num_vars = int(next(input))
-      var_ids = next(input).split()
-      var_sizes = next(input).split()
+      var_ids = map(int, next(input).split())
+      var_sizes = map(int, next(input).split())
       potential = {}
       potentials = int(next(input))
+      unwrap = self.UnwrapPotential(var_sizes)
       for p in range(potentials):
         [pid, pval] = next(input).split()
         pid  = int(pid)
         pval = float(pval)
-        potential[pid] = pval
+        potential[unwrap(pid)] = pval
       self.factors[f] = {'vars': zip(var_ids, var_sizes), 'potential': potential}
+  
+  def UnwrapPotential(self, var_sizes):
+    def Unwrap(pid):
+      out = []
+      for sz in var_sizes:
+        out.append(pid % sz)
+        pid /= sz
+      return tuple(out)
+    return Unwrap
+
 
 class Info():
   def __init__(self, input):
     self.varName = {}
     self.varType = {}
     self.factorName = {}
+    self.varValue = {}
     for line in input:
       line = line.rstrip('\n')
       if line == '': continue
@@ -58,9 +70,15 @@ class Info():
       [obj, name] = line.split()
       if obj[0] == 'x':
         '''Reading a variable'''
-        self.varName[int(obj[1:])] = name
-        self.varType[int(obj[1:])] = self.GuessVarType(name)
-        while next(input).rstrip() != "": pass
+        vid = int(obj[1:])
+        self.varName[vid] = name
+        self.varType[vid] = self.GuessVarType(name)
+        self.varValue[vid] = {}
+        while True:
+          line = next(input).rstrip()
+          if line == "": break
+          [valueid, value] = line.split()
+          self.varValue[vid][int(valueid)] = value
       else:
         assert obj[0] == 'f', 'Wrong format?'
         '''Reading a factor'''
@@ -75,14 +93,26 @@ def LoadConceptualGraph(path):
   
   m = conceptual.Graph()
   for var in info.varName:
-    m.AddNode(info.varName[var], info.varType[var])
+    node = m.AddNode(info.varName[var], info.varType[var])
+    node.values = info.varValue[var]
   for fac in fg.factors:
+    vids,vsizes = zip(*fg.factors[fac]['vars'])
+    for (vid, vsize) in fg.factors[fac]['vars']:
+      assert  vsize == len(info.varValue[int(vid)])
+
     f = m.AddEdge("f%d" % fac, info.factorName[fac],
-                  list(info.varName[int(vid)] for (vid,vsize) in fg.factors[fac]['vars']))
+                  list(info.varName[int(vid)] for vid in vids))
+
+    f.potential = {}
+    for pindex, pval in fg.factors[fac]['potential'].items():
+      pi = []
+      for vid,vval in zip(vids, pindex): pi.append(info.varValue[vid][vval])
+      f.potential[tuple(pi)] = pval
+
   return m
 
 
 def LoadSequences(paths=glob.glob('../../../data/samples/ConceptualGraph/*')):
   for path in paths:
-    yield ConcetualGraph(path)
+    yield LoadConcetualGraph(path)
 
