@@ -82,6 +82,9 @@ private:
 	ml::FactorClass *_supportImpliesTransitiveSupportFactorClass;
 	ml::FactorClass *_supportTransitiveFactorClass;
 	ml::FactorClass *_containmentTransitiveFactorClass;
+	ml::FactorClass *_generousContainmentFactorClass;
+	ml::FactorClass *_containmentSupportsFactorClass;
+	ml::FactorClass *_directSupportRequiredFactorClass;;
 
 };
 

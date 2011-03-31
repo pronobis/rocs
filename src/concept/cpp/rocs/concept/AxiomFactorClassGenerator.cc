@@ -29,6 +29,7 @@
 
 #include "rocs/ml/FactorClassSet.h"
 #include <opencv2/core/core.hpp>
+#include <stddef.h>
 
 namespace rocs {
 namespace concept {
@@ -36,7 +37,7 @@ namespace concept {
 using namespace ml;
 
 
-void AxiomFactorClassGenerator::generate(size_t inCount, size_t intCount, size_t onCount)
+void AxiomFactorClassGenerator::generate(size_t inCount, size_t ontCount, size_t onCount)
 {
   {
     int sizes[] = {2, 2};
@@ -131,6 +132,19 @@ void AxiomFactorClassGenerator::generate(size_t inCount, size_t intCount, size_t
     _containmentSupportsFactorClass = &_fcs->addFactorClass(classes, containmentSupportsPotentials);
   }
 
+  {
+    int dimensions = inCount + ontCount + onCount;
+    int *sizes = new int[dimensions];
+    for (int i = 0; i < dimensions; i++) {
+      sizes[i] = 2;
+    }
+    cv::Mat directSupportRequiredPotentials(dimension, sizes, CV_64F);
+    directSupportRequiredPotentials.setTo(1);
+
+    //Forbidden IFF:
+    //not ON(x,y) AND
+    //for ALL z, 
+  }
 }
 
 
