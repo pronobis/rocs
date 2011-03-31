@@ -37,7 +37,9 @@ using namespace ml;
 
 void AxiomFactorClassGenerator::generate()
 {
-
+	cv::Mat supportIrreflexivePotentials;
+	_supportIrreflexiveFactorClass = &_fcs->addFactorClass(*_ontRelationVariableClass,
+			*_ontRelationVariableClass, supportIrreflexivePotentials);
 }
 
 
