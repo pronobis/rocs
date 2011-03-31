@@ -218,7 +218,7 @@ void AxiomFactorClassGenerator::generate(size_t inCount, size_t ontCount, size_t
     int sizes[] = {2, 2};
     cv::Mat uniqueSupportPotentials(2, sizes, CV_64F);
     uniqueSupportPotentials.setTo(1);
-    int indices[] = {1,0};//Forbid true, true, false case
+    int indices[] = {1,1};//Forbid true, true
     uniqueSupportPotentials.at<double>(indices) = 0;
 
     _uniqueSupportFactorClass = &_fcs->addFactorClass(*_onRelationVariableClass,

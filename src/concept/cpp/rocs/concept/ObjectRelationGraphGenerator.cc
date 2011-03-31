@@ -32,6 +32,7 @@
 #include "rocs/ml/FactorClassSet.h"
 #include "rocs/ml/VariableClassSet.h"
 #include <set>
+#include <boost/scoped_ptr.hpp>
 
 namespace rocs {
 namespace concept {
@@ -194,10 +195,10 @@ void recurseSupportRequirement_On(cv::Mat &potentials,
     if (dontcare) {
       // Doesn't matter what the value is; recurse for both 0 and 1
       indices[index] = 0;
-      recurseSupportRequirement_In(potentials, false,
+      recurseSupportRequirement_In(potentials, true,
 	  Ont_zmap, On_zmap, In_zmap, indices, zVals, zIt);
       indices[index] = 1;
-      recurseSupportRequirement_In(potentials, false,
+      recurseSupportRequirement_In(potentials, true,
 	  Ont_zmap, On_zmap, In_zmap, indices, zVals, zIt);
     }
     else {
@@ -449,13 +450,11 @@ void ObjectRelationGraphGenerator::createAxiomFactors()
 	  int onCount = _onRelations.size();
 	  int ontCount = _ontRelations.size();
 	  int dimensions = inCount + ontCount + onCount;
-	  int *sizes = new int[dimensions];
-	  int *indices = new int[dimensions];
+	  boost::scoped_ptr<int> sizes(new int[dimensions]);
+	  boost::scoped_ptr<int> indices(new int[dimensions]);
 	  for (int i = 0; i < dimensions; i++) {
-	    sizes[i] = 2;
+	    sizes.get()[i] = 2;
 	  }
-	  cv::Mat directSupportRequiredPotentials(dimensions, sizes, CV_64F);
-	  directSupportRequiredPotentials.setTo(1);
 
 	  vector<Variable> varVect;
 	  varVect.push_back(*rOnt1.variable);
@@ -503,20 +502,178 @@ void ObjectRelationGraphGenerator::createAxiomFactors()
 	    }
 	  }
 
-	  indices[0] = 1; //ONt(x,y)
-	  indices[1] = 0; //~ON(x,y)
-	  indices[2] = 0; //~IN(x,y)
+	  cv::Mat directSupportRequiredPotentials(varVect.size(), sizes.get(), CV_64F);
+	  directSupportRequiredPotentials.setTo(1);
+
+	  indices.get()[0] = 1; //ONt(x,y)
+	  indices.get()[1] = 0; //~ON(x,y)
+	  indices.get()[2] = 0; //~IN(x,y)
 	  recurseSupportRequirement_Ont(directSupportRequiredPotentials,
 	      Ont_zmap, On_zmap, In_zmap,
-	      indices, zVals, zVals.begin());
-	  indices[2] = 1; //~IN(x,y)
+	      indices.get(), zVals, zVals.begin());
+	  indices.get()[2] = 1; //~IN(x,y)
 	  recurseSupportRequirement_Ont(directSupportRequiredPotentials,
 	      Ont_zmap, On_zmap, In_zmap,
-	      indices, zVals, zVals.begin());
+	      indices.get(), zVals, zVals.begin());
 
 
 	  _fg->addFactor(varVect, directSupportRequiredPotentials);
 	}
+
+	// (11)
+	vector<Variable> varVect;
+	vector<int> indices;
+	for (size_t i=0; i<_objects.size(); ++i)
+	{
+		string &xobject = _objects[i];
+		for(size_t k=0; k<_ontRelations.size(); ++k)
+		{
+			if (_ontRelations[k].object1Id == xobject)
+			{
+				varVect.push_back(*_ontRelations[k].variable);
+				indices.push_back(0);
+			}
+		}
+		for(size_t k=0; k<_inRelations.size(); ++k)
+		{
+			if (_inRelations[k].object1Id == xobject)
+			{
+				varVect.push_back(*_inRelations[k].variable);
+				indices.push_back(0);
+			}
+		}
+
+		boost::scoped_ptr<int> sizes(new int[varVect.size()]);
+		boost::scoped_ptr<int> _indices(new int[varVect.size()]);
+		for (size_t k=0; k<varVect.size(); ++k)
+		{
+			sizes.get()[k]=2;
+			_indices.get()[k]=indices[k];
+		}
+		cv::Mat supportRequiredPotentials(varVect.size(), sizes.get(), CV_64F);
+		supportRequiredPotentials.setTo(1);
+		supportRequiredPotentials.at<double>(_indices.get()) = 0;
+
+		_fg->addFactor(varVect, supportRequiredPotentials);
+	}
+
+	// (12)
+	for (size_t i=0; i<_onRelations.size(); ++i)
+	{
+		Relation &r1 = _onRelations[i];
+		for (size_t j=0; j<_onRelations.size(); ++j)
+		{
+			Relation &r2 = _onRelations[j];
+			if ((r1.object1Id == r2.object1Id) && (r1.object2Id != r2.object2Id))
+			{
+				_fg->addFactor("(12) "+r1.variable->name()+" "+r2.variable->name(),
+						*r1.variable, *r2.variable, _axiomFactorGraphGenerator->uniqueSupportFactorClass());
+			}
+		}
+	}
+
+	// (13)
+	for (size_t i=0; i<_ontRelations.size(); ++i)
+	{
+		Relation &r1 = _ontRelations[i];
+		for (size_t j=0; j<_ontRelations.size(); ++j)
+		{
+			Relation &r2 = _ontRelations[j];
+			if ((r1.object1Id == r2.object1Id) && ((r1.object2Id != r2.object2Id) ))
+			{
+				vector<Variable> varVect;
+				varVect.push_back(*r1.variable);
+				varVect.push_back(*r2.variable);
+				Relation *rel1 =findOntRelation(r1.object2Id, r2.object2Id);
+				Relation *rel2 =findOntRelation(r2.object2Id, r1.object2Id);
+
+				if (rel1&&rel2)
+				{
+					varVect.push_back(*rel1->variable);
+					varVect.push_back(*rel2->variable);
+
+					_fg->addFactor("(13) "+r1.variable->name()+" "+r2.variable->name()+" "+rel1->variable->name()+" "+rel2->variable->name(),
+							varVect, _axiomFactorGraphGenerator->uniqueTransitiveSupportFactorClass());
+				} else if (rel1 || rel2)
+				{
+					Variable *var = (rel1)?rel1->variable:rel2->variable;
+					varVect.push_back(*var);
+					int sizes[] = {2,2,2};
+					cv::Mat potentials(3, sizes, CV_64F);
+					potentials.setTo(1);
+				    int indices[] = {1,1,0}; //Forbid true, true, false
+					potentials.at<double>(indices) = 0;
+
+					_fg->addFactor("(13) "+r1.variable->name()+" "+r2.variable->name()+" "+var->name(),
+							varVect, potentials);
+				}
+				else
+				{
+					int sizes[] = {2,2};
+					cv::Mat potentials(2, sizes, CV_64F);
+					potentials.setTo(1);
+				    int indices[] = {1,1}; //Forbid true, true
+					potentials.at<double>(indices) = 0;
+
+					_fg->addFactor("(13) "+r1.variable->name()+" "+r2.variable->name(),
+							varVect, potentials);
+				}
+			}
+		}
+	}
+
+
+	// (14)
+	for (size_t i=0; i<_inRelations.size(); ++i)
+	{
+		Relation &r1 = _inRelations[i];
+		for (size_t j=0; j<_inRelations.size(); ++j)
+		{
+			Relation &r2 = _inRelations[j];
+			if ((r1.object1Id == r2.object1Id) && ((r1.object2Id != r2.object2Id) ))
+			{
+				vector<Variable> varVect;
+				varVect.push_back(*r1.variable);
+				varVect.push_back(*r2.variable);
+				Relation *rel1 =findInRelation(r1.object2Id, r2.object2Id);
+				Relation *rel2 =findInRelation(r2.object2Id, r1.object2Id);
+
+				if (rel1&&rel2)
+				{
+					varVect.push_back(*rel1->variable);
+					varVect.push_back(*rel2->variable);
+
+					_fg->addFactor("(14) "+r1.variable->name()+" "+r2.variable->name()+" "+rel1->variable->name()+" "+rel2->variable->name(),
+							varVect, _axiomFactorGraphGenerator->uniqueInnessFactorClass());
+				} else if (rel1 || rel2)
+				{
+					Variable *var = (rel1)?rel1->variable:rel2->variable;
+					varVect.push_back(*var);
+					int sizes[] = {2,2,2};
+					cv::Mat potentials(3, sizes, CV_64F);
+					potentials.setTo(1);
+				    int indices[] = {1,1,0}; //Forbid true, true, false
+					potentials.at<double>(indices) = 0;
+
+					_fg->addFactor("(14) "+r1.variable->name()+" "+r2.variable->name()+" "+var->name(),
+							varVect, potentials);
+				}
+				else
+				{
+					int sizes[] = {2,2};
+					cv::Mat potentials(2, sizes, CV_64F);
+					potentials.setTo(1);
+				    int indices[] = {1,1}; //Forbid true, true
+					potentials.at<double>(indices) = 0;
+
+					_fg->addFactor("(14) "+r1.variable->name()+" "+r2.variable->name(),
+							varVect, potentials);
+				}
+			}
+		}
+	}
+
+
 }
 
 
