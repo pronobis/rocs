@@ -28,6 +28,8 @@
 #ifndef _ROCS_CONCEPT_AXIOMFACTORCLASSGENERATOR_H_
 #define _ROCS_CONCEPT_AXIOMFACTORCLASSGENERATOR_H_
 
+#include <stddef.h>
+
 namespace rocs {
 
 namespace ml{
@@ -63,9 +65,9 @@ public:
 
 public:
 
-	ml::FactorClass &supportIrreflexiveFactorClass()
+	ml::FactorClass &supportAntisymmetricalFactorClass()
 	{
-		return *_supportIrreflexiveFactorClass;
+		return *_supportAntisymmetricalFactorClass;
 	}
 
 
