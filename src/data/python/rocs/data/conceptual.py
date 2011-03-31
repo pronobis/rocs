@@ -59,10 +59,21 @@ class Graph:
   
   def SaveAsDot(self, f):
     f.write("graph FactorGraph { overlap=scalexy; splines=true;\n")
+    '''Print nodes'''
     f.write("node[shape=ellipse];\n")
-    for node in self.node: print("  %s;"%node)
+    for key,node in self.node.iteritems():
+      if hasattr(node, 'observed_value'):
+        f.write(" %s[label=\"%s\"];\n" % (key, node.observed_value))
+      else:
+        f.write(" %s;"%key)
+    
+    '''Print factors'''
     f.write("node[shape=box];\n")
-    for edge in self.edge: print("  %s;"%edge)
+    for key,edge in self.edge.iteritems():
+      if not hasattr(edge, 'dot_hide'):
+        f.write(" %s[label=\"%s\"];\n" % (key, edge.type))
+
+    '''Print edges'''
     for edge in self.edge:
       for node in self.edge[edge].nodes:
         f.write("  %s -- %s;\n" % (edge, node))
