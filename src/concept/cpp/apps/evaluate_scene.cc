@@ -38,9 +38,9 @@ int main(int argc, char **argv)
 
 	FactorGraph fg;
 	ObjectRelationGraphGenerator orgg(&fg);
-	orgg.addObject("A");
-	orgg.addObject("B");
 	orgg.addObject("T");
+	orgg.addObject("B");
+	orgg.addObject("A");
 	orgg.addInRelationException("T","");
 	orgg.addOnRelationException("T","");
 	orgg.addOntRelationException("T","");
@@ -52,14 +52,16 @@ int main(int argc, char **argv)
 //	orgg.addInRelationObservation("A", "B", 0.05);
 //	orgg.addInRelationObservation("B", "T", 0);
 //	orgg.addInRelationObservation("A", "T", 0);
-	orgg.addOnRelationObservation("B", "A", 0.00);
-	orgg.addOnRelationObservation("A", "B", 0.95);
-	orgg.addOnRelationObservation("B", "T", 0.95);
 	orgg.addOnRelationObservation("A", "T", 0.00);
+	orgg.addOnRelationObservation("A", "B", 2.4e-7);
+	orgg.addOnRelationObservation("B", "T", 0.95);
+	orgg.addOnRelationObservation("B", "A", 1.5e-5);
+	orgg.addInRelationObservation("B", "T", 0.085);
 	orgg.addInRelationObservation("B", "A", 0.00);
 	orgg.addInRelationObservation("A", "B", 0.00);
-	orgg.addInRelationObservation("B", "T", 0);
 	orgg.addInRelationObservation("A", "T", 0);
+
+
 	orgg.generate();
 
 	cout <<fg;

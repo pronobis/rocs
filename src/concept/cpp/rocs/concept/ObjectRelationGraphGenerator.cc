@@ -189,7 +189,7 @@ void recurseSupportRequirement_On(cv::Mat &potentials,
     set<string>::iterator zIt)
 {
   if (On_zmap.count(*zIt) > 0) {
-    // If there is an ON(z,y) relation
+    // If there is an ON(x,z) relation
     int index = On_zmap[*zIt];
 
     if (dontcare) {
@@ -442,7 +442,7 @@ void ObjectRelationGraphGenerator::createAxiomFactors()
 	{
 	  Relation &rOnt1 = _ontRelations[i];
 	  Relation *rOn1 = findOnRelation(rOnt1.object1Id, rOnt1.object2Id);
-	  Relation *rIn1 = findInRelation(rOnt1.object1Id, rOnt1.object2Id);
+//	  Relation *rIn1 = findInRelation(rOnt1.object1Id, rOnt1.object2Id);
 	  const string & x = rOnt1.object1Id;
 	  const string & y = rOnt1.object2Id;
 
@@ -459,7 +459,7 @@ void ObjectRelationGraphGenerator::createAxiomFactors()
 	  vector<Variable> varVect;
 	  varVect.push_back(*rOnt1.variable);
 	  varVect.push_back(*rOn1->variable);
-	  varVect.push_back(*rIn1->variable);
+//	  varVect.push_back(*rIn1->variable);
 
 	  // Maps from z object ID to the index number 
 	  map<string, int> Ont_zmap;
@@ -467,7 +467,7 @@ void ObjectRelationGraphGenerator::createAxiomFactors()
 	  map<string, int> In_zmap;
 
 	  // Look for all ONt(z,y)
-	  int variableIndex = 3;
+	  int variableIndex = varVect.size();
 	  set<string> zVals;
 	  for (int i = 0; i < ontCount; i++) {
 	    if (_ontRelations[i].object2Id == y &&
@@ -496,7 +496,7 @@ void ObjectRelationGraphGenerator::createAxiomFactors()
 		_inRelations[i].object2Id != y) {
 	      string z = _inRelations[i].object2Id;
 	      zVals.insert(z);
-	      In_zmap[z] = i;
+	      In_zmap[z] = variableIndex;
 	      varVect.push_back(*_inRelations[i].variable);
 	      variableIndex++;
 	    }
@@ -507,24 +507,28 @@ void ObjectRelationGraphGenerator::createAxiomFactors()
 
 	  indices.get()[0] = 1; //ONt(x,y)
 	  indices.get()[1] = 0; //~ON(x,y)
-	  indices.get()[2] = 0; //~IN(x,y)
+//	  indices.get()[2] = 0; //~IN(x,y)
 	  recurseSupportRequirement_Ont(directSupportRequiredPotentials,
 	      Ont_zmap, On_zmap, In_zmap,
 	      indices.get(), zVals, zVals.begin());
-	  indices.get()[2] = 1; //~IN(x,y)
-	  recurseSupportRequirement_Ont(directSupportRequiredPotentials,
-	      Ont_zmap, On_zmap, In_zmap,
-	      indices.get(), zVals, zVals.begin());
+//	  indices.get()[2] = 1; //~IN(x,y)
+//	  recurseSupportRequirement_Ont(directSupportRequiredPotentials,
+//	      Ont_zmap, On_zmap, In_zmap,
+//	      indices.get(), zVals, zVals.begin());
 
-
-	  _fg->addFactor(varVect, directSupportRequiredPotentials);
+	  stringstream s;
+	  for (size_t i=0; i<varVect.size(); ++i)
+		  s<<varVect[i].name()<<" ";
+	  _fg->addFactor("(10) "+s.str(),
+			  varVect, directSupportRequiredPotentials);
 	}
 
 	// (11)
-	vector<Variable> varVect;
-	vector<int> indices;
 	for (size_t i=0; i<_objects.size(); ++i)
 	{
+		vector<Variable> varVect;
+		vector<int> indices;
+
 		string &xobject = _objects[i];
 		for(size_t k=0; k<_ontRelations.size(); ++k)
 		{
@@ -543,18 +547,25 @@ void ObjectRelationGraphGenerator::createAxiomFactors()
 			}
 		}
 
-		boost::scoped_ptr<int> sizes(new int[varVect.size()]);
-		boost::scoped_ptr<int> _indices(new int[varVect.size()]);
-		for (size_t k=0; k<varVect.size(); ++k)
+		if (!varVect.empty())
 		{
-			sizes.get()[k]=2;
-			_indices.get()[k]=indices[k];
-		}
-		cv::Mat supportRequiredPotentials(varVect.size(), sizes.get(), CV_64F);
-		supportRequiredPotentials.setTo(1);
-		supportRequiredPotentials.at<double>(_indices.get()) = 0;
+			boost::scoped_ptr<int> sizes(new int[varVect.size()]);
+			boost::scoped_ptr<int> _indices(new int[varVect.size()]);
+			for (size_t k=0; k<varVect.size(); ++k)
+			{
+				sizes.get()[k]=2;
+				_indices.get()[k]=indices[k];
+			}
+			cv::Mat supportRequiredPotentials(varVect.size(), sizes.get(), CV_64F);
+			supportRequiredPotentials.setTo(1);
+			supportRequiredPotentials.at<double>(_indices.get()) = 0;
 
-		_fg->addFactor(varVect, supportRequiredPotentials);
+			  stringstream s;
+			  for (size_t i=0; i<varVect.size(); ++i)
+				  s<<varVect[i].name()<<" ";
+			_fg->addFactor("(11) "+s.str(),
+					varVect, supportRequiredPotentials);
+		}
 	}
 
 	// (12)
