@@ -63,6 +63,7 @@ public:
 
 	virtual dai::Factor getMarginal(const Variable &variable);
 
+	double getMapPosterior();
 
 private:
 

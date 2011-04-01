@@ -44,12 +44,20 @@ int main(int argc, char **argv)
 	orgg.addInRelationException("T","");
 	orgg.addOnRelationException("T","");
 	orgg.addOntRelationException("T","");
-	orgg.addOnRelationObservation("B", "A", 0.05);
-	orgg.addOnRelationObservation("A", "B", 0.8);
-	orgg.addOnRelationObservation("B", "T", 0.8);
-	orgg.addOnRelationObservation("A", "T", 0.05);
-	orgg.addInRelationObservation("B", "A", 0.05);
-	orgg.addInRelationObservation("A", "B", 0.05);
+//	orgg.addOnRelationObservation("B", "A", 0.05);
+//	orgg.addOnRelationObservation("A", "B", 0.8);
+//	orgg.addOnRelationObservation("B", "T", 0.8);
+//	orgg.addOnRelationObservation("A", "T", 0.05);
+//	orgg.addInRelationObservation("B", "A", 0.05);
+//	orgg.addInRelationObservation("A", "B", 0.05);
+//	orgg.addInRelationObservation("B", "T", 0);
+//	orgg.addInRelationObservation("A", "T", 0);
+	orgg.addOnRelationObservation("B", "A", 0.00);
+	orgg.addOnRelationObservation("A", "B", 0.95);
+	orgg.addOnRelationObservation("B", "T", 0.95);
+	orgg.addOnRelationObservation("A", "T", 0.00);
+	orgg.addInRelationObservation("B", "A", 0.00);
+	orgg.addInRelationObservation("A", "B", 0.00);
 	orgg.addInRelationObservation("B", "T", 0);
 	orgg.addInRelationObservation("A", "T", 0);
 	orgg.generate();
@@ -70,8 +78,9 @@ int main(int argc, char **argv)
 	}
 
 
-
 	solver.solve();
+	cout << "MAP posterior: " << solver.getMapPosterior() << endl;
+
 
 	// Display results
 	cout << "In:" << endl;

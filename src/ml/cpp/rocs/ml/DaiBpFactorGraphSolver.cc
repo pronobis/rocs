@@ -153,6 +153,56 @@ vector<size_t> DaiBpFactorGraphSolver::getMAP()
 }
 
 
+// ---------------------------------------------
+double DaiBpFactorGraphSolver::getMapPosterior()
+{
+	rocsDebug3("Obtaining MAP posterior probability.")
+
+	vector<size_t> map = _bp.findMaximum();
+
+	return exp(_bp.logScore(map));
+
+/*	// Create VarSet for this factor
+	dai::VarSet daiVarSet;
+	vector<dai::Var> daiVars;
+	for(size_t i=0; i<_factorGraph.vars().size()-7; i++)
+	{
+		daiVars.push_back(_factorGraph.vars()[i]);
+		daiVarSet.insert(_factorGraph.vars()[i]);
+		rocsDebug3("%d", _factorGraph.vars()[i].label());
+	}
+
+    dai::Factor marginal = _bp.belief(daiVarSet);
+    vector<size_t> map = _bp.findMaximum();
+
+	// Convert output to original variable order.
+	size_t nrStates = 1;
+	for (size_t i = 0; i < daiVars.size(); ++i )
+		nrStates *= daiVars[i].states();
+	rocsAssert(marginal.nrStates() == nrStates);
+
+	// Get the index of the value
+	int index = 0;
+	int step = 1;
+	for (int i=daiVars.size(); i>0; --i)
+	{
+		index+= map[i-1] * step;
+		step*=daiVars[i-1].states();
+	}
+
+	dai::Permute permindex(daiVars, false);
+	return marginal.get(permindex.convertLinearIndex(index)); */
+
+}
+
+
+
+
+
+
+
+
+
 
 /*
 void CalcMarginal(const vector<const Variable*> vars,
