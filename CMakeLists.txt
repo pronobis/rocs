@@ -29,7 +29,6 @@ if ("${ROCS_DIR_INIT}" STREQUAL "")
 	endif("${ROCS_DIR_INIT}" STREQUAL "")
 endif("${ROCS_DIR_INIT}" STREQUAL "")
 set(ROCS_DIR ${ROCS_DIR_INIT} CACHE PATH "Path to the directory where ROCS should be installed.")
-set(CMAKE_INSTALL_PREFIX "${ROCS_DIR}" CACHE INTERNAL "Prefix prepended to install directories" FORCE)
 
 # Set build type
 if("${ROCS_BUILD_TYPE}" STREQUAL "")
