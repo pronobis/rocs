@@ -160,7 +160,9 @@ double DaiBpFactorGraphSolver::getMapPosterior()
 
 	vector<size_t> map = _bp.findMaximum();
 
+	rocsDebug3("%f", _bp.logScore(map));
 	return exp(_bp.logScore(map));
+
 
 /*	// Create VarSet for this factor
 	dai::VarSet daiVarSet;
