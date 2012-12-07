@@ -4,9 +4,9 @@ ROCS (Toolkit for Robots Comprehending Space)
 Introduction
 ------------
 
-ROCS is a multi-language software toolkit containing algorithms providing
-mobile robots with the ability to perceive and understand large-scale
-real-world environments. ROCS contains implementations of algorithms for
+ROCS is a software toolkit containing algorithms providing mobile robots
+with the ability to perceive and understand large-scale real-world 
+environments. ROCS contains implementations of algorithms for
 mobile robot localization, extraction of semantic information about
 environment from robotic sensors, place categorization etc.
 
@@ -24,7 +24,7 @@ Installation
 ------------
 
 For detailed instructions on how to install ROCS, see
-[doc/INSTALL.md](http://github.com/pronobis/ROCS/blob/master/doc/INSTALL.md).
+[INSTALL.md](http://github.com/pronobis/ROCS/blob/master/INSTALL.md).
 
 
 Bugs and Suggestions
@@ -52,6 +52,6 @@ See the [LICENSE.md](http://github.com/pronobis/ROCS/blob/master/LICENSE.md)
 file for the license definitions and restrictions.
 
 #### Authors:
-- Arnaud Ramey
 - Andrzej Pronobis
+- Arnaud Ramey
 
