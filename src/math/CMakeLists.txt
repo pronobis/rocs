@@ -1,9 +1,0 @@
-if(ROCS_BUILD_MODULE_MATH)
-
-#	add_rocs_cpp_module(math
-#		SOURCES
-#		HEADERS
-#		LINK ${OPENCV_LIBRARIES}
-#		LINK_MODULES core)
-
-endif(ROCS_BUILD_MODULE_MATH)

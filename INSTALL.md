@@ -22,5 +22,3 @@ Alternatively, you can run the configure.sh script.
 from the root source directory. ROCS will be installed to ${ROCS_DIR}.
 Alternatively, you can run the make.sh script.
 
-Windows
--------
