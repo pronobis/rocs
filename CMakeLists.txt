@@ -1,4 +1,10 @@
-cmake_minimum_required(VERSION 2.6)
+cmake_minimum_required(VERSION 2.8)
+include(ExternalProject)
+
+# Message
+message(STATUS "================================")
+message(STATUS "Configuring ROCS")
+message(STATUS "================================")
 
 # Using CCache to speed up compilation of ROCS
 if(ROCS_CCACHE)
@@ -79,10 +85,12 @@ include(ROCSDeps)
 # Finding external dependencies
 include(ROCSExtDeps)
 
+# Add empty line
+message(STATUS "")
 
 
 # ------------------------------------------------------------------
-# Subprojects
+# Subdirectories
 # ------------------------------------------------------------------
 
 add_subdirectory(${ROCS_SRC_CONFIG})
@@ -93,14 +101,49 @@ install(FILES
 	${ROCS_SRC_ROOT}/INSTALL.md ${ROCS_SRC_ROOT}/CHANGELOG.md 
 	DESTINATION ${ROCS_DIR}/doc)
 
-# Thirdparty
+
+# ------------------------------------------------------------------
+# Third-party 
+# ------------------------------------------------------------------
 add_subdirectory_with_includes(${ROCS_SRC_THIRDPARTY}/cimg)
-add_subdirectory_with_includes(${ROCS_SRC_THIRDPARTY}/libdai)
 
+# libdai
+if(ROCS_BUILD_THIRDPARTY_LIBDAI)
+  add_subdirectory_with_includes(${ROCS_SRC_THIRDPARTY}/libdai)
+endif(ROCS_BUILD_THIRDPARTY_LIBDAI)
+
+# Google Test
+if(ROCS_BUILD_THIRDPARTY_GTEST)
+  externalproject_add(gtest 
+    SOURCE_DIR ${ROCS_SRC_THIRDPARTY}/gtest-1.6.0
+    # Disable install step
+    INSTALL_COMMAND ""
+    )
+  # Add includes
+  externalproject_get_property(gtest source_dir)
+  include_directories(${source_dir}/include)  
+  externalproject_get_property(gtest binary_dir)
+  link_directories(${binary_dir})
+endif(ROCS_BUILD_THIRDPARTY_GTEST)
+
+
+# ------------------------------------------------------------------
 # Modules
-add_subdirectory_with_includes(${ROCS_SRC_MODULES}/core)
-add_subdirectory_with_includes(${ROCS_SRC_MODULES}/vision)
+# ------------------------------------------------------------------
+# Core
+if(ROCS_BUILD_MODULE_CORE)
+  add_subdirectory_with_includes(${ROCS_SRC_MODULES}/core)
+endif(ROCS_BUILD_MODULE_CORE)
 
-# Documentation - modules must be already defined
+# Vision
+if(ROCS_BUILD_MODULE_VISION)
+  add_subdirectory_with_includes(${ROCS_SRC_MODULES}/vision)
+endif(ROCS_BUILD_MODULE_VISION)
+
+
+# ------------------------------------------------------------------
+# Documentation 
+# Modules must be already defined
+# ------------------------------------------------------------------
 add_subdirectory(${ROCS_SRC_DOC})
 

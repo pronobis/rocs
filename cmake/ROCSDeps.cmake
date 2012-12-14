@@ -37,13 +37,13 @@
 
 # Module Vision Apps
 if(ROCS_BUILD_MODULE_VISION_APPS)
-	set(ROCS_BUILD_MODULE_VISION yes)
+  set(ROCS_BUILD_MODULE_VISION yes)
 endif(ROCS_BUILD_MODULE_VISION_APPS)
 
 # Module Vision
 if(ROCS_BUILD_MODULE_VISION)
-	set(ROCS_BUILD_MODULE_CORE yes)
-	set(ROCS_FIND_OPENCV yes)
+  set(ROCS_BUILD_MODULE_CORE yes)
+  set(ROCS_FIND_OPENCV yes)
 endif(ROCS_BUILD_MODULE_VISION)
 
 # # Module Ml
@@ -61,22 +61,47 @@ endif(ROCS_BUILD_MODULE_VISION)
 
 # Module Core
 if(ROCS_BUILD_MODULE_CORE)
-	set(ROCS_FIND_BOOST_PROGRAM_OPTIONS yes)
-	set(ROCS_FIND_BOOST_PROPERTY_TREE yes)
-	set(ROCS_FIND_BOOST_SYSTEM yes)
-	set(ROCS_FIND_BOOST_FILESYSTEM yes)
-	set(ROCS_FIND_BOOST_HEADERS yes)
+  set(ROCS_FIND_BOOST_PROGRAM_OPTIONS yes)
+  set(ROCS_FIND_BOOST_SYSTEM yes)
+  set(ROCS_FIND_BOOST_FILESYSTEM yes)
+  set(ROCS_FIND_BOOST_HEADERS yes)
 endif(ROCS_BUILD_MODULE_CORE)
 
 # Documentation
 if(ROCS_BUILD_DOC)
-	set(ROCS_FIND_DOXYGEN yes)
+  set(ROCS_FIND_DOXYGEN yes)
 endif(ROCS_BUILD_DOC)
 
 # Testing
 if(ROCS_BUILD_TESTS)
-	set(ROCS_FIND_BOOST_UNIT_TEST_FRAMEWORK yes)
-	enable_testing()
+  #set(ROCS_FIND_BOOST_UNIT_TEST_FRAMEWORK yes) # Use this for Boost test framework
+  set(ROCS_BUILD_THIRDPARTY_GTEST yes)
+  enable_testing()
 endif(ROCS_BUILD_TESTS)
 
+# Summarize the elements to be built
+message(STATUS "Selected components:")
+if(ROCS_BUILD_THIRDPARTY_GTEST)
+  message(STATUS "-> Google Test Framework") 
+endif(ROCS_BUILD_THIRDPARTY_GTEST)
+if(ROCS_BUILD_MODULE_CORE)
+  message(STATUS "-> Module Core") 
+  message(STATUS "   - library") 
+  if (ROCS_BUILD_MODULE_CORE_APPS)
+    message(STATUS "   - apps") 
+  endif (ROCS_BUILD_MODULE_CORE_APPS)
+  if (ROCS_BUILD_TESTS)
+    message(STATUS "   - tests") 
+  endif (ROCS_BUILD_TESTS)
+endif(ROCS_BUILD_MODULE_CORE)
+if(ROCS_BUILD_MODULE_VISION)
+  message(STATUS "-> Module Vision") 
+  message(STATUS "   - library") 
+  if (ROCS_BUILD_MODULE_VISION_APPS)
+    message(STATUS "   - apps") 
+  endif (ROCS_BUILD_MODULE_VISION_APPS)
+  if (ROCS_BUILD_TESTS)
+    message(STATUS "   - tests") 
+  endif (ROCS_BUILD_TESTS)
+endif(ROCS_BUILD_MODULE_VISION)
 

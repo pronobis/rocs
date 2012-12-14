@@ -1,5 +1,3 @@
-if(ROCS_BUILD_MODULE_DATA)
-
 	# Module
 #	add_rocs_cpp_module(ml
 #		SOURCES ChainGraph.cc
@@ -10,5 +8,3 @@ if(ROCS_BUILD_MODULE_DATA)
 	# Tests
 #	add_rocs_cpp_test_suite(graph)
 #	add_rocs_cpp_test_suite(query)
-
-endif(ROCS_BUILD_MODULE_DATA)
