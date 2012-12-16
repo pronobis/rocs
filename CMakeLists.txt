@@ -43,8 +43,9 @@ endif("${ROCS_BUILD_TYPE}" STREQUAL "")
 set(ROCS_BUILD_TYPE ${ROCS_BUILD_TYPE} CACHE PATH "ROCS build type (Debug/Release).")
 set(CMAKE_BUILD_TYPE ${ROCS_BUILD_TYPE} CACHE INTERNAL "" FORCE)
 
-# Make ROCS_DIR available as preprocessor definition
+# Make ROCS_DIR and ROCS_SRC_ROOT available as preprocessor definition
 ADD_DEFINITIONS(-DROCS_DIR="${ROCS_DIR}")
+ADD_DEFINITIONS(-DROCS_SRC_ROOT="${ROCS_SRC_ROOT}")
 
 # Are we installing to SRC_ROOT?
 get_filename_component(TMP_PATH1 ${ROCS_SRC_ROOT} ABSOLUTE)

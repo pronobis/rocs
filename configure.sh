@@ -1,5 +1,5 @@
 #!/bin/sh
 
-mkdir BUILD
-cd BUILD
+mkdir build
+cd build
 ccmake ..
