@@ -43,7 +43,7 @@ namespace core {
 
 // Debug level
 #ifndef ROCS_MAX_DEBUG_LEVEL
-	#define ROCS_MAX_DEBUG_LEVEL 0
+  #define ROCS_MAX_DEBUG_LEVEL 0
 #endif
 
 /*! Stringified __LINE__ */

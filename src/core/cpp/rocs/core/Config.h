@@ -23,18 +23,13 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 // ===============================================================================
 
-/*!
- * \author Andrzej Pronobis, Arnaud Ramey 
- * \file Config.h
- */
-
 #ifndef _ROCS_CORE_CONFIG_H_
 #define _ROCS_CORE_CONFIG_H_
 
 // ROCS includes
 #include "rocs/core/error.h"
 #include "rocs/core/CommandLineHelp.h"
-// BOOST includes
+// Boost includes
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/xml_parser.hpp>
 #include <boost/property_tree/json_parser.hpp>
@@ -80,6 +75,8 @@ using boost::property_tree::ptree;
  *
  * For INFO, the include tag is :<br>
  * <code>include { href "toInsert.info" }</code>
+ *
+ * \author Andrzej Pronobis, Arnaud Ramey 
  */
 class Config
 {

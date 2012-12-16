@@ -23,16 +23,10 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 // ===============================================================================
 
-/*!
- * Config class.
- * \author Arnaud Ramey, Andrzej Pronobis
- * \file Config.cc
- */
-
 #include "rocs/core/FileInfo.h"
 #include "rocs/core/Config.h"
 
-// Stl & Boost
+// STL & Boost
 #include <set>
 #include <boost/algorithm/string.hpp>
 
