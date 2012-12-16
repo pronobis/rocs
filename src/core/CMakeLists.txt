@@ -5,6 +5,6 @@ add_rocs_cpp_module(core
   LINK ${BOOST_PROGRAM_OPTIONS_LIBRARIES} ${BOOST_FILESYSTEM_LIBRARIES})
 
 # Tests
-add_rocs_cpp_test_suite(test1)
-add_rocs_cpp_test_suite(configuration)
+add_rocs_cpp_test(test)
+#add_rocs_cpp_test_suite(configuration)
 

@@ -19,29 +19,29 @@
 // ==================================================================
 
 /*!
- * Example test suite.
+ * Example of a test case. Also serves as a "test" of google test.
  * For more information see:
- * http://www.boost.org/doc/libs/1_44_0/libs/test/doc/html/utf/user-guide.html
+ * https://code.google.com/p/googletest/wiki/V1_6_Documentation
  * \author Andrzej Pronobis
  * \file test_test1.cc
  */
 
-// Boost
-#include <boost/test/unit_test.hpp>
+// Google Test
+#include "gtest/gtest.h"
 // ROCS
 /* Nothing for now. This is just an example*/
 
-/*! Define first test case. */
-BOOST_AUTO_TEST_CASE( case1 )
-{
-	BOOST_CHECK( 0 == 0 );
-	BOOST_REQUIRE( 0 == 0 );
+
+/*! Define first test in this test case. */
+TEST(Test, Asserts) {
+  ASSERT_FALSE(false);
+  ASSERT_TRUE(true);
 }
 
-/*! Define second test case. */
-BOOST_AUTO_TEST_CASE( case2 )
-{
-	BOOST_CHECK( 1 == 1 );
-	BOOST_REQUIRE( 1 == 1 );
+
+/*! Define second test in this test case. */
+TEST(Test, Expects) {
+  EXPECT_FALSE(false);
+  EXPECT_TRUE(true);
 }
 

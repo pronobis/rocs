@@ -114,15 +114,15 @@ endif(ROCS_BUILD_THIRDPARTY_LIBDAI)
 
 # Google Test
 if(ROCS_BUILD_THIRDPARTY_GTEST)
-  externalproject_add(gtest 
+  externalproject_add(googletest 
     SOURCE_DIR ${ROCS_SRC_THIRDPARTY}/gtest-1.6.0
     # Disable install step
     INSTALL_COMMAND ""
     )
   # Add includes
-  externalproject_get_property(gtest source_dir)
+  externalproject_get_property(googletest source_dir)
   include_directories(${source_dir}/include)  
-  externalproject_get_property(gtest binary_dir)
+  externalproject_get_property(googletest binary_dir)
   link_directories(${binary_dir})
 endif(ROCS_BUILD_THIRDPARTY_GTEST)
 

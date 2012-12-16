@@ -123,10 +123,10 @@ macro(add_rocs_cpp_app)
 endmacro(add_rocs_cpp_app)
 
 
-# Adds a C++ test suite application
+# Adds a C++ test application
 # Arguments:
 # <test_name>
-macro(add_rocs_cpp_test_suite)
+macro(add_rocs_cpp_test)
 	# Parse arguments
 	parse_arguments(ARG "" "" ${ARGN})
 	list(GET ARG_DEFAULT_ARGS 0 ARG_NAME)
@@ -143,7 +143,7 @@ macro(add_rocs_cpp_test_suite)
 
 		# Add target for the test
 		add_executable(${_TEST_TARGET_} cpp/tests/test_${ARG_NAME}.cc)
-		target_link_libraries(${_TEST_TARGET_} boost_unit_test_framework)
+                target_link_libraries(${_TEST_TARGET_} pthread gtest gtest_main)
 		target_link_libraries(${_TEST_TARGET_} rocs_${MODULE_NAME})
 
 		# Special definitions used by Boost 
@@ -154,7 +154,7 @@ macro(add_rocs_cpp_test_suite)
 				RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/tests/")
 
 		# Make output of CTest verbose on failure
- 		#$ENV{CTEST_OUTPUT_ON_FAILURE} = 1;
+ 		# set(CTEST_OUTPUT_ON_FAILURE true) - doesn't work needs fixing
 
 		# Add the test
 		enable_testing()
@@ -162,6 +162,6 @@ macro(add_rocs_cpp_test_suite)
 		add_test(${_TEST_TARGET_} "${LOC}")
 
 	endif(ROCS_BUILD_TESTS)
-endmacro(add_rocs_cpp_test_suite)
+endmacro(add_rocs_cpp_test)
 
 
